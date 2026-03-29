@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pordeenomad Commission & Affiliate Flow</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --primary-light: #10B981;
+      --secondary: #0D9488;
+      --secondary-dark: #0F766E;
+      --secondary-light: #14B8A6;
+      --accent-orange: #F59E0B;
+      --accent-red: #EF4444;
+      --accent-purple: #8B5CF6;
+      --accent-pink: #EC4899;
+      --accent-amber: #FBBF24;
+      --bg-dark: #F0FDF4;
+      --bg-card: rgba(5,150,105,0.05);
+      --bg-card-hover: rgba(5,150,105,0.10);
+      --text-primary: #0A2E1B;
+      --text-secondary: #3D6B50;
+      --text-muted: #7DA88A;
+      --grid-color: rgba(5,150,105,0.06);
+      --border-color: rgba(5,150,105,0.12);
+      --transition-fast: 200ms;
+      --transition-normal: 350ms;
+      --transition-slow: 500ms;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 0; pointer-events: none;
+    }
+    .grid-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, var(--bg-card-hover) 0%, transparent 60%);
+    }
+
+    .presentation {
+      position: relative; width: 100vw;
+      height: 56.25vw; max-height: 100vh; max-width: 177.78vh;
+      margin: 0 auto; overflow: hidden; z-index: 1;
+    }
+
+    .slide {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      padding: clamp(28px, 3.5vw, 56px);
+      opacity: 0; visibility: hidden; transform: translateX(60px);
+      transition: opacity var(--transition-slow) ease,
+                  transform var(--transition-slow) cubic-bezier(0.34, 1.56, 0.64, 1),
+                  visibility 0s var(--transition-slow);
+    }
+    .slide.active { opacity: 1; visibility: visible; transform: translateX(0); transition-delay: 0s; }
+    .slide.prev { transform: translateX(-60px); }
+
+    .slide-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: clamp(16px, 2vw, 32px); flex-shrink: 0;
+    }
+    .slide-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 20px;
+      font-size: clamp(10px, 1vw, 13px); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      background: var(--bg-card); color: var(--primary);
+      border: 1px solid var(--border-color);
+    }
+    .slide-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+    .slide-number {
+      font-size: clamp(11px, 1vw, 14px); font-weight: 500;
+      color: var(--text-muted); font-family: 'Inter', monospace;
+    }
+
+    .slide-title {
+      font-size: clamp(22px, 3vw, 48px); font-weight: 800;
+      line-height: 1.15; margin-bottom: clamp(6px, 0.8vw, 14px);
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .slide-subtitle {
+      font-size: clamp(12px, 1.3vw, 18px); color: var(--text-secondary);
+      font-weight: 400; line-height: 1.6; max-width: 700px;
+    }
+    .slide-content {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; overflow: hidden;
+    }
+
+    .cover-content {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center;
+      gap: clamp(14px, 1.8vw, 24px);
+    }
+    .cover-title {
+      font-size: clamp(32px, 5vw, 72px); font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--secondary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: shimmer 4s ease infinite; background-size: 200% 200%;
+    }
+    .cover-subtitle {
+      font-size: clamp(13px, 1.6vw, 22px); color: var(--text-secondary);
+      font-weight: 400; max-width: 600px; line-height: 1.6;
+    }
+    .cover-roles {
+      display: flex; gap: clamp(10px, 1.2vw, 20px);
+      margin-top: clamp(6px, 0.8vw, 14px); flex-wrap: wrap; justify-content: center;
+    }
+    .role-chip {
+      padding: clamp(6px, 0.7vw, 10px) clamp(14px, 1.4vw, 24px);
+      border-radius: 50px; font-size: clamp(10px, 1vw, 14px); font-weight: 600;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+      color: var(--text-secondary); transition: all var(--transition-fast) ease;
+    }
+    .role-chip:hover { transform: translateY(-2px) scale(1.05); }
+
+    .end-content {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; gap: 24px;
+    }
+    .end-title {
+      font-size: clamp(36px, 5.5vw, 80px); font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--primary-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: shimmer 3s ease infinite; background-size: 200% 200%;
+    }
+
+    .flow-container {
+      display: flex; flex-direction: column; gap: clamp(10px, 1.2vw, 18px);
+      max-width: 1200px; margin: 0 auto; width: 100%;
+    }
+    .flow-row {
+      display: flex; align-items: center; gap: clamp(4px, 0.6vw, 10px);
+      flex-wrap: wrap; justify-content: center;
+    }
+    .flow-step {
+      display: flex; align-items: center; gap: clamp(4px, 0.5vw, 8px);
+      padding: clamp(8px, 0.9vw, 14px) clamp(12px, 1.2vw, 20px);
+      border-radius: 10px; font-size: clamp(10px, 1vw, 14px); font-weight: 500;
+      transition: all var(--transition-fast) ease; white-space: nowrap;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+    }
+    .flow-step:hover { transform: translateY(-2px); background: var(--bg-card-hover); }
+    .flow-step .icon { font-size: clamp(14px, 1.4vw, 20px); }
+    .flow-arrow { color: var(--text-muted); font-size: clamp(14px, 1.4vw, 20px); flex-shrink: 0; }
+
+    .highlight-green { background: rgba(5,150,105,0.1) !important; border-color: rgba(5,150,105,0.25) !important; color: var(--primary) !important; }
+    .highlight-orange { background: rgba(245,158,11,0.1) !important; border-color: rgba(245,158,11,0.3) !important; color: var(--accent-orange) !important; }
+    .highlight-red { background: rgba(239,68,68,0.08) !important; border-color: rgba(239,68,68,0.25) !important; color: var(--accent-red) !important; }
+    .highlight-purple { background: rgba(139,92,246,0.1) !important; border-color: rgba(139,92,246,0.25) !important; color: var(--accent-purple) !important; }
+    .highlight-teal { background: rgba(13,148,136,0.1) !important; border-color: rgba(13,148,136,0.25) !important; color: var(--secondary) !important; }
+
+    .cards-grid {
+      display: grid; gap: clamp(10px, 1.2vw, 18px);
+      max-width: 1200px; margin: 0 auto; width: 100%;
+    }
+    .cards-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .card {
+      padding: clamp(14px, 1.5vw, 24px); border-radius: 14px;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+      transition: all var(--transition-fast) ease;
+    }
+    .card:hover { transform: translateY(-3px); background: var(--bg-card-hover); }
+    .card-icon { font-size: clamp(22px, 2.2vw, 36px); margin-bottom: clamp(6px, 0.8vw, 12px); }
+    .card-title { font-size: clamp(12px, 1.2vw, 16px); font-weight: 700; margin-bottom: clamp(3px, 0.4vw, 6px); }
+    .card-desc { font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary); line-height: 1.5; }
+    .card-tag {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: clamp(9px, 0.8vw, 12px); font-weight: 600; margin-top: 8px;
+    }
+    .tag-green { background: rgba(5,150,105,0.12); color: var(--primary); }
+    .tag-orange { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+    .tag-red { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+    .tag-purple { background: rgba(139,92,246,0.12); color: var(--accent-purple); }
+    .tag-teal { background: rgba(13,148,136,0.12); color: var(--secondary); }
+    .tag-gray { background: rgba(107,143,113,0.12); color: var(--text-muted); }
+
+    .state-machine {
+      display: flex; align-items: center; justify-content: center;
+      gap: clamp(4px, 0.6vw, 10px); flex-wrap: wrap;
+      margin: clamp(8px, 1vw, 16px) 0;
+    }
+    .state-node {
+      padding: clamp(8px, 0.9vw, 14px) clamp(14px, 1.4vw, 22px);
+      border-radius: 10px; font-size: clamp(10px, 0.95vw, 13px); font-weight: 600;
+      text-align: center; border: 1px solid var(--border-color);
+      background: var(--bg-card); min-width: clamp(70px, 7vw, 110px);
+    }
+    .state-arrow { color: var(--text-muted); font-size: clamp(14px, 1.4vw, 22px); }
+
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 32px); max-width: 1200px; margin: 0 auto; width: 100%;
+    }
+    .col-section { display: flex; flex-direction: column; gap: clamp(8px, 1vw, 14px); }
+
+    .section-label {
+      font-size: clamp(10px, 0.85vw, 12px); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-muted); margin-bottom: clamp(6px, 0.8vw, 12px);
+      padding-bottom: 6px; border-bottom: 1px solid var(--border-color);
+    }
+    .bullet-list { list-style: none; display: flex; flex-direction: column; gap: clamp(6px, 0.7vw, 10px); }
+    .bullet-list li {
+      display: flex; align-items: flex-start; gap: clamp(6px, 0.7vw, 10px);
+      font-size: clamp(10px, 1vw, 14px); color: var(--text-secondary); line-height: 1.6;
+    }
+    .bullet-list li .bullet {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary); flex-shrink: 0; margin-top: 7px;
+    }
+
+    .timeline {
+      position: relative; padding-left: clamp(24px, 3vw, 40px);
+      max-width: 900px; margin: 0 auto; width: 100%;
+    }
+    .timeline::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; border-radius: 2px;
+      background: linear-gradient(180deg, var(--primary), var(--secondary), var(--primary-light));
+    }
+    .timeline-item {
+      position: relative; padding: clamp(10px, 1.2vw, 18px) 0;
+      padding-left: clamp(16px, 2vw, 26px);
+    }
+    .timeline-item::before {
+      content: ''; position: absolute;
+      left: calc(-1 * clamp(24px, 3vw, 40px) - 1px);
+      top: clamp(16px, 2vw, 24px);
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--primary); border: 3px solid var(--bg-dark);
+      box-shadow: 0 0 0 3px var(--bg-card-hover);
+    }
+    .timeline-item:nth-child(2)::before { background: var(--secondary); }
+    .timeline-item:nth-child(3)::before { background: var(--accent-purple); }
+    .timeline-item:nth-child(4)::before { background: var(--accent-orange); }
+    .timeline-item:nth-child(5)::before { background: var(--accent-red); }
+    .timeline-date {
+      font-size: clamp(10px, 0.85vw, 12px); font-weight: 700;
+      color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+    .timeline-title { font-size: clamp(12px, 1.2vw, 16px); font-weight: 700; margin-bottom: 3px; }
+    .timeline-desc { font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary); line-height: 1.5; }
+
+    .stats-row {
+      display: flex; justify-content: center; gap: clamp(16px, 2.5vw, 40px);
+      flex-wrap: wrap; max-width: 1000px; margin: 0 auto; width: 100%;
+    }
+    .stat-item {
+      text-align: center; padding: clamp(14px, 1.8vw, 28px);
+      min-width: clamp(100px, 10vw, 160px);
+    }
+    .stat-number {
+      font-size: clamp(28px, 3.5vw, 56px); font-weight: 900; line-height: 1;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: clamp(4px, 0.5vw, 8px);
+    }
+    .stat-label {
+      font-size: clamp(10px, 1vw, 14px); font-weight: 600;
+      color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .stat-desc { font-size: clamp(9px, 0.85vw, 12px); color: var(--text-muted); margin-top: 3px; }
+
+    .agenda-list {
+      display: flex; flex-direction: column; gap: clamp(8px, 1vw, 14px);
+      max-width: 700px; margin: 0 auto; width: 100%;
+    }
+    .agenda-item {
+      display: flex; align-items: center; gap: clamp(12px, 1.5vw, 20px);
+      padding: clamp(12px, 1.2vw, 18px) clamp(16px, 1.6vw, 24px);
+      border-radius: 12px; border: 1px solid var(--border-color);
+      background: var(--bg-card); transition: all var(--transition-fast) ease;
+    }
+    .agenda-item:hover { transform: translateX(4px); background: var(--bg-card-hover); }
+    .agenda-num {
+      width: clamp(32px, 3vw, 42px); height: clamp(32px, 3vw, 42px);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: clamp(12px, 1.2vw, 18px); font-weight: 800; flex-shrink: 0;
+      color: white; background: var(--primary);
+    }
+    .agenda-item:nth-child(2) .agenda-num { background: var(--secondary); }
+    .agenda-item:nth-child(3) .agenda-num { background: var(--accent-purple); }
+    .agenda-item:nth-child(4) .agenda-num { background: var(--accent-orange); }
+    .agenda-text { font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; }
+    .agenda-sub { font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary); margin-top: 2px; }
+
+    .split-row {
+      display: flex; gap: clamp(8px, 1vw, 16px);
+      justify-content: center; flex-wrap: wrap;
+    }
+    .mini-card {
+      flex: 1; min-width: 180px; max-width: 350px;
+      padding: clamp(12px, 1.2vw, 20px); border-radius: 12px;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+    }
+    .mini-card-title {
+      font-size: clamp(11px, 1.1vw, 15px); font-weight: 700;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+    .mini-card ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .mini-card ul li {
+      font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary);
+      padding-left: 12px; position: relative;
+    }
+    .mini-card ul li::before {
+      content: '\203A'; position: absolute; left: 0;
+      color: var(--primary); font-weight: 700;
+    }
+
+    .example-box {
+      margin-top: clamp(8px, 1vw, 16px);
+      padding: clamp(12px, 1.2vw, 20px);
+      border-radius: 10px; border: 1px dashed var(--border-color);
+      background: var(--bg-card); max-width: 600px;
+    }
+    .example-box .label {
+      font-size: clamp(9px, 0.8vw, 11px); font-weight: 700;
+      color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .example-box .calc {
+      font-size: clamp(11px, 1.1vw, 15px); font-weight: 600;
+      color: var(--text-primary); line-height: 1.8;
+    }
+    .example-box .result {
+      font-size: clamp(14px, 1.4vw, 20px); font-weight: 800;
+      color: var(--primary); margin-top: 4px;
+    }
+    .example-box .wrong {
+      font-size: clamp(11px, 1vw, 14px); font-weight: 600;
+      color: var(--accent-red); margin-top: 8px;
+      padding-top: 8px; border-top: 1px dashed rgba(239,68,68,0.3);
+    }
+
+    .comm-table {
+      width: 100%; border-collapse: collapse; margin-top: clamp(6px, 0.8vw, 12px);
+      font-size: clamp(10px, 0.95vw, 13px);
+    }
+    .comm-table th {
+      background: var(--bg-card-hover); padding: clamp(6px, 0.6vw, 10px) clamp(8px, 0.8vw, 14px);
+      text-align: center; font-weight: 700; color: var(--primary);
+      border: 1px solid var(--border-color); font-size: clamp(9px, 0.85vw, 12px);
+    }
+    .comm-table td {
+      padding: clamp(5px, 0.5vw, 8px) clamp(8px, 0.8vw, 14px);
+      text-align: center; border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+    .comm-table td.bold { font-weight: 700; color: var(--primary); }
+    .comm-table tr:hover td { background: var(--bg-card); }
+
+    .principle-box {
+      display: flex; align-items: center; gap: clamp(10px, 1.2vw, 18px);
+      padding: clamp(14px, 1.4vw, 22px);
+      border-radius: 12px; border: 2px solid var(--primary);
+      background: rgba(5,150,105,0.06); margin: clamp(8px, 1vw, 16px) 0;
+      max-width: 700px;
+    }
+    .principle-icon { font-size: clamp(28px, 3vw, 44px); flex-shrink: 0; }
+    .principle-text { font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; color: var(--primary-dark); line-height: 1.5; }
+
+    /* Pool Distribution Visual */
+    .pool-visual {
+      max-width: 800px; margin: 0 auto; width: 100%;
+    }
+    .pool-bar {
+      display: flex; border-radius: 10px; overflow: hidden; height: clamp(40px, 4vw, 56px);
+      border: 2px solid var(--border-color); margin: clamp(8px, 1vw, 16px) 0;
+    }
+    .pool-segment {
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(10px, 1vw, 14px); font-weight: 700; color: white;
+      transition: all var(--transition-fast) ease;
+    }
+    .pool-segment:hover { filter: brightness(1.1); }
+    .pool-legend {
+      display: flex; gap: clamp(12px, 1.5vw, 24px); flex-wrap: wrap;
+      justify-content: center; margin-top: clamp(6px, 0.8vw, 12px);
+    }
+    .pool-legend-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: clamp(10px, 0.95vw, 13px); color: var(--text-secondary);
+    }
+    .pool-legend-dot {
+      width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+    }
+
+    .nav-bar {
+      position: fixed; bottom: clamp(16px, 2vw, 28px);
+      left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 16px; border-radius: 16px;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08); z-index: 100;
+    }
+    .nav-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      border: 1px solid var(--border-color); background: transparent;
+      color: var(--text-secondary); font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast) ease;
+    }
+    .nav-btn:hover { background: var(--bg-card-hover); color: var(--primary); }
+    .nav-btn:active { transform: scale(0.92); }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .nav-progress { display: flex; align-items: center; gap: 4px; }
+    .nav-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--text-muted); opacity: 0.3;
+      transition: all var(--transition-fast) ease; cursor: pointer;
+    }
+    .nav-dot.active { background: var(--primary); opacity: 1; width: 22px; border-radius: 4px; }
+    .nav-dot:hover { opacity: 0.7; }
+    .nav-counter {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      font-family: 'Inter', monospace; font-variant-numeric: tabular-nums;
+      min-width: 50px; text-align: center;
+    }
+
+    .page-dropdown {
+      position: fixed; bottom: clamp(72px, 8vw, 96px);
+      left: 50%; transform: translateX(-50%) translateY(10px);
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+      border: 1px solid var(--border-color); border-radius: 14px;
+      padding: 8px; z-index: 101; max-height: 60vh; overflow-y: auto;
+      min-width: 300px; opacity: 0; visibility: hidden;
+      transition: all var(--transition-fast) ease;
+    }
+    .page-dropdown.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    .page-dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; border-radius: 8px; cursor: pointer;
+      font-size: 13px; color: var(--text-secondary);
+      transition: all var(--transition-fast) ease;
+    }
+    .page-dropdown-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .page-dropdown-item.active { background: var(--bg-card-hover); color: var(--primary); font-weight: 600; }
+    .page-dropdown-item .item-num {
+      font-weight: 700; font-family: 'Inter', monospace; font-size: 11px;
+      min-width: 24px; text-align: center; padding: 2px 6px;
+      border-radius: 6px; background: var(--bg-card);
+    }
+
+    .fullscreen-btn {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.8); backdrop-filter: blur(8px);
+      color: var(--text-muted); font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast) ease;
+    }
+    .fullscreen-btn:hover { color: var(--primary); }
+
+    @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .slide.active .anim-item { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+    .slide.active .anim-item:nth-child(1){animation-delay:0.1s}
+    .slide.active .anim-item:nth-child(2){animation-delay:0.2s}
+    .slide.active .anim-item:nth-child(3){animation-delay:0.3s}
+    .slide.active .anim-item:nth-child(4){animation-delay:0.4s}
+    .slide.active .anim-item:nth-child(5){animation-delay:0.5s}
+    .slide.active .anim-item:nth-child(6){animation-delay:0.6s}
+
+    .hl { font-weight: 700; }
+    .hl-green { color: var(--primary); }
+    .hl-teal { color: var(--secondary); }
+    .hl-orange { color: var(--accent-orange); }
+    .hl-red { color: var(--accent-red); }
+    .hl-purple { color: var(--accent-purple); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { animation-duration:0.01ms!important; transition-duration:0.01ms!important; }
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+    @media (max-width: 768px) {
+      body { overflow-y: auto; overflow-x: hidden; }
+      .presentation { width: 100vw; height: 100vh; height: 100dvh; max-height: none; max-width: none; }
+      .slide { padding: clamp(16px, 4vw, 28px); padding-bottom: clamp(72px, 14vw, 100px); overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+      .slide-content { overflow: visible; min-height: 0; }
+      .slide-header { margin-bottom: 12px; }
+      .slide-title { font-size: clamp(20px, 5.5vw, 30px); }
+      .slide-subtitle { font-size: clamp(12px, 3.2vw, 15px); max-width: 100%; }
+      .cover-title { font-size: clamp(26px, 7.5vw, 40px); }
+      .cover-subtitle { font-size: clamp(12px, 3.2vw, 16px); max-width: 100%; }
+      .end-title { font-size: clamp(30px, 9vw, 50px); }
+      .cards-grid.cols-2, .cards-grid.cols-3, .cards-grid.cols-4 { grid-template-columns: 1fr; }
+      .flow-row { flex-direction: column; gap: 6px; }
+      .flow-step { white-space: normal; text-align: center; justify-content: center; width: 100%; }
+      .flow-arrow { transform: rotate(90deg); font-size: 16px; }
+      .two-col { grid-template-columns: 1fr; gap: 14px; }
+      .split-row { flex-direction: column; }
+      .mini-card { min-width: 100%; max-width: 100%; }
+      .state-machine { flex-direction: column; }
+      .state-arrow { transform: rotate(90deg); }
+      .pool-bar { height: 36px; }
+      .pool-segment { font-size: clamp(9px, 2.5vw, 12px); }
+      .pool-legend { gap: 8px; }
+      .nav-bar { gap: 6px; padding: 6px 10px; bottom: 10px; border-radius: 12px; }
+      .nav-btn { width: 34px; height: 34px; font-size: 14px; }
+      .nav-progress { display: none; }
+      .nav-counter { font-size: 12px; min-width: 40px; }
+      .page-dropdown { min-width: 240px; bottom: 60px; }
+      .fullscreen-btn { display: none; }
+      .principle-box { flex-direction: column; text-align: center; }
+      .comm-table { font-size: clamp(9px, 2.5vw, 12px); }
+      .comm-table th, .comm-table td { padding: 4px 6px; }
+      .timeline { padding-left: 20px; }
+      .timeline-item { padding-left: 14px; }
+      .timeline-item::before { left: -21px; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .cards-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="presentation" id="presentation">
+
+  <!-- SLIDE 0: COVER -->
+  <div class="slide active" data-slide="0">
+    <div class="slide-content cover-content">
+      <div class="cover-title anim-item">Pordeenomad</div>
+      <div class="cover-subtitle anim-item">ระบบโครงสร้าง Commission &amp; Affiliate Flow</div>
+      <div class="cover-roles">
+        <div class="role-chip anim-item">&#x1F6D2; Buyer</div>
+        <div class="role-chip anim-item">&#x1F3EA; Seller</div>
+        <div class="role-chip anim-item">&#x1F4E2; Affiliate</div>
+        <div class="role-chip anim-item">&#x1F6E1; Admin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: ภาพรวมระบบ -->
+  <div class="slide" data-slide="1">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Overview</div>
+      <div class="slide-number">02</div>
+    </div>
+    <div class="slide-title">ภาพรวมระบบ</div>
+    <div class="slide-subtitle">Clone จาก Buydi + เพิ่ม Affiliate แบบ MLM (อ้างอิง BStore)</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-4 anim-item">
+        <div class="card">
+          <div class="card-icon">&#x1F6D2;</div>
+          <div class="card-title">Buyer</div>
+          <div class="card-desc">ซื้อสินค้าผ่าน Affiliate Link → ผูกกับ Affiliate ถาวร</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x1F3EA;</div>
+          <div class="card-title">Seller</div>
+          <div class="card-desc">ลงสินค้า กำหนด Commission Rate → จ่ายเป็นก้อนเดียว</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x1F4E2;</div>
+          <div class="card-title">Affiliate</div>
+          <div class="card-desc">แชร์ลิงก์ ชวนคนเข้าทีม → รับส่วนแบ่งจาก Pool</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#x1F6E1;</div>
+          <div class="card-title">Admin</div>
+          <div class="card-desc">อนุมัติ ตรวจสอบ จัดการถอนเงิน Dispute</div>
+        </div>
+      </div>
+      <div class="principle-box anim-item" style="margin:clamp(12px,1.4vw,24px) auto 0;">
+        <div class="principle-icon">&#x1F4B0;</div>
+        <div class="principle-text">หลักการสำคัญ: <strong>"เงินก้อนเดียว"</strong> — Seller กำหนด Commission เท่าไหร่ ระบบนำไปกระจายภายใน Pool นั้น ไม่มีการบวกเพิ่ม</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Flow การสั่งซื้อ -->
+  <div class="slide" data-slide="2">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Order Flow</div>
+      <div class="slide-number">03</div>
+    </div>
+    <div class="slide-title">Flow การสั่งซื้อ</div>
+    <div class="slide-subtitle">Commission คำนวณจากยอดขายสุทธิ (หลังหักส่วนลด) ที่สำเร็จจริงเท่านั้น</div>
+    <div class="slide-content">
+      <div class="flow-container">
+        <div class="flow-row anim-item">
+          <div class="flow-step"><span class="icon">&#x1F517;</span> Affiliate Link</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step"><span class="icon">&#x1F6D2;</span> ดูสินค้า</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step"><span class="icon">&#x1F4B3;</span> ชำระเงิน</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-green"><span class="icon">&#x2705;</span> Order สำเร็จ</div>
+        </div>
+        <div class="flow-row anim-item">
+          <div class="flow-step highlight-green"><span class="icon">&#x2705;</span> สำเร็จ</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-orange"><span class="icon">&#x1F4CA;</span> คำนวณยอดสุทธิ</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-purple"><span class="icon">&#x1F4B0;</span> สร้าง Commission Pool</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-teal"><span class="icon">&#xF7;</span> กระจายภายใน Pool</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top:clamp(12px,1.4vw,24px);">
+        <div class="mini-card">
+          <div class="mini-card-title">&#x2705; นับเป็น Commission</div>
+          <ul>
+            <li>Order สำเร็จ (Completed) เท่านั้น</li>
+            <li>หักส่วนลดแล้ว = ยอดสุทธิ</li>
+            <li>Seller กำหนด Rate เอง (ต่อสินค้า)</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title" style="color:var(--accent-red);">&#x274C; ไม่นับ</div>
+          <ul>
+            <li>ยกเลิก / คืนสินค้า</li>
+            <li>Order ที่ยังไม่สำเร็จ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Lifetime Customer Binding -->
+  <div class="slide" data-slide="3">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Lifetime Binding</div>
+      <div class="slide-number">04</div>
+    </div>
+    <div class="slide-title">Lifetime Customer Binding</div>
+    <div class="slide-subtitle">ลูกค้าถูกผูกกับ Affiliate ถาวร — ได้ Commission ทุกครั้งที่ลูกค้าซื้อ</div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="section-label">วิธีการทำงาน</div>
+          <ul class="bullet-list">
+            <li><span class="bullet"></span>ลูกค้าเข้าผ่าน Affiliate Link ครั้งแรก</li>
+            <li><span class="bullet"></span>ระบบ <strong>ผูก (Bind)</strong> ลูกค้ากับ Affiliate ถาวร</li>
+            <li><span class="bullet"></span>ลูกค้าซื้ออะไรก็ตาม → Affiliate เดิมได้ Commission</li>
+            <li><span class="bullet"></span><strong>ไม่มีวันหมดอายุ</strong> ไม่ต้องคลิกลิงก์ซ้ำ</li>
+          </ul>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">เปรียบเทียบ</div>
+          <div class="card" style="border-color:rgba(239,68,68,0.3);">
+            <div class="card-title" style="color:var(--accent-red);">&#x274C; Buydi เดิม</div>
+            <div class="card-desc">Cookie 30 วัน — หมดอายุแล้วลูกค้าหลุด</div>
+          </div>
+          <div class="card" style="border-color:var(--primary);border-width:2px;margin-top:8px;">
+            <div class="card-title" style="color:var(--primary);">&#x2705; Pordeenomad</div>
+            <div class="card-desc">Lifetime Binding — ผูกถาวร ตลอดชีวิต</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: เงินก้อนเดียว — KEY SLIDE -->
+  <div class="slide" data-slide="4">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Core Principle</div>
+      <div class="slide-number">05</div>
+    </div>
+    <div class="slide-title">หลักการ "เงินก้อนเดียว"</div>
+    <div class="slide-subtitle">Seller กำหนด Commission → ระบบนำไปแบ่งให้ Affiliate + Referer ภายใน Pool (Platform Fee แยกต่างหาก)</div>
+    <div class="slide-content">
+      <div class="pool-visual anim-item">
+        <div style="text-align:center;margin-bottom:clamp(6px,0.8vw,12px);">
+          <span style="font-size:clamp(12px,1.2vw,16px);font-weight:700;">สินค้า 1,000 &#xE3F; | Seller ตั้ง Commission 15%</span><br>
+          <span style="font-size:clamp(16px,2vw,28px);font-weight:900;color:var(--primary);">Commission Pool = 150 &#xE3F;</span>
+        </div>
+        <div class="pool-bar">
+          <div class="pool-segment" style="flex:70;background:var(--primary);">ค่านายหน้า</div>
+          <div class="pool-segment" style="flex:30;background:var(--accent-purple);">ค่าลิขสิทธิ์</div>
+        </div>
+        <div class="pool-legend">
+          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--primary);"></div> ค่านายหน้า → Affiliate (คนขาย)</div>
+          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--accent-purple);"></div> ค่าลิขสิทธิ์ → Referer (คนชวน) — เฉพาะทีมชั้น 1</div>
+        </div>
+        <div style="text-align:center;font-size:clamp(10px,0.9vw,13px);color:var(--text-muted);margin-top:8px;">* สัดส่วนการแบ่งยังต้องกำหนด — <strong>ระดับสมาชิก (Tier) จะมีผลกับ % ที่แต่ละฝ่ายได้รับ</strong></div>
+        <div style="text-align:center;font-size:clamp(10px,0.9vw,13px);color:var(--secondary);margin-top:4px;">Platform Fee เป็นค่าธรรมเนียมแยกต่างหาก ไม่ได้อยู่ใน Commission Pool</div>
+      </div>
+      <div class="example-box anim-item" style="max-width:700px;margin:clamp(10px,1.2vw,20px) auto 0;">
+        <div class="label">&#x1F4DD; ตัวอย่าง (สัดส่วนสมมติ — ตั้งค่าได้ที่หลังบ้าน)</div>
+        <div class="calc">
+          สินค้า <span class="hl hl-green">1,000 &#xE3F;</span> | Seller ตั้ง Commission 15% → Pool = <span class="hl hl-green">150 &#xE3F;</span><br>
+          กรณี: A ขายสินค้า (B เป็นคนชวน A เข้าระบบ)<br><br>
+          <span class="hl hl-green">&#x1F464; ค่านายหน้า (A):</span> 120 &#xE3F; = <strong>80%</strong> ของ Pool<br>
+          <span class="hl hl-purple">&#x1F465; ค่าลิขสิทธิ์ (B):</span> 30 &#xE3F; = <strong>20%</strong> ของ Pool
+        </div>
+        <div class="result">รวม = 150 &#xE3F; = 100% ของ Pool &#x2705;</div>
+        <div style="font-size:clamp(9px,0.85vw,12px);color:var(--secondary);margin-top:6px;line-height:1.6;">
+          &#x2699; สัดส่วน % สามารถ<strong>ตั้งค่าได้ที่ระบบหลังบ้าน (Admin)</strong> และระดับสมาชิกของ B จะมีผลกับ % ค่าลิขสิทธิ์ที่ได้รับ
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: รายได้ตาม MoM -->
+  <div class="slide" data-slide="5">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Income Types</div>
+      <div class="slide-number">06</div>
+    </div>
+    <div class="slide-title">ประเภทรายได้ (ตาม MoM)</div>
+    <div class="slide-subtitle">MoM ยืนยัน 2 ประเภท + 1 ประเภทที่ยังต้องสรุปรายละเอียด</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-3 anim-item">
+        <div class="card" style="border-color:var(--primary);border-width:2px;">
+          <div class="card-icon">&#x1F4B5;</div>
+          <div class="card-title" style="color:var(--primary);">1. ค่านายหน้า</div>
+          <div class="card-desc">Affiliate แชร์ลิงก์ → ลูกค้าซื้อ → ได้ Commission จาก Pool</div>
+          <div class="card-tag tag-green">&#x2705; ยืนยันแล้ว — รายวัน</div>
+        </div>
+        <div class="card" style="border-color:var(--accent-purple);border-width:2px;">
+          <div class="card-icon">&#x1F465;</div>
+          <div class="card-title" style="color:var(--accent-purple);">2. ค่าลิขสิทธิ์ (Referer)</div>
+          <div class="card-desc">คนที่ชวน Affiliate เข้าระบบ → ได้ส่วนแบ่งจาก Pool เฉพาะทีมชั้น 1</div>
+          <div class="card-tag tag-purple">&#x2705; ยืนยันแล้ว — รายวัน</div>
+        </div>
+        <div class="card" style="border-color:var(--accent-orange);border-width:2px;border-style:dashed;">
+          <div class="card-icon">&#x1F3C6;</div>
+          <div class="card-title" style="color:var(--accent-orange);">3. โบนัสผู้นำ / ทีม</div>
+          <div class="card-desc">สิทธิ์โบนัสจากการสร้างทีม — ยังต้องกำหนดเงื่อนไข ป้องกันจ่ายซ้ำซ้อน</div>
+          <div class="card-tag tag-orange">&#x23F3; ยังต้องสรุป</div>
+        </div>
+      </div>
+      <div class="principle-box anim-item" style="margin:clamp(12px,1.4vw,20px) auto 0;border-color:var(--secondary);">
+        <div class="principle-icon">&#x1F4CB;</div>
+        <div class="principle-text" style="color:var(--secondary-dark);">ทุกประเภทรายได้ต้องอยู่ภายใน "เงินก้อนเดียว" ที่ Seller กำหนด — ไม่มีการบวกเพิ่มจากยอดหลัก</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: ค่านายหน้า (แก้ตัวอย่าง) -->
+  <div class="slide" data-slide="6">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>&#x2705; ยืนยันแล้ว</div>
+      <div class="slide-number">07</div>
+    </div>
+    <div class="slide-title">1. ค่านายหน้า</div>
+    <div class="slide-subtitle">Direct Commission — ส่วนแบ่งจาก Pool ที่ไปถึง Affiliate ผู้ขาย</div>
+    <div class="slide-content">
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step"><span class="icon">&#x1F517;</span> แชร์ลิงก์</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step"><span class="icon">&#x1F6D2;</span> ลูกค้าซื้อ</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-orange"><span class="icon">&#x1F4B0;</span> สร้าง Pool</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-green"><span class="icon">&#x1F464;</span> Affiliate ได้ส่วนแบ่ง</div>
+        </div>
+      </div>
+      <div class="two-col anim-item" style="margin-top:clamp(12px,1.4vw,24px);">
+        <div class="col-section">
+          <div class="section-label">คุณสมบัติ</div>
+          <ul class="bullet-list">
+            <li><span class="bullet"></span>ได้ทุกระดับ (สมัครฟรีก็ได้)</li>
+            <li><span class="bullet"></span>Seller กำหนด Rate ต่อสินค้า</li>
+            <li><span class="bullet"></span><strong>Lifetime</strong> — ลูกค้าซื้อกี่ครั้งก็ได้ทุกครั้ง</li>
+            <li><span class="bullet"></span>คำนวณเมื่อ Order สำเร็จ</li>
+          </ul>
+        </div>
+        <div class="col-section">
+          <div class="example-box" style="margin-top:0;">
+            <div class="label">&#x1F4DD; ตัวอย่าง (สัดส่วนสมมติ)</div>
+            <div class="calc">
+              สินค้า <span class="hl hl-green">1,000 &#xE3F;</span> | Commission 15%<br>
+              Pool = <span class="hl hl-green">150 &#xE3F;</span><br>
+              A ขายสินค้า → A ได้ค่านายหน้า
+            </div>
+            <div class="result">= 120 &#xE3F; เข้า Affiliate (ตัวอย่าง)</div>
+            <div style="font-size:clamp(9px,0.8vw,11px);color:var(--text-muted);margin-top:4px;">* สัดส่วนจริงยังต้องกำหนด — ขึ้นกับว่ามี Referer หรือไม่ และระดับสมาชิก</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: ค่าลิขสิทธิ์ (แก้ตัวอย่าง) -->
+  <div class="slide" data-slide="7">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>&#x2705; ยืนยันแล้ว</div>
+      <div class="slide-number">08</div>
+    </div>
+    <div class="slide-title">2. ค่าลิขสิทธิ์ (Referer)</div>
+    <div class="slide-subtitle">ส่วนแบ่งจาก Pool เดียวกัน ให้คนที่ชวน Affiliate เข้าระบบ — ทีมชั้น 1 เท่านั้น</div>
+    <div class="slide-content">
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-purple"><span class="icon">&#x1F464;</span> B ชวน A เข้าระบบ</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step"><span class="icon">&#x1F517;</span> A แชร์ขายสินค้า</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-orange"><span class="icon">&#x1F4B0;</span> สร้าง Pool</div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-step highlight-green"><span class="icon">&#xF7;</span> แบ่งให้ A + B</div>
+        </div>
+      </div>
+      <div class="two-col anim-item" style="margin-top:clamp(12px,1.4vw,24px);">
+        <div class="col-section">
+          <div class="section-label">หลักการ (ตาม MoM)</div>
+          <ul class="bullet-list">
+            <li><span class="bullet"></span>เฉพาะ<strong>ทีมชั้นที่ 1</strong> (คนที่ชวนโดยตรง)</li>
+            <li><span class="bullet"></span>ไม่ขยายไปหลายชั้น</li>
+            <li><span class="bullet"></span><strong>อยู่ภายใน Pool เดียวกัน</strong> กับค่านายหน้า</li>
+            <li><span class="bullet"></span>ไม่บวกเพิ่มแยกจาก Commission หลัก</li>
+          </ul>
+        </div>
+        <div class="col-section">
+          <div class="example-box" style="margin-top:0;">
+            <div class="label">&#x1F4DD; ตัวอย่าง — เงินก้อนเดียว (สัดส่วนสมมติ)</div>
+            <div class="calc">
+              สินค้า <span class="hl hl-green">1,000 &#xE3F;</span> | Commission 15%<br>
+              Pool = <span class="hl hl-green">150 &#xE3F;</span><br>
+              A ขายสินค้า, B เป็นคนชวน A<br>
+              <br>
+              <span class="hl hl-green">A (Affiliate):</span> 120 &#xE3F; (ค่านายหน้า)<br>
+              <span class="hl hl-purple">B (Referer):</span> 30 &#xE3F; (ค่าลิขสิทธิ์)
+            </div>
+            <div class="result">รวม = 150 &#xE3F; = Pool &#x2705; (ไม่เกิน)</div>
+            <div style="font-size:clamp(9px,0.8vw,11px);color:var(--text-muted);margin-top:6px;">* สัดส่วนจริงยังต้องกำหนด — ระดับสมาชิกของ B จะมีผลกับ % ค่าลิขสิทธิ์</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: ข้อเสนอแนะการแสดงผล -->
+  <div class="slide" data-slide="8">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>UX Recommendation</div>
+      <div class="slide-number">09</div>
+    </div>
+    <div class="slide-title">การแสดงผล Commission</div>
+    <div class="slide-subtitle">ปัญหา: Seller ตั้ง 15% แต่ Affiliate ได้จริง 12% → จะสื่อสารยังไงไม่ให้สับสน?</div>
+    <div class="slide-content">
+      <div class="principle-box anim-item" style="margin:0 auto clamp(10px,1.2vw,20px);border-color:var(--accent-red);">
+        <div class="principle-icon">&#x26A0;</div>
+        <div class="principle-text" style="color:var(--accent-red);">ถ้าแสดง "Commission 15%" แต่ Affiliate ได้จริง 120 &#xE3F; (12% ของราคา) → <strong>จะเกิดความสับสน</strong></div>
+      </div>
+      <div class="cards-grid cols-2 anim-item">
+        <div class="card" style="border-color:var(--primary);border-width:2px;">
+          <div class="card-title" style="color:var(--primary);">&#x1F4AC; แนะนำ: แสดงแยกตามบทบาท</div>
+          <div class="card-desc" style="line-height:2;">
+            <strong>Seller เห็น:</strong> "Commission ที่ร้านจ่าย: 15%" (ต้นทุนรวม)<br>
+            <strong>Affiliate เห็น:</strong> "Commission ที่คุณได้: 12%" หรือ "120 &#xE3F;"<br>
+            <strong>Referer เห็น:</strong> "ค่าลิขสิทธิ์จากทีม: 3%" หรือ "30 &#xE3F;"
+          </div>
+          <div class="card-tag tag-green">&#x2705; แต่ละคนเห็นเฉพาะส่วนของตัวเอง — ไม่สับสน</div>
+        </div>
+        <div class="card" style="border-color:var(--accent-red);border-style:dashed;">
+          <div class="card-title" style="color:var(--accent-red);">&#x274C; ไม่ควรทำ</div>
+          <div class="card-desc" style="line-height:2;">
+            แสดง "Commission 15%" ให้ Affiliate เห็น<br>
+            แต่จ่ายจริงแค่ 12% → <strong>รู้สึกว่าได้น้อยกว่าที่คาด</strong><br>
+            เกิดความไม่ไว้วางใจในระบบ
+          </div>
+          <div class="card-tag tag-red">ทำให้ Affiliate งง + ร้องเรียน</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:clamp(10px,0.9vw,13px);color:var(--text-muted);margin-top:clamp(8px,1vw,14px);" class="anim-item">
+        &#x1F4CB; ประเด็นนี้ถูกพูดถึงใน MoM ข้อ 2.8 — "การออกแบบหน้าจอ การแสดงผลข้อมูล เป็นประเด็นสำคัญที่ต้องพิจารณาควบคู่กัน"
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: โบนัสผู้นำ/ทีม -->
+  <div class="slide" data-slide="9">
+    <div class="slide-header">
+      <div class="slide-badge" style="background:rgba(245,158,11,0.15);color:var(--accent-orange);border-color:rgba(245,158,11,0.3);"><span class="dot" style="background:var(--accent-orange);"></span>&#x1F4A1; ข้อเสนอแนะ</div>
+      <div class="slide-number">10</div>
+    </div>
+    <div class="slide-title">3. โบนัสผู้นำ / ทีม</div>
+    <div class="slide-subtitle">โบนัสรายเดือน จ่ายจาก Platform revenue — ไม่กระทบ "เงินก้อนเดียว" ของ Seller</div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="section-label">&#x1F4B0; แหล่งเงิน</div>
+          <div class="card" style="border-color:var(--primary);border-width:2px;margin-bottom:clamp(6px,0.8vw,12px);">
+            <div class="card-desc" style="line-height:1.8;font-size:clamp(10px,1vw,14px);">
+              <strong style="color:var(--primary);">Platform จ่ายเอง</strong> จากรายได้ค่า Platform Fee<br>
+              Seller ไม่ต้องจ่ายเพิ่ม — ไม่กระทบ Commission Pool<br>
+              Platform จูงใจให้สร้างทีม → ทีมโต → ขายเยอะขึ้น → Platform Fee เยอะขึ้น
+            </div>
+          </div>
+          <div class="section-label">&#x2705; ต่างจากค่าลิขสิทธิ์ยังไง?</div>
+          <table class="comm-table">
+            <tr><th></th><th>ค่าลิขสิทธิ์</th><th>โบนัสผู้นำ</th></tr>
+            <tr><td style="text-align:left;font-weight:600;">ได้เมื่อไหร่</td><td>ทุกครั้งที่ทีมขาย</td><td>เดือนละครั้ง</td></tr>
+            <tr><td style="text-align:left;font-weight:600;">ลักษณะ</td><td>ส่วนแบ่งอัตโนมัติ</td><td>ต้องผ่านเป้า</td></tr>
+            <tr><td style="text-align:left;font-weight:600;">แหล่งเงิน</td><td class="bold">Seller (Pool)</td><td class="bold">Platform</td></tr>
+          </table>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">&#x1F3AF; เงื่อนไข (ต้องผ่านทุกข้อ)</div>
+          <div class="card" style="margin-bottom:6px;">
+            <div class="card-title">1. ยอดขายส่วนตัว &#x2265; เกณฑ์/เดือน</div>
+            <div class="card-desc">ผู้นำต้องขายเองด้วย — <span style="color:var(--accent-red);">ป้องกัน "ชวนลม"</span></div>
+          </div>
+          <div class="card" style="margin-bottom:6px;">
+            <div class="card-title">2. ทีมชั้น 1 ที่ Active &#x2265; เกณฑ์/เดือน</div>
+            <div class="card-desc">สมาชิกต้องมียอดขายจริงในเดือนนั้น — <span style="color:var(--accent-red);">ป้องกันทีม inactive</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">3. ยอดขายรวมทีม &#x2265; เกณฑ์/เดือน</div>
+            <div class="card-desc">ทีมต้องมี performance จริง — <span style="color:var(--accent-red);">ป้องกันยอดน้อย</span></div>
+          </div>
+          <div style="font-size:clamp(9px,0.85vw,12px);color:var(--text-muted);margin-top:6px;text-align:center;">
+            &#x2699; ตัวเลขเกณฑ์ + % โบนัส ตั้งค่าได้ที่หลังบ้าน | ระดับสมาชิกมีผลกับ % โบนัส
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: ระบบ Tier (proposed) -->
+  <div class="slide" data-slide="10">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Tiers (เสนอ)</div>
+      <div class="slide-number">11</div>
+    </div>
+    <div class="slide-title">ระบบระดับสมาชิก</div>
+    <div class="slide-subtitle">อ้างอิงจาก BStore — ต้องพิจารณาปรับให้เหมาะกับ Pordeenomad</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-3 anim-item">
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">&#x1F4B3;</div>
+          <div class="card-title">Customer</div>
+          <div class="card-desc">สมัครฟรี<br>ได้สิทธิ์ค่านายหน้าอย่างเดียว</div>
+          <div class="card-tag tag-gray">เริ่มต้น</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">&#x1FA99;</div>
+          <div class="card-title">Silver / Gold</div>
+          <div class="card-desc">ปลดล็อก: ค่าลิขสิทธิ์<br>+ โบนัสผู้นำ/ทีม (ถ้ามี)</div>
+          <div class="card-tag tag-green">ระดับกลาง</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">&#x1F451;</div>
+          <div class="card-title">Platinum / Wisdom</div>
+          <div class="card-desc">อัตราสูงสุด<br>สิทธิพิเศษเพิ่มเติม</div>
+          <div class="card-tag tag-purple">ระดับสูง</div>
+        </div>
+      </div>
+      <div class="principle-box anim-item" style="margin:clamp(12px,1.4vw,20px) auto 0;border-color:var(--accent-orange);border-style:dashed;">
+        <div class="principle-icon">&#x1F4DD;</div>
+        <div class="principle-text" style="color:var(--accent-orange);">เกณฑ์อัพเกรด ตัวเลข และสิทธิประโยชน์ของแต่ละระดับ ต้องกำหนดให้เหมาะกับ Pordeenomad — อาจไม่เหมือน BStore ทั้งหมด</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Wallet & Withdrawal -->
+  <div class="slide" data-slide="11">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Wallet</div>
+      <div class="slide-number">12</div>
+    </div>
+    <div class="slide-title">Wallet &amp; การถอนเงิน</div>
+    <div class="slide-subtitle">Commission จาก Pool เข้า Wallet → ขอถอน → Admin อนุมัติ</div>
+    <div class="slide-content">
+      <div class="flow-container">
+        <div class="cards-grid cols-2 anim-item" style="max-width:700px;margin:0 auto;">
+          <div class="card" style="text-align:center;">
+            <div class="card-icon">&#x26A1;</div>
+            <div class="card-title" style="color:var(--primary);">เมื่อ Order สำเร็จ</div>
+            <div class="card-desc">ค่านายหน้า + ค่าลิขสิทธิ์<br>เข้า Wallet ตาม Pool</div>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div class="card-icon">&#x1F3C6;</div>
+            <div class="card-title" style="color:var(--accent-orange);">โบนัส (ถ้ามี)</div>
+            <div class="card-desc">โบนัสผู้นำ/ทีม<br>ยังต้องกำหนดรอบจ่าย</div>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--text-muted);font-size:clamp(16px,2vw,28px);margin:6px 0;" class="anim-item">&#x2B07;</div>
+        <div class="state-machine anim-item">
+          <div class="state-node highlight-green">&#x1F4B0; Wallet</div>
+          <div class="state-arrow">&#x2192;</div>
+          <div class="state-node">&#x1F4DD; ขอถอน</div>
+          <div class="state-arrow">&#x2192;</div>
+          <div class="state-node highlight-orange">&#x1F6E1; Admin ตรวจ</div>
+          <div class="state-arrow">&#x2192;</div>
+          <div class="state-node highlight-green">&#x2705; อนุมัติ</div>
+          <div class="state-arrow">&#x2192;</div>
+          <div class="state-node highlight-teal">&#x1F3E6; โอนเงิน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Commission Lifecycle -->
+  <div class="slide" data-slide="12">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Lifecycle</div>
+      <div class="slide-number">13</div>
+    </div>
+    <div class="slide-title">Commission Lifecycle</div>
+    <div class="slide-subtitle">วงจรชีวิตของ Commission ตั้งแต่เกิดจนจ่าย</div>
+    <div class="slide-content">
+      <div class="timeline anim-item">
+        <div class="timeline-item">
+          <div class="timeline-date">Step 1</div>
+          <div class="timeline-title">Buyer สั่งซื้อผ่าน Affiliate Link</div>
+          <div class="timeline-desc">ลูกค้าถูกผูกกับ Affiliate (Lifetime Binding)</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Step 2</div>
+          <div class="timeline-title">Order สำเร็จ → สร้าง Commission Pool</div>
+          <div class="timeline-desc">คำนวณจากยอดสุทธิ &#xD7; Rate ที่ Seller กำหนด = Pool</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Step 3</div>
+          <div class="timeline-title">ระบบกระจาย Pool ภายใน</div>
+          <div class="timeline-desc">ค่านายหน้า (Affiliate) + ค่าลิขสิทธิ์ (Referer) + Platform Fee</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Step 4</div>
+          <div class="timeline-title">เข้า Wallet ของแต่ละคน</div>
+          <div class="timeline-desc">Affiliate และ Referer ได้รับส่วนแบ่งเข้า Wallet</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Step 5</div>
+          <div class="timeline-title">ขอถอน → Admin อนุมัติ → โอนเงิน</div>
+          <div class="timeline-desc">ผ่านกระบวนการตรวจสอบก่อนจ่ายจริง</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: GAP ANALYSIS DIVIDER -->
+  <div class="slide" data-slide="13">
+    <div class="slide-content cover-content">
+      <div class="cover-title anim-item" style="font-size:clamp(28px,4.5vw,64px);">Gap Analysis</div>
+      <div class="cover-subtitle anim-item" style="font-size:clamp(14px,1.8vw,24px);">Pordeenomad vs BStore</div>
+      <div class="cover-subtitle anim-item" style="font-size:clamp(11px,1.2vw,16px);color:var(--text-muted);margin-top:-8px;">เปรียบเทียบจุดที่เหมือน จุดที่ต่าง และใครจ่ายอะไร</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: โมเดลธุรกิจ -->
+  <div class="slide" data-slide="14">
+    <div class="slide-header">
+      <div class="slide-badge" style="background:rgba(139,92,246,0.12);color:var(--accent-purple);border-color:rgba(139,92,246,0.25);"><span class="dot" style="background:var(--accent-purple);"></span>Gap Analysis</div>
+      <div class="slide-number">15</div>
+    </div>
+    <div class="slide-title">โมเดลธุรกิจ</div>
+    <div class="slide-subtitle">ความแตกต่างพื้นฐานที่ทำให้โครงสร้าง commission ต่างกัน</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-2 anim-item">
+        <div class="card" style="border-color:var(--accent-orange);border-width:2px;">
+          <div class="card-icon">&#x1F3EA;</div>
+          <div class="card-title" style="color:var(--accent-orange);">BStore</div>
+          <div class="card-desc" style="line-height:2;">
+            Platform + <strong>ขายสินค้าเอง</strong><br>
+            BStore กำหนดราคาและ margin เอง<br>
+            ควบคุมต้นทุนได้ 100%<br>
+            <strong>ไม่มี Platform Fee</strong> (เป็นเจ้าของเอง)
+          </div>
+          <div class="card-tag tag-orange">จึงบวก Commission หลายชั้นได้</div>
+        </div>
+        <div class="card" style="border-color:var(--primary);border-width:2px;">
+          <div class="card-icon">&#x1F6D2;</div>
+          <div class="card-title" style="color:var(--primary);">Pordeenomad</div>
+          <div class="card-desc" style="line-height:2;">
+            Marketplace — <strong>Seller ภายนอก</strong>ลงขาย<br>
+            Seller กำหนดราคาและ commission เอง<br>
+            Platform ไม่รู้ต้นทุนสินค้า<br>
+            <strong>มี Platform Fee</strong> แยกต่างหาก
+          </div>
+          <div class="card-tag tag-green">จึงต้องใช้หลัก "เงินก้อนเดียว"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: ใครจ่ายอะไร -->
+  <div class="slide" data-slide="15">
+    <div class="slide-header">
+      <div class="slide-badge" style="background:rgba(139,92,246,0.12);color:var(--accent-purple);border-color:rgba(139,92,246,0.25);"><span class="dot" style="background:var(--accent-purple);"></span>Gap Analysis</div>
+      <div class="slide-number">16</div>
+    </div>
+    <div class="slide-title">ใครจ่ายอะไร?</div>
+    <div class="slide-subtitle">จุดแตกต่างหลัก — BStore จ่ายเองทั้งหมด vs Pordeenomad แบ่ง Seller + Platform</div>
+    <div class="slide-content">
+      <table class="comm-table anim-item" style="max-width:1000px;margin:0 auto;">
+        <tr>
+          <th style="text-align:left;min-width:140px;">รายการ</th>
+          <th style="min-width:120px;">BStore<br><span style="font-weight:400;font-size:0.85em;">ใครจ่าย</span></th>
+          <th style="min-width:120px;">Pordeenomad<br><span style="font-weight:400;font-size:0.85em;">ใครจ่าย</span></th>
+          <th style="min-width:80px;">สถานะ</th>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:600;">ค่านายหน้า</td>
+          <td>BStore (กำไรสินค้า)</td>
+          <td class="bold">Seller (Pool)</td>
+          <td>&#x2705;</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:600;">ค่าลิขสิทธิ์</td>
+          <td>BStore (<span style="color:var(--accent-red);">บวกเพิ่ม</span>)</td>
+          <td class="bold">Seller (Pool เดียวกัน)</td>
+          <td>&#x2705;</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:600;">ค่าบริหาร</td>
+          <td>BStore (กำไร)</td>
+          <td style="color:var(--text-muted);">&#x2014; ไม่มี</td>
+          <td style="color:var(--accent-red);">ตัดออก</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:600;">ส่วนแบ่งยอดขาย</td>
+          <td>BStore (ยอดรวมบริษัท)</td>
+          <td style="color:var(--text-muted);">&#x2014; ไม่มี</td>
+          <td style="color:var(--accent-red);">ตัดออก</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:600;">โบนัสรายไตรมาส</td>
+          <td>BStore (กำไร)</td>
+          <td style="color:var(--text-muted);">&#x2014; ไม่มี</td>
+          <td style="color:var(--accent-red);">ตัดออก</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:600;">โบนัสผู้นำ/ทีม</td>
+          <td style="color:var(--text-muted);">&#x2014; (รวมใน 3 ข้อบน)</td>
+          <td class="bold">Platform (Fee revenue)</td>
+          <td style="color:var(--accent-purple);">เสนอใหม่</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:600;">Platform Fee</td>
+          <td style="color:var(--text-muted);">&#x2014; ไม่มี</td>
+          <td class="bold">Seller จ่าย (แยก)</td>
+          <td>&#x2705;</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: โครงสร้าง Commission -->
+  <div class="slide" data-slide="16">
+    <div class="slide-header">
+      <div class="slide-badge" style="background:rgba(139,92,246,0.12);color:var(--accent-purple);border-color:rgba(139,92,246,0.25);"><span class="dot" style="background:var(--accent-purple);"></span>Gap Analysis</div>
+      <div class="slide-number">17</div>
+    </div>
+    <div class="slide-title">โครงสร้าง Commission</div>
+    <div class="slide-subtitle">BStore บวกเพิ่มหลายชั้น vs Pordeenomad แบ่งภายใน Pool เดียว</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-2 anim-item">
+        <div class="card" style="border-color:var(--accent-orange);border-width:2px;">
+          <div class="card-title" style="color:var(--accent-orange);">&#x274C; BStore — Additive (บวกเพิ่ม)</div>
+          <div class="card-desc" style="line-height:2;font-size:clamp(10px,1vw,14px);">
+            สินค้า 1,000 &#xE3F; | Commission 20%<br>
+            &#x1F464; Affiliate ได้: <strong>200 &#xE3F;</strong> (เต็ม 20%)<br>
+            &#x1F465; Referer ได้: 200 &#xD7; 30% = <strong>60 &#xE3F;</strong> (บวกเพิ่ม)<br>
+            <span style="color:var(--accent-red);font-weight:700;">BStore จ่ายรวม: 260 &#xE3F;</span>
+          </div>
+          <div class="card-tag tag-orange">ทำได้เพราะควบคุม margin เอง</div>
+        </div>
+        <div class="card" style="border-color:var(--primary);border-width:2px;">
+          <div class="card-title" style="color:var(--primary);">&#x2705; Pordeenomad — Single Pool</div>
+          <div class="card-desc" style="line-height:2;font-size:clamp(10px,1vw,14px);">
+            สินค้า 1,000 &#xE3F; | Seller ตั้ง Commission 20%<br>
+            Pool = <strong>200 &#xE3F;</strong><br>
+            &#x1F464; Affiliate ได้: <strong>160 &#xE3F;</strong> (จาก Pool)<br>
+            &#x1F465; Referer ได้: <strong>40 &#xE3F;</strong> (จาก Pool)<br>
+            <span style="color:var(--primary);font-weight:700;">Seller จ่ายรวม: 200 &#xE3F; เท่าเดิม</span>
+          </div>
+          <div class="card-tag tag-green">Seller จ่ายแค่ที่ตั้งไว้ ไม่บวกเพิ่ม</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:clamp(9px,0.85vw,12px);color:var(--text-muted);margin-top:clamp(8px,1vw,14px);" class="anim-item">* ตัวเลขเป็นตัวอย่างสมมติ — สัดส่วนจริงยังต้องกำหนด</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: Next Steps -->
+  <div class="slide" data-slide="17">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Next Steps</div>
+      <div class="slide-number">18</div>
+    </div>
+    <div class="slide-title">ขั้นตอนถัดไป</div>
+    <div class="slide-subtitle">สิ่งที่ต้องดำเนินการต่อ</div>
+    <div class="slide-content">
+      <div class="agenda-list">
+        <div class="agenda-item anim-item">
+          <div class="agenda-num">1</div>
+          <div>
+            <div class="agenda-text">กำหนดสัดส่วนการแบ่ง Pool</div>
+            <div class="agenda-sub">ค่านายหน้า vs ค่าลิขสิทธิ์ = กี่ % ของ Pool?</div>
+          </div>
+        </div>
+        <div class="agenda-item anim-item">
+          <div class="agenda-num">2</div>
+          <div>
+            <div class="agenda-text">สรุปเงื่อนไขโบนัสผู้นำ/ทีม</div>
+            <div class="agenda-sub">เกณฑ์ ตัวเลข รอบจ่าย % โบนัส</div>
+          </div>
+        </div>
+        <div class="agenda-item anim-item">
+          <div class="agenda-num">3</div>
+          <div>
+            <div class="agenda-text">กำหนดระดับ Tier และเกณฑ์อัพเกรด</div>
+            <div class="agenda-sub">กี่ระดับ? ยอดเท่าไหร่? Tier มีผลกับ % อย่างไร?</div>
+          </div>
+        </div>
+        <div class="agenda-item anim-item">
+          <div class="agenda-num">4</div>
+          <div>
+            <div class="agenda-text">ออกแบบ System Architecture + UI/UX</div>
+            <div class="agenda-sub">Database Model + API + หน้าจอแสดงผลแยกตามบทบาท</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: Thank You -->
+  <div class="slide" data-slide="18">
+    <div class="slide-content end-content">
+      <div class="end-title anim-item">Thank You</div>
+      <div class="slide-subtitle anim-item" style="max-width:500px;text-align:center;">Pordeenomad Commission &amp; Affiliate Flow<br>+ Gap Analysis: Pordeenomad vs BStore</div>
+    </div>
+  </div>
+
+</div>
+
+<button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen (F)">&#x26F6;</button>
+<div class="page-dropdown" id="pageDropdown"></div>
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="homeBtn" title="Home (H)" style="font-size:18px;">&#x2302;</button>
+  <button class="nav-btn" id="prevBtn" title="Previous">&#x2039;</button>
+  <div class="nav-progress" id="navProgress"></div>
+  <button class="nav-btn" id="nextBtn" title="Next">&#x203A;</button>
+  <div class="nav-counter" id="navCounter">1 / 19</div>
+  <button class="nav-btn" id="menuBtn" title="Slide Menu">&#x2630;</button>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let currentSlide = 0, animTimer = null, dropdownOpen = false;
+
+  const slideTitles = [
+    'Cover',
+    'ภาพรวมระบบ',
+    'Flow การสั่งซื้อ',
+    'Lifetime Customer Binding',
+    'หลักการ "เงินก้อนเดียว"',
+    'ประเภทรายได้ (ตาม MoM)',
+    '1. ค่านายหน้า',
+    '2. ค่าลิขสิทธิ์ (Referer)',
+    'การแสดงผล Commission (แนะนำ)',
+    '3. โบนัสผู้นำ/ทีม (เสนอ)',
+    'ระบบระดับสมาชิก (เสนอ)',
+    'Wallet & การถอนเงิน',
+    'Commission Lifecycle',
+    '— Gap Analysis —',
+    'โมเดลธุรกิจ',
+    'ใครจ่ายอะไร?',
+    'โครงสร้าง Commission',
+    'ขั้นตอนถัดไป',
+    'Thank You',
+  ];
+
+  const navProgress = document.getElementById('navProgress');
+  if (totalSlides <= 16) {
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goToSlide(i));
+      navProgress.appendChild(dot);
+    }
+  }
+
+  const dropdown = document.getElementById('pageDropdown');
+  slideTitles.forEach((title, i) => {
+    const item = document.createElement('div');
+    item.className = 'page-dropdown-item' + (i === 0 ? ' active' : '');
+    item.innerHTML = '<span class="item-num">' + String(i + 1).padStart(2, '0') + '</span> ' + title;
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown(false);
+      requestAnimationFrame(() => goToSlide(i));
+    });
+    dropdown.appendChild(item);
+  });
+
+  function goToSlide(index) {
+    if (index === currentSlide || index < 0 || index >= totalSlides) return;
+    if (animTimer) {
+      clearTimeout(animTimer);
+      slides.forEach(s => { s.classList.remove('active', 'prev'); s.style.transform = ''; });
+    }
+    const prev = slides[currentSlide], next = slides[index];
+    const goingForward = index > currentSlide;
+    prev.classList.remove('active');
+    if (goingForward) prev.classList.add('prev');
+    next.style.transition = 'none';
+    next.style.transform = goingForward ? 'translateX(60px)' : 'translateX(-60px)';
+    next.style.opacity = '0';
+    next.offsetHeight;
+    next.style.transition = next.style.transform = next.style.opacity = '';
+    next.classList.add('active');
+    currentSlide = index;
+    updateUI();
+    animTimer = setTimeout(() => {
+      prev.classList.remove('prev');
+      prev.style.transform = '';
+      animTimer = null;
+    }, 500);
+  }
+
+  function updateUI() {
+    document.getElementById('navCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    navProgress.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    document.getElementById('prevBtn').disabled = currentSlide === 0;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+    document.getElementById('homeBtn').disabled = currentSlide === 0;
+    dropdown.querySelectorAll('.page-dropdown-item').forEach((item, i) => item.classList.toggle('active', i === currentSlide));
+  }
+
+  function toggleDropdown(state) {
+    dropdownOpen = state !== undefined ? state : !dropdownOpen;
+    dropdown.classList.toggle('open', dropdownOpen);
+  }
+
+  document.getElementById('homeBtn').addEventListener('click', () => goToSlide(0));
+  document.getElementById('prevBtn').addEventListener('click', () => goToSlide(currentSlide - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goToSlide(currentSlide + 1));
+  document.getElementById('menuBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(); });
+  document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+    else if (e.key === 'Home' || e.key === 'h' || e.key === 'H') { e.preventDefault(); goToSlide(0); }
+    else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+    else if (e.key === 'f' || e.key === 'F') { document.getElementById('fullscreenBtn').click(); }
+    else if (e.key === 'Escape') { toggleDropdown(false); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) diff > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (dropdownOpen && !dropdown.contains(e.target) && e.target.id !== 'menuBtn') toggleDropdown(false);
+  });
+
+  updateUI();
+})();
+</script>
+</body>
+</html>
