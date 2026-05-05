@@ -106,7 +106,7 @@
     }
     .slide-content {
       flex: 1; display: flex; flex-direction: column;
-      justify-content: center; overflow: hidden;
+      justify-content: center; overflow: auto;
     }
 
     .cover-content {
@@ -388,30 +388,47 @@
     /* VERSION SWITCHER */
     .version-switcher {
       position: fixed; top: 16px; left: 16px; z-index: 200;
-      display: flex; align-items: center; gap: 0;
-      background: rgba(255,255,255,0.9); backdrop-filter: blur(16px);
-      border-radius: 12px; border: 1px solid var(--border-color);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      overflow: hidden;
     }
-    .version-btn {
-      padding: 8px 16px; border: none; background: transparent;
-      font-family: inherit; font-size: 12px; font-weight: 600;
-      color: var(--text-muted); cursor: pointer;
+    .version-select-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(16px);
+      border-radius: 10px; cursor: pointer;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      color: var(--primary); box-shadow: 0 4px 24px rgba(0,0,0,0.08);
       transition: all var(--transition-fast) ease;
       white-space: nowrap;
     }
-    .version-btn.active {
-      background: var(--primary); color: white;
+    .version-select-btn:hover { border-color: var(--primary); }
+    .version-select-btn .ver-arrow {
+      font-size: 10px; transition: transform var(--transition-fast) ease;
     }
-    .version-btn:hover:not(.active) {
-      background: var(--bg-card-hover); color: var(--primary);
+    .version-switcher.open .ver-arrow { transform: rotate(180deg); }
+    .version-dropdown {
+      position: absolute; top: calc(100% + 6px); left: 0; min-width: 200px;
+      background: rgba(255,255,255,0.96); backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color); border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      opacity: 0; visibility: hidden; transform: translateY(-6px);
+      transition: all var(--transition-fast) ease;
+      overflow: hidden;
     }
-    .version-label {
-      padding: 8px 12px; font-size: 10px; font-weight: 700;
-      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
-      border-right: 1px solid var(--border-color);
+    .version-switcher.open .version-dropdown {
+      opacity: 1; visibility: visible; transform: translateY(0);
     }
+    .version-opt {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border: none; background: transparent; width: 100%;
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      color: var(--text-secondary); cursor: pointer;
+      transition: all var(--transition-fast) ease;
+      text-align: left;
+    }
+    .version-opt:hover { background: var(--bg-card-hover); color: var(--primary); }
+    .version-opt.active {
+      background: var(--primary); color: white; font-weight: 700;
+    }
+    .version-opt .ver-check { width: 16px; text-align: center; font-size: 11px; }
 
     .nav-bar {
       position: fixed; bottom: clamp(16px, 2vw, 28px);
@@ -542,6 +559,8 @@
       .timeline-item { padding-left: 14px; }
       .timeline-item::before { left: -21px; }
       .version-switcher { top: auto; bottom: 70px; left: 10px; }
+      .version-dropdown { bottom: calc(100% + 6px); top: auto; transform: translateY(6px); }
+      .version-switcher.open .version-dropdown { transform: translateY(0); }
     }
     @media (min-width: 769px) and (max-width: 1024px) {
       .cards-grid.cols-4, .cards-grid.cols-5 { grid-template-columns: repeat(2, 1fr); }
@@ -602,18 +621,24 @@
 
 <div class="grid-bg"></div>
 
-<!-- ========== VERSION SWITCHER ========== -->
-<div class="version-switcher">
-  <div class="version-label">Version</div>
-  <button class="version-btn active" data-version="1">V1 — 27 Mar</button>
-  <button class="version-btn" data-version="2">V2 — 30 Mar</button>
-  <button class="version-btn" data-version="3">V2.2 — 5 รายได้</button>
+<!-- ========== VERSION SWITCHER (Dropdown) ========== -->
+<div class="version-switcher" id="versionSwitcher">
+  <button class="version-select-btn" id="versionToggle">
+    <span id="versionLabel">V3 — 3 เม.ย.</span>
+    <span class="ver-arrow">&#x25BC;</span>
+  </button>
+  <div class="version-dropdown" id="versionDropdown">
+    <button class="version-opt" data-version="1"><span class="ver-check"></span>V1 — 27 Mar</button>
+    <button class="version-opt" data-version="2"><span class="ver-check"></span>V2 — 30 Mar</button>
+    <button class="version-opt" data-version="3"><span class="ver-check"></span>V2.2 — 5 รายได้</button>
+    <button class="version-opt active" data-version="4"><span class="ver-check">&#x2713;</span>V3 — 3 เม.ย.</button>
+  </div>
 </div>
 
 <!-- ============================================================ -->
 <!-- VERSION 1: Original (27 Mar 26 MoM)                          -->
 <!-- ============================================================ -->
-<div class="presentation" id="presentation-v1">
+<div class="presentation hidden" id="presentation-v1">
 
   <div class="slide active" data-slide="0">
     <div class="slide-content cover-content">
@@ -1850,6 +1875,397 @@
 
 </div>
 
+<!-- ============================================================ -->
+<!-- VERSION 4: V3 (3 เม.ย. 26 — โมเดล TikTok Shop)               -->
+<!-- ============================================================ -->
+<div class="presentation" id="presentation-v4">
+
+  <!-- V4 S0: COVER -->
+  <div class="slide active" data-slide="0">
+    <div class="slide-content cover-content">
+      <div class="cover-title anim-item">Pordeenomad</div>
+      <div class="cover-subtitle anim-item">โมเดลค่านายหน้าแบบ TikTok Shop</div>
+      <div class="cover-subtitle anim-item" style="font-size:clamp(10px,1vw,14px);color:var(--text-muted);">V3 — อ้างอิง MoM 3 เม.ย. 2569</div>
+      <div class="cover-roles">
+        <div class="role-chip anim-item" style="background:rgba(5,150,105,0.1);border-color:rgba(5,150,105,0.3);color:var(--primary);">Seller กำหนดค่านายหน้าเอง</div>
+        <div class="role-chip anim-item" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:var(--accent-orange);">Platform หัก 10% แยก</div>
+        <div class="role-chip anim-item" style="background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3);color:var(--accent-purple);">รายได้ 5 ประเภท</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S1: โครงสร้างใหม่ -->
+  <div class="slide" data-slide="1">
+    <div class="slide-header"><div class="slide-badge"><span class="dot"></span>โครงสร้างใหม่</div><div class="slide-number">02</div></div>
+    <div class="slide-title">Seller กำหนดค่านายหน้า + Platform หัก 10%</div>
+    <div class="slide-subtitle">เปลี่ยนจาก Commission Pool ก้อนเดียว → <strong>Seller ตั้งค่านายหน้าแยก</strong> + <strong>Platform หัก 10% แยก</strong> (อิง TikTok Shop)</div>
+    <div class="slide-content">
+      <div class="pool-visual anim-item">
+        <div style="text-align:center;margin-bottom:clamp(6px,0.8vw,12px);">
+          <span style="font-size:clamp(12px,1.2vw,16px);font-weight:700;">สินค้าราคา <strong style="color:var(--primary);">1,000 &#xE3F;</strong></span>
+        </div>
+        <div class="pool-bar">
+          <div class="pool-segment" style="flex:80;background:var(--primary);">Seller เหลือ 800 &#xE3F;</div>
+          <div class="pool-segment" style="flex:10;background:var(--accent-orange);">ค่านายหน้า 10%</div>
+          <div class="pool-segment" style="flex:10;background:var(--accent-purple);">Platform 10%</div>
+        </div>
+        <div class="pool-legend">
+          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--accent-orange);"></div> <strong>ค่านายหน้า = Seller กำหนดเอง (เช่น 10%)</strong> → 100 &#xE3F; → Affiliate ได้ตรงๆ</div>
+        </div>
+        <div class="pool-legend" style="margin-top:4px;">
+          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--accent-purple);"></div> <strong>Platform Fee = 10% (คงที่)</strong> → 100 &#xE3F; → Platform หักแยกจากราคาขาย</div>
+        </div>
+        <div class="pool-legend" style="margin-top:4px;">
+          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--primary);"></div> <strong>Seller เหลือ</strong> = 1,000 - 100 - 100 = <strong>800 &#xE3F;</strong></div>
+        </div>
+      </div>
+      <div class="principle-box anim-item" style="margin:clamp(10px,1.2vw,20px) auto 0;">
+        <div class="principle-icon">&#x1F4A1;</div>
+        <div class="principle-text">
+          <strong>จุดเปลี่ยนจาก V2.2:</strong> ไม่มี "Commission Pool ก้อนเดียว 80/20" อีกต่อไป — ค่านายหน้า Affiliate จ่ายตรง, Platform Fee หักแยก 10% จากราคาขาย
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S2: Platform Fee 10% Breakdown -->
+  <div class="slide" data-slide="2">
+    <div class="slide-header"><div class="slide-badge" style="background:rgba(139,92,246,0.12);color:var(--accent-purple);border-color:rgba(139,92,246,0.3);"><span class="dot" style="background:var(--accent-purple);"></span>Platform Fee</div><div class="slide-number">03</div></div>
+    <div class="slide-title">Platform Fee 10% Breakdown</div>
+    <div class="slide-subtitle">Platform หัก 10% จากราคาขาย → แบ่งออกเป็น 3 ส่วน</div>
+    <div class="slide-content">
+      <div style="text-align:center;margin-bottom:clamp(10px,1.2vw,18px);" class="anim-item">
+        <span style="font-size:clamp(14px,1.6vw,22px);font-weight:800;color:var(--accent-purple);">สินค้า 1,000 &#xE3F; → Platform Fee 10% = 100 &#xE3F;</span>
+      </div>
+      <div class="cards-grid cols-3 anim-item" style="max-width:900px;margin:0 auto;">
+        <div class="card" style="text-align:center;border-color:rgba(5,150,105,0.4);border-width:2px;">
+          <div style="font-size:clamp(28px,3vw,44px);margin-bottom:8px;">&#x1F680;</div>
+          <div class="card-title" style="color:var(--primary);">Growth Fund</div>
+          <div style="font-size:clamp(22px,2.5vw,36px);font-weight:900;color:var(--primary);">5%</div>
+          <div class="card-desc" style="margin-top:6px;line-height:1.6;">= 50 &#xE3F;<br>ค่าลิขสิทธิ์ + ค่าบริหารทีม<br>+ ส่วนแบ่งยอดขาย + โบนัส</div>
+        </div>
+        <div class="card" style="text-align:center;border-color:rgba(13,148,136,0.4);border-width:2px;">
+          <div style="font-size:clamp(28px,3vw,44px);margin-bottom:8px;">&#x2699;&#xFE0F;</div>
+          <div class="card-title" style="color:var(--secondary);">Infrastructure</div>
+          <div style="font-size:clamp(22px,2.5vw,36px);font-weight:900;color:var(--secondary);">2%</div>
+          <div class="card-desc" style="margin-top:6px;line-height:1.6;">= 20 &#xE3F;<br>Server, Payment Gateway<br>ระบบหลังบ้าน</div>
+        </div>
+        <div class="card" style="text-align:center;border-color:rgba(245,158,11,0.4);border-width:2px;">
+          <div style="font-size:clamp(28px,3vw,44px);margin-bottom:8px;">&#x1F4B0;</div>
+          <div class="card-title" style="color:var(--accent-orange);">Gross Profit</div>
+          <div style="font-size:clamp(22px,2.5vw,36px);font-weight:900;color:var(--accent-orange);">3%</div>
+          <div class="card-desc" style="margin-top:6px;line-height:1.6;">= 30 &#xE3F;<br>กำไรบริษัท</div>
+        </div>
+      </div>
+      <div class="pool-visual anim-item" style="margin-top:clamp(12px,1.5vw,24px);">
+        <div class="pool-bar">
+          <div class="pool-segment" style="flex:50;background:var(--primary);">5% Growth = 50&#xE3F;</div>
+          <div class="pool-segment" style="flex:20;background:var(--secondary);">2% Infra = 20&#xE3F;</div>
+          <div class="pool-segment" style="flex:30;background:var(--accent-orange);">3% GP = 30&#xE3F;</div>
+        </div>
+      </div>
+      <div class="principle-box anim-item" style="margin:clamp(8px,1vw,14px) auto 0;">
+        <div class="principle-icon">&#x1F4CA;</div>
+        <div class="principle-text">
+          <strong>Growth Fund 5%</strong> = เงินที่ใช้จ่ายรายได้ประเภท 2-5 ให้สมาชิก (ค่าลิขสิทธิ์, ค่าบริหาร, ส่วนแบ่งยอดขาย, โบนัสพิเศษ)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S3: ระดับสมาชิก & สิทธิประโยชน์ -->
+  <div class="slide" data-slide="3">
+    <div class="slide-header"><div class="slide-badge"><span class="dot"></span>Tier (อัปเดต 3 เม.ย.)</div><div class="slide-number">04</div></div>
+    <div class="slide-title">ระดับสมาชิก &amp; สิทธิประโยชน์</div>
+    <div class="slide-subtitle">อัปเดตจาก V2.2 — Gold ค่าลิขสิทธิ์ 30%, Platinum/Wisdom ค่าลิขสิทธิ์ 50%</div>
+    <div class="slide-content">
+      <table class="comm-table anim-item" style="max-width:1100px;margin:0 auto;">
+        <tr>
+          <th style="text-align:left;min-width:140px;">สิทธิประโยชน์</th>
+          <th>Customer<br><span style="font-weight:400;">สมัครฟรี</span></th>
+          <th>Silver<br><span style="font-weight:400;">500&#xE3F;</span></th>
+          <th>Gold<br><span style="font-weight:400;">5,000&#xE3F;</span></th>
+          <th>Platinum<br><span style="font-weight:400;">25,000&#xE3F;</span></th>
+          <th>Wisdom<br><span style="font-weight:400;">50,000&#xE3F;</span></th>
+        </tr>
+        <tr style="background:rgba(245,158,11,0.05);">
+          <td style="text-align:left;font-weight:700;">1. ค่านายหน้า <span style="color:var(--text-muted);font-weight:400;">(Seller กำหนด)</span></td>
+          <td class="bold">&#x2705;</td><td class="bold">&#x2705;</td><td class="bold">&#x2705;</td><td class="bold">&#x2705;</td><td class="bold">&#x2705;</td>
+        </tr>
+        <tr style="background:rgba(245,158,11,0.05);">
+          <td style="text-align:left;font-weight:700;">2. ค่าลิขสิทธิ์ <span style="color:var(--text-muted);font-weight:400;">(จาก Growth Fund)</span></td>
+          <td style="color:var(--text-muted);">—</td><td class="bold">10%</td><td class="bold" style="color:var(--accent-orange);">30%</td><td class="bold" style="color:var(--accent-orange);">50%</td><td class="bold" style="color:var(--accent-orange);">50%</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:700;">3. ค่าบริหารทีม <span style="color:var(--text-muted);font-weight:400;">(จาก Growth Fund)</span></td>
+          <td style="color:var(--text-muted);">—</td><td class="bold">5%</td><td class="bold">10%</td><td class="bold">15%</td><td class="bold">20%</td>
+        </tr>
+        <tr>
+          <td style="text-align:left;font-weight:700;">4. ส่วนแบ่งยอดขาย <span style="color:var(--text-muted);font-weight:400;">(จาก Growth Fund)</span></td>
+          <td style="color:var(--text-muted);">—</td><td style="color:var(--text-muted);">—</td><td class="bold">10%</td><td class="bold">15%</td><td class="bold">20%</td>
+        </tr>
+        <tr style="background:rgba(239,68,68,0.04);">
+          <td style="text-align:left;font-weight:700;">5. โบนัสพิเศษ <span style="color:var(--text-muted);font-weight:400;">(Campaign)</span></td>
+          <td style="color:var(--text-muted);">—</td><td style="color:var(--text-muted);">—</td><td class="bold">&#x2705;</td><td class="bold">&#x2705;</td><td class="bold">&#x2705;</td>
+        </tr>
+      </table>
+      <div style="text-align:center;font-size:clamp(10px,0.95vw,13px);color:var(--text-muted);margin-top:clamp(8px,1vw,14px);">
+        รายได้ 1 จ่ายตรงจาก Seller | รายได้ 2-5 จ่ายจาก <span style="color:var(--accent-purple);font-weight:700;">Platform Fee (Growth Fund 5%)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S4: 1. ค่านายหน้า -->
+  <div class="slide" data-slide="4">
+    <div class="slide-header"><div class="slide-badge" style="background:rgba(245,158,11,0.12);color:var(--accent-orange);border-color:rgba(245,158,11,0.3);"><span class="dot" style="background:var(--accent-orange);"></span>รายได้ประเภท 1</div><div class="slide-number">05</div></div>
+    <div class="slide-title">1. ค่านายหน้า</div>
+    <div class="slide-subtitle">Seller กำหนดค่านายหน้าเอง → Affiliate ได้รับตรงๆ เมื่อ Order สำเร็จ</div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="example-box" style="margin-top:0;max-width:100%;">
+            <div class="label">ตัวอย่าง</div>
+            <div class="calc" style="line-height:2.2;">
+              สินค้าราคา <span class="hl hl-green">1,000 &#xE3F;</span><br>
+              Seller กำหนดค่านายหน้า <strong>10%</strong><br><br>
+              Affiliate ได้รับ = 10% &#xD7; 1,000<br>
+              = <span class="hl hl-green">100 &#xE3F;</span> ตรงๆ<br><br>
+              <strong>ไม่ต้องแบ่งจาก Pool</strong><br>
+              Seller จ่ายค่านายหน้า 100&#xE3F; โดยตรง
+            </div>
+            <div class="result">Affiliate ได้ 100 &#xE3F; ทันทีเมื่อ Order Complete</div>
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="card" style="border-color:var(--primary);border-width:2px;">
+            <div class="card-title" style="color:var(--primary);font-size:clamp(14px,1.4vw,20px);">Lifetime Commission</div>
+            <div class="card-desc" style="line-height:2;font-size:clamp(11px,1.1vw,15px);">
+              รับค่าคอมมิชชั่นจากลูกค้าที่คุณแนะนำ<br><strong>ตลอดชีวิต</strong> ไม่มีวันหมดอายุ<br>สร้างรายได้แบบ Passive Income
+            </div>
+          </div>
+          <div class="card" style="border-color:var(--accent-orange);border-width:2px;margin-top:12px;">
+            <div class="card-title" style="color:var(--accent-orange);font-size:clamp(14px,1.4vw,20px);">ต่างจาก V2.2 อย่างไร?</div>
+            <div class="card-desc" style="line-height:2;font-size:clamp(11px,1.1vw,15px);">
+              V2.2: ค่านายหน้ามาจาก "ก้อน 1 (80% ของ Pool)"<br>
+              V3: Seller จ่ายค่านายหน้าตรงๆ ตาม % ที่ตั้ง<br>
+              <strong>ง่ายกว่า โปร่งใสกว่า</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S5: 2. ค่าลิขสิทธิ์ -->
+  <div class="slide" data-slide="5">
+    <div class="slide-header"><div class="slide-badge" style="background:rgba(139,92,246,0.12);color:var(--accent-purple);border-color:rgba(139,92,246,0.3);"><span class="dot" style="background:var(--accent-purple);"></span>รายได้ประเภท 2 | จาก Growth Fund</div><div class="slide-number">06</div></div>
+    <div class="slide-title">2. ค่าลิขสิทธิ์ (Cascade Model)</div>
+    <div class="slide-subtitle">เมื่อลูกทีมขายได้ → แม่ทีมได้ค่าลิขสิทธิ์เป็น % ของค่านายหน้าลูกทีม → ส่งต่อขึ้นไปตามสายงาน<br><strong style="color:var(--accent-purple);">จ่ายจาก Growth Fund (5% ของ Platform Fee)</strong></div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="section-label">ตัวอย่าง EX1: D ขายสินค้าได้ ค่านายหน้า 100 &#xE3F;</div>
+          <div class="example-box" style="margin-top:0;max-width:100%;">
+            <div class="calc" style="line-height:2.4;">
+              <strong>D</strong> (คนขาย) ได้ค่านายหน้า = <span class="hl hl-green">100 &#xE3F;</span><br><br>
+              <strong style="color:var(--text-muted);">C (Silver 10%)</strong> ได้ค่าลิขสิทธิ์<br>
+              = 10% &#xD7; 100 = <strong>10 &#xE3F;</strong><br><br>
+              <strong style="color:var(--accent-orange);">B (Gold 30%)</strong> ได้ค่าลิขสิทธิ์<br>
+              = 30% &#xD7; 10 = <strong>3 &#xE3F;</strong><br><br>
+              <strong style="color:var(--accent-purple);">A (Platinum 50%)</strong> ได้ค่าลิขสิทธิ์<br>
+              = 50% &#xD7; 3 = <strong>1.5 &#xE3F;</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">Cascade Flow</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="card" style="text-align:center;padding:10px;width:100%;border-color:var(--primary);border-width:2px;">
+              <div style="font-weight:700;color:var(--primary);">D — คนขาย</div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่านายหน้า <strong>100 &#xE3F;</strong></div>
+            </div>
+            <div style="font-size:18px;color:var(--text-muted);">&#x2B07; 10%</div>
+            <div class="card" style="text-align:center;padding:10px;width:100%;border-color:rgba(192,192,192,0.5);border-width:2px;">
+              <div style="font-weight:700;">C — Silver</div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>10 &#xE3F;</strong></div>
+            </div>
+            <div style="font-size:18px;color:var(--text-muted);">&#x2B07; 30%</div>
+            <div class="card" style="text-align:center;padding:10px;width:100%;border-color:rgba(245,158,11,0.5);border-width:2px;">
+              <div style="font-weight:700;color:var(--accent-orange);">B — Gold</div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>3 &#xE3F;</strong></div>
+            </div>
+            <div style="font-size:18px;color:var(--text-muted);">&#x2B07; 50%</div>
+            <div class="card" style="text-align:center;padding:10px;width:100%;border-color:rgba(139,92,246,0.5);border-width:2px;">
+              <div style="font-weight:700;color:var(--accent-purple);">A — Platinum</div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>1.5 &#xE3F;</strong></div>
+            </div>
+          </div>
+          <div style="font-size:clamp(10px,0.9vw,12px);color:var(--accent-purple);margin-top:8px;text-align:center;font-weight:600;">
+            คิดจากค่านายหน้าของลูกทีม ส่งต่อขึ้นเรื่อยๆ — จ่ายจาก Growth Fund
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S6: 3. ค่าบริหารทีม -->
+  <div class="slide" data-slide="6">
+    <div class="slide-header"><div class="slide-badge" style="background:rgba(245,158,11,0.15);color:var(--accent-orange);border-color:rgba(245,158,11,0.4);"><span class="dot" style="background:var(--accent-orange);"></span>รายได้ประเภท 3</div><div class="slide-number">07</div></div>
+    <div class="slide-title">3. ค่าบริหารทีม</div>
+    <div class="slide-subtitle">Pool 1% จากยอดคอมมิชชั่นทั้งหมดของทีม → แบ่งตาม Tier | เงื่อนไข: ค่านายหน้า &#8805; 1,000 &#xE3F;/เดือน</div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="section-label">% ค่าบริหารตาม Tier</div>
+          <table class="comm-table">
+            <tr><th>Tier</th><th>% ค่าบริหาร</th></tr>
+            <tr><td style="color:var(--text-muted);">Customer</td><td style="color:var(--text-muted);">—</td></tr>
+            <tr><td>Silver</td><td class="bold">5%</td></tr>
+            <tr><td style="color:var(--accent-orange);">Gold</td><td class="bold">10%</td></tr>
+            <tr><td style="color:var(--accent-purple);">Platinum</td><td class="bold">15%</td></tr>
+            <tr><td>Wisdom</td><td class="bold">20%</td></tr>
+          </table>
+          <div style="font-size:clamp(10px,0.9vw,12px);color:var(--text-muted);margin-top:8px;text-align:center;">
+            เงื่อนไข: ค่านายหน้ารายเดือน &#8805; <strong>1,000 &#xE3F;</strong>
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">ตัวอย่าง</div>
+          <div class="example-box" style="margin-top:0;max-width:100%;">
+            <div class="calc" style="line-height:2.2;">
+              ยอดคอมมิชชั่นทีม = <span class="hl hl-green">100,000 &#xE3F;</span><br>
+              Pool ค่าบริหาร 1% = <strong>1,000 &#xE3F;</strong><br><br>
+              <table class="comm-table" style="margin:0;">
+                <tr><th>Tier</th><th>%</th><th>ได้รับ</th></tr>
+                <tr><td>Silver</td><td>5%</td><td class="bold">50 &#xE3F;</td></tr>
+                <tr><td style="color:var(--accent-orange);">Gold</td><td>10%</td><td class="bold">100 &#xE3F;</td></tr>
+                <tr><td style="color:var(--accent-purple);">Platinum</td><td>15%</td><td class="bold">150 &#xE3F;</td></tr>
+                <tr><td>Wisdom</td><td>20%</td><td class="bold">200 &#xE3F;</td></tr>
+              </table>
+            </div>
+          </div>
+          <div style="font-size:clamp(10px,0.95vw,13px);color:var(--accent-purple);margin-top:8px;font-weight:600;text-align:center;">
+            จ่ายรายเดือน จาก Growth Fund (5% ของ Platform Fee)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S7: 4. ส่วนแบ่งยอดขาย -->
+  <div class="slide" data-slide="7">
+    <div class="slide-header"><div class="slide-badge" style="background:rgba(245,158,11,0.15);color:var(--accent-orange);border-color:rgba(245,158,11,0.4);"><span class="dot" style="background:var(--accent-orange);"></span>รายได้ประเภท 4</div><div class="slide-number">08</div></div>
+    <div class="slide-title">4. ส่วนแบ่งยอดขาย</div>
+    <div class="slide-subtitle">Pool 1% จากยอดขายรวมของบริษัท → แบ่งเท่ากันในแต่ละ Tier</div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="section-label">สิทธิประโยชน์ และเงื่อนไข</div>
+          <table class="comm-table">
+            <tr><th></th><th>Gold<br>10%</th><th>Platinum<br>15%</th><th>Wisdom<br>20%</th></tr>
+            <tr><td style="text-align:left;font-weight:600;">1. ยอดขายส่วนตัว/เดือน</td><td colspan="3" style="text-align:center;font-weight:700;">&#8805; 1,000 &#xE3F;</td></tr>
+            <tr><td style="text-align:left;font-weight:600;">2. รายได้ค่านายหน้า/เดือน</td><td colspan="3" style="text-align:center;font-weight:700;">&#8805; 10,000 &#xE3F;</td></tr>
+          </table>
+          <div style="font-size:clamp(10px,0.9vw,12px);color:var(--text-muted);margin-top:8px;text-align:center;">
+            * Customer และ Silver ไม่ได้รับสิทธิ์ส่วนแบ่งยอดขาย
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">ตัวอย่าง — ยอดขายบริษัท 1,000,000 &#xE3F;</div>
+          <div class="example-box" style="margin-top:0;max-width:100%;">
+            <div class="calc" style="line-height:2.2;">
+              ยอดขายบริษัท = <span class="hl hl-green">1,000,000 &#xE3F;</span><br>
+              Pool ส่วนแบ่ง 1% = <strong>10,000 &#xE3F;</strong><br><br>
+              <table class="comm-table" style="margin:0;">
+                <tr><th>Tier</th><th>%</th><th>Pool</th><th>จำนวนคน</th><th>คนละ</th></tr>
+                <tr><td style="color:var(--accent-orange);">Gold</td><td>10%</td><td>1,000</td><td>10 คน</td><td class="bold">100 &#xE3F;</td></tr>
+                <tr><td style="color:var(--accent-purple);">Platinum</td><td>15%</td><td>1,500</td><td>5 คน</td><td class="bold">300 &#xE3F;</td></tr>
+                <tr><td>Wisdom</td><td>20%</td><td>2,000</td><td>3 คน</td><td class="bold">667 &#xE3F;</td></tr>
+              </table>
+            </div>
+          </div>
+          <div style="font-size:clamp(10px,0.95vw,13px);color:var(--accent-purple);margin-top:8px;font-weight:600;text-align:center;">
+            จ่ายรายเดือน — แบ่งเท่ากันในแต่ละ Tier
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S8: 5. โบนัสพิเศษ -->
+  <div class="slide" data-slide="8">
+    <div class="slide-header"><div class="slide-badge" style="background:rgba(239,68,68,0.1);color:var(--accent-red);border-color:rgba(239,68,68,0.3);"><span class="dot" style="background:var(--accent-red);"></span>รายได้ประเภท 5</div><div class="slide-number">09</div></div>
+    <div class="slide-title">5. โบนัสพิเศษ (Campaign-based)</div>
+    <div class="slide-subtitle">แทนโบนัสไตรมาสแบบ V2.2 → เปลี่ยนเป็น Campaign-based ที่บริษัทจัดเป็นครั้งๆ</div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="card" style="border-color:var(--accent-red);border-width:2px;text-align:center;">
+            <div style="font-size:clamp(28px,3vw,44px);margin-bottom:8px;">&#x2708;&#xFE0F;</div>
+            <div class="card-title" style="color:var(--accent-red);font-size:clamp(16px,1.6vw,22px);">ตัวอย่าง: ทริปฮ่องกง</div>
+            <div class="card-desc" style="line-height:2;font-size:clamp(12px,1.2vw,16px);margin-top:10px;">
+              Campaign ระยะเวลา <strong>6 เดือน</strong>
+            </div>
+          </div>
+          <div class="example-box anim-item" style="margin-top:12px;">
+            <div class="label">เงื่อนไข</div>
+            <div class="calc" style="line-height:2.2;">
+              &#x1F3AF; ค่านายหน้าสะสม <span class="hl hl-orange">100,000 &#xE3F;</span> ใน 6 เดือน<br>
+              &#x2192; ได้ <strong>1 ที่นั่ง</strong><br><br>
+              &#x1F3AF; ค่านายหน้าสะสม <span class="hl hl-orange">200,000 &#xE3F;</span> ใน 6 เดือน<br>
+              &#x2192; ได้ <strong>2 ที่นั่ง</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">ต่างจาก V2.2 อย่างไร?</div>
+          <table class="comm-table">
+            <tr><th>V2.2</th><th>V3 (3 เม.ย.)</th></tr>
+            <tr><td>โบนัสไตรมาส (ทุก 3 เดือน)</td><td style="font-weight:700;color:var(--primary);">โบนัสพิเศษ (Campaign)</td></tr>
+            <tr><td>คำนวณจากค่าเฉลี่ยค่านายหน้า</td><td style="font-weight:700;color:var(--primary);">บริษัทกำหนดเงื่อนไขเป็นรอบๆ</td></tr>
+            <tr><td>Gold 25% / Plat 50% / Wis 100%</td><td style="font-weight:700;color:var(--primary);">ไม่ผูกกับ % ของ Tier</td></tr>
+            <tr><td>จ่ายเป็นเงิน</td><td style="font-weight:700;color:var(--primary);">รางวัลพิเศษ (ทริป, สินค้า ฯลฯ)</td></tr>
+          </table>
+          <div class="principle-box anim-item" style="margin-top:12px;">
+            <div class="principle-icon">&#x1F4A1;</div>
+            <div class="principle-text">
+              บริษัทสามารถจัด Campaign ได้ตลอดปี ไม่จำกัดจำนวนครั้ง — ยืดหยุ่นกว่าโบนัสไตรมาสแบบตายตัว
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S9: Open Questions -->
+  <div class="slide" data-slide="9">
+    <div class="slide-header"><div class="slide-badge"><span class="dot"></span>Open Questions</div><div class="slide-number">10</div></div>
+    <div class="slide-title">Open Questions จากมีตติ้ง 3 เม.ย.</div>
+    <div class="slide-subtitle">8 ประเด็นที่ยังต้อง Confirm ก่อนสรุป Requirement สุดท้าย</div>
+    <div class="slide-content">
+      <div class="agenda-list">
+        <div class="agenda-item anim-item"><div class="agenda-num">1</div><div><div class="agenda-text">Platform Fee 10% — ตัวเลขสุดท้ายเท่าไร?</div><div class="agenda-sub">ตอนนี้ใช้ 10% (5% Growth + 2% Infra + 3% GP) — ยืนยันสัดส่วนย่อย</div></div></div>
+        <div class="agenda-item anim-item"><div class="agenda-num">2</div><div><div class="agenda-text">ค่านายหน้าขั้นต่ำที่ Seller ตั้งได้?</div><div class="agenda-sub">ต้องกำหนดขั้นต่ำเท่าไร? (เช่น 5%? 10%?) เพื่อให้ Affiliate มีแรงจูงใจ</div></div></div>
+        <div class="agenda-item anim-item"><div class="agenda-num">3</div><div><div class="agenda-text">ค่าลิขสิทธิ์ Cascade — กี่ชั้น?</div><div class="agenda-sub">ปัจจุบันออกแบบแบบ Unlimited Cascade — ควรจำกัดจำนวนชั้นหรือไม่?</div></div></div>
+        <div class="agenda-item anim-item"><div class="agenda-num">4</div><div><div class="agenda-text">ค่าบริหารทีม — Pool 1% จากอะไร?</div><div class="agenda-sub">จากยอดคอมทีม หรือ จากยอดขายทีม? คำนวณจาก direct team หรือรวม sub-team?</div></div></div>
+        <div class="agenda-item anim-item"><div class="agenda-num">5</div><div><div class="agenda-text">ส่วนแบ่งยอดขาย — Pool 1% จากอะไร?</div><div class="agenda-sub">จากยอดขายรวมบริษัท? จากค่าคอมรวม? ยืนยันฐานการคำนวณ</div></div></div>
+        <div class="agenda-item anim-item"><div class="agenda-num">6</div><div><div class="agenda-text">เงื่อนไข Tier — ยอดสะสมหรือยอดรายเดือน?</div><div class="agenda-sub">Customer→Silver ใช้ 500 บาท สะสมตลอดชีพ หรือ Reset ทุกเดือน?</div></div></div>
+        <div class="agenda-item anim-item"><div class="agenda-num">7</div><div><div class="agenda-text">Growth Fund 5% — จ่ายรายได้ 2-5 ครบหรือไม่?</div><div class="agenda-sub">ต้อง Simulate ว่า 5% เพียงพอจ่ายทุกประเภทรายได้หรือไม่ กรณี Scale</div></div></div>
+        <div class="agenda-item anim-item"><div class="agenda-num">8</div><div><div class="agenda-text">Campaign โบนัสพิเศษ — ใครเป็นคนออกแบบ?</div><div class="agenda-sub">ทีม Marketing กำหนดเงื่อนไข หรือมี Template มาตรฐาน?</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V4 S10: Thank You -->
+  <div class="slide" data-slide="10">
+    <div class="slide-content end-content">
+      <div class="end-title anim-item">Thank You</div>
+      <div class="slide-subtitle anim-item" style="max-width:500px;text-align:center;">V3 — โมเดลค่านายหน้าแบบ TikTok Shop<br>อ้างอิง MoM 3 เม.ย. 2569</div>
+    </div>
+  </div>
+
+</div>
+
 <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen (F)">&#x26F6;</button>
 <div class="page-dropdown" id="pageDropdown"></div>
 <div class="nav-bar" id="navBar">
@@ -1923,10 +2339,28 @@
         'ประเด็นที่ต้อง Confirm',
         'Thank You',
       ]
+    },
+    4: {
+      container: document.getElementById('presentation-v4'),
+      titles: [
+        'Cover',
+        'โครงสร้างใหม่ (TikTok Shop)',
+        'Platform Fee 10% Breakdown',
+        'ระดับสมาชิก & สิทธิประโยชน์',
+        '1. ค่านายหน้า',
+        '2. ค่าลิขสิทธิ์ (Cascade)',
+        '3. ค่าบริหารทีม',
+        '4. ส่วนแบ่งยอดขาย',
+        '5. โบนัสพิเศษ (Campaign)',
+        'Open Questions',
+        'Thank You',
+      ]
     }
   };
 
-  let currentVersion = 1;
+  const versionKeys = Object.keys(versions).map(Number);
+  const latestVersion = Math.max(...versionKeys);
+  let currentVersion = latestVersion;
   let currentSlide = 0;
   let animTimer = null;
   let dropdownOpen = false;
@@ -2023,18 +2457,32 @@
     newSlides.forEach(s => { s.classList.remove('active', 'prev'); s.style.transform = ''; });
     newSlides[0].classList.add('active');
 
-    // Update version buttons
-    document.querySelectorAll('.version-btn').forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.dataset.version) === v);
+    // Update dropdown
+    const opts = document.querySelectorAll('.version-opt');
+    opts.forEach(opt => {
+      const isActive = parseInt(opt.dataset.version) === v;
+      opt.classList.toggle('active', isActive);
+      opt.querySelector('.ver-check').textContent = isActive ? '\u2713' : '';
     });
+    const activeOpt = document.querySelector('.version-opt.active');
+    if (activeOpt) document.getElementById('versionLabel').textContent = activeOpt.textContent.trim().replace(/^✓\s*/, '');
+    document.getElementById('versionSwitcher').classList.remove('open');
 
     buildNav();
     updateUI();
   }
 
-  // Version switcher
-  document.querySelectorAll('.version-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchVersion(parseInt(btn.dataset.version)));
+  // Version dropdown
+  const vSwitcher = document.getElementById('versionSwitcher');
+  document.getElementById('versionToggle').addEventListener('click', (e) => {
+    e.stopPropagation();
+    vSwitcher.classList.toggle('open');
+  });
+  document.querySelectorAll('.version-opt').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      switchVersion(parseInt(opt.dataset.version));
+    });
   });
 
   document.getElementById('homeBtn').addEventListener('click', () => goToSlide(0));
@@ -2052,10 +2500,11 @@
     else if (e.key === 'Home' || e.key === 'h' || e.key === 'H') { e.preventDefault(); goToSlide(0); }
     else if (e.key === 'End') { e.preventDefault(); goToSlide(getTotalSlides() - 1); }
     else if (e.key === 'f' || e.key === 'F') { document.getElementById('fullscreenBtn').click(); }
-    else if (e.key === 'Escape') { toggleDropdown(false); }
+    else if (e.key === 'Escape') { toggleDropdown(false); vSwitcher.classList.remove('open'); }
     else if (e.key === '1') { switchVersion(1); }
     else if (e.key === '2') { switchVersion(2); }
     else if (e.key === '3') { switchVersion(3); }
+    else if (e.key === '4') { switchVersion(4); }
   });
 
   let touchStartX = 0;
@@ -2067,6 +2516,7 @@
 
   document.addEventListener('click', (e) => {
     if (dropdownOpen && !dropdown.contains(e.target) && e.target.id !== 'menuBtn') toggleDropdown(false);
+    if (!vSwitcher.contains(e.target)) vSwitcher.classList.remove('open');
   });
 
   buildNav();
