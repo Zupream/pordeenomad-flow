@@ -621,6 +621,18 @@
 
 <div class="grid-bg"></div>
 
+<!-- ========== HUB BACK BUTTON ========== -->
+<a href="hub.html" style="
+  position: fixed; top: 16px; right: 16px; z-index: 200;
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border: 1px solid var(--border-color);
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(16px);
+  border-radius: 10px; text-decoration: none;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--text-secondary); box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  transition: all 200ms ease;
+" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-secondary)'">← Hub</a>
+
 <!-- ========== VERSION SWITCHER (Dropdown) ========== -->
 <div class="version-switcher" id="versionSwitcher">
   <button class="version-select-btn" id="versionToggle">
@@ -1898,31 +1910,31 @@
   <div class="slide" data-slide="1">
     <div class="slide-header"><div class="slide-badge"><span class="dot"></span>โครงสร้างใหม่</div><div class="slide-number">02</div></div>
     <div class="slide-title">Seller กำหนดค่านายหน้า + Platform หัก 10%</div>
-    <div class="slide-subtitle">เปลี่ยนจาก Commission Pool ก้อนเดียว → <strong>Seller ตั้งค่านายหน้าแยก</strong> + <strong>Platform หัก 10% แยก</strong> (อิง TikTok Shop)</div>
+    <div class="slide-subtitle">Seller ตั้งค่านายหน้าเอง (เช่น 5%) + Platform หัก 10% แยก — อิงโมเดล TikTok Shop</div>
     <div class="slide-content">
       <div class="pool-visual anim-item">
         <div style="text-align:center;margin-bottom:clamp(6px,0.8vw,12px);">
           <span style="font-size:clamp(12px,1.2vw,16px);font-weight:700;">สินค้าราคา <strong style="color:var(--primary);">1,000 &#xE3F;</strong></span>
         </div>
         <div class="pool-bar">
-          <div class="pool-segment" style="flex:80;background:var(--primary);">Seller เหลือ 800 &#xE3F;</div>
-          <div class="pool-segment" style="flex:10;background:var(--accent-orange);">ค่านายหน้า 10%</div>
-          <div class="pool-segment" style="flex:10;background:var(--accent-purple);">Platform 10%</div>
+          <div class="pool-segment" style="flex:70;background:var(--primary);">Seller เหลือ 850 &#xE3F;</div>
+          <div class="pool-segment" style="flex:12;background:var(--accent-orange);">ค่านายหน้า 5% = 50&#xE3F;</div>
+          <div class="pool-segment" style="flex:18;background:var(--accent-purple);">Platform 10% = 100&#xE3F;</div>
         </div>
         <div class="pool-legend">
-          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--accent-orange);"></div> <strong>ค่านายหน้า = Seller กำหนดเอง (เช่น 10%)</strong> → 100 &#xE3F; → Affiliate ได้ตรงๆ</div>
+          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--accent-orange);"></div> <strong>ค่านายหน้า = Seller กำหนดเอง (เช่น 5%)</strong> → 50 &#xE3F; → Affiliate ได้ตรงๆ</div>
         </div>
         <div class="pool-legend" style="margin-top:4px;">
           <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--accent-purple);"></div> <strong>Platform Fee = 10% (คงที่)</strong> → 100 &#xE3F; → Platform หักแยกจากราคาขาย</div>
         </div>
         <div class="pool-legend" style="margin-top:4px;">
-          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--primary);"></div> <strong>Seller เหลือ</strong> = 1,000 - 100 - 100 = <strong>800 &#xE3F;</strong></div>
+          <div class="pool-legend-item"><div class="pool-legend-dot" style="background:var(--primary);"></div> <strong>Seller เหลือ</strong> = 1,000 - 50 - 100 = <strong>850 &#xE3F;</strong></div>
         </div>
       </div>
       <div class="principle-box anim-item" style="margin:clamp(10px,1.2vw,20px) auto 0;">
         <div class="principle-icon">&#x1F4A1;</div>
         <div class="principle-text">
-          <strong>จุดเปลี่ยนจาก V2.2:</strong> ไม่มี "Commission Pool ก้อนเดียว 80/20" อีกต่อไป — ค่านายหน้า Affiliate จ่ายตรง, Platform Fee หักแยก 10% จากราคาขาย
+          Seller กำหนดค่านายหน้าเอง (เช่น 5%) → Affiliate ได้ตรงๆ | Platform หัก 10% แยกจากราคาขาย → ใช้จ่ายรายได้ประเภท 2-5
         </div>
       </div>
     </div>
@@ -1977,7 +1989,7 @@
   <div class="slide" data-slide="3">
     <div class="slide-header"><div class="slide-badge"><span class="dot"></span>Tier (อัปเดต 3 เม.ย.)</div><div class="slide-number">04</div></div>
     <div class="slide-title">ระดับสมาชิก &amp; สิทธิประโยชน์</div>
-    <div class="slide-subtitle">อัปเดตจาก V2.2 — Gold ค่าลิขสิทธิ์ 30%, Platinum/Wisdom ค่าลิขสิทธิ์ 50%</div>
+    <div class="slide-subtitle">สิทธิประโยชน์ตาม Tier — ยิ่งระดับสูง ยิ่งได้ % มากขึ้น</div>
     <div class="slide-content">
       <table class="comm-table anim-item" style="max-width:1100px;margin:0 auto;">
         <tr>
@@ -2027,13 +2039,13 @@
             <div class="label">ตัวอย่าง</div>
             <div class="calc" style="line-height:2.2;">
               สินค้าราคา <span class="hl hl-green">1,000 &#xE3F;</span><br>
-              Seller กำหนดค่านายหน้า <strong>10%</strong><br><br>
-              Affiliate ได้รับ = 10% &#xD7; 1,000<br>
-              = <span class="hl hl-green">100 &#xE3F;</span> ตรงๆ<br><br>
+              Seller กำหนดค่านายหน้า <strong>5%</strong><br><br>
+              Affiliate ได้รับ = 5% &#xD7; 1,000<br>
+              = <span class="hl hl-green">50 &#xE3F;</span> ตรงๆ<br><br>
               <strong>ไม่ต้องแบ่งจาก Pool</strong><br>
-              Seller จ่ายค่านายหน้า 100&#xE3F; โดยตรง
+              Seller จ่ายค่านายหน้า 50&#xE3F; โดยตรง
             </div>
-            <div class="result">Affiliate ได้ 100 &#xE3F; ทันทีเมื่อ Order Complete</div>
+            <div class="result">Affiliate ได้ 50 &#xE3F; ทันทีเมื่อ Order Complete</div>
           </div>
         </div>
         <div class="col-section anim-item">
@@ -2044,11 +2056,11 @@
             </div>
           </div>
           <div class="card" style="border-color:var(--accent-orange);border-width:2px;margin-top:12px;">
-            <div class="card-title" style="color:var(--accent-orange);font-size:clamp(14px,1.4vw,20px);">ต่างจาก V2.2 อย่างไร?</div>
+            <div class="card-title" style="color:var(--accent-orange);font-size:clamp(14px,1.4vw,20px);">Seller กำหนดเอง</div>
             <div class="card-desc" style="line-height:2;font-size:clamp(11px,1.1vw,15px);">
-              V2.2: ค่านายหน้ามาจาก "ก้อน 1 (80% ของ Pool)"<br>
-              V3: Seller จ่ายค่านายหน้าตรงๆ ตาม % ที่ตั้ง<br>
-              <strong>ง่ายกว่า โปร่งใสกว่า</strong>
+              Seller ตั้งค่านายหน้าได้เอง (เช่น 5%, 10%, 15%)<br>
+              Affiliate ได้รับค่านายหน้าตรงๆ ตาม % ที่ Seller ตั้ง<br>
+              <strong>ง่าย โปร่งใส เข้าใจทันที</strong>
             </div>
           </div>
         </div>
@@ -2060,48 +2072,56 @@
   <div class="slide" data-slide="5">
     <div class="slide-header"><div class="slide-badge" style="background:rgba(139,92,246,0.12);color:var(--accent-purple);border-color:rgba(139,92,246,0.3);"><span class="dot" style="background:var(--accent-purple);"></span>รายได้ประเภท 2 | จาก Growth Fund</div><div class="slide-number">06</div></div>
     <div class="slide-title">2. ค่าลิขสิทธิ์ (Cascade Model)</div>
-    <div class="slide-subtitle">เมื่อลูกทีมขายได้ → แม่ทีมได้ค่าลิขสิทธิ์เป็น % ของค่านายหน้าลูกทีม → ส่งต่อขึ้นไปตามสายงาน<br><strong style="color:var(--accent-purple);">จ่ายจาก Growth Fund (5% ของ Platform Fee)</strong></div>
+    <div class="slide-subtitle">เมื่อลูกทีมขายได้ → แม่ทีมได้ค่าลิขสิทธิ์ตาม Tier % จาก <strong style="color:var(--accent-purple);">Royalty Pool (2% ของยอดขาย)</strong> ซึ่งเป็นส่วนหนึ่งของ Growth Fund</div>
     <div class="slide-content">
       <div class="two-col">
         <div class="col-section anim-item">
-          <div class="section-label">ตัวอย่าง EX1: D ขายสินค้าได้ ค่านายหน้า 100 &#xE3F;</div>
+          <div class="section-label">ตัวอย่าง: D ขายสินค้า 1,000 &#xE3F; | Seller ตั้ง 5%</div>
           <div class="example-box" style="margin-top:0;max-width:100%;">
             <div class="calc" style="line-height:2.4;">
-              <strong>D</strong> (คนขาย) ได้ค่านายหน้า = <span class="hl hl-green">100 &#xE3F;</span><br><br>
+              <strong>D</strong> (คนขาย) ได้ค่านายหน้า = 5% &#xD7; 1,000 = <span class="hl hl-green">50 &#xE3F;</span><br>
+              <span style="font-size:0.9em;color:var(--text-muted);">(จาก Seller โดยตรง)</span><br><br>
+              <span class="hl hl-purple">Royalty Pool</span> = 2% &#xD7; 1,000 = <strong>20 &#xE3F;</strong><br>
+              <span style="font-size:0.9em;color:var(--text-muted);">(จาก Growth Fund ใน Platform Fee)</span><br><br>
               <strong style="color:var(--text-muted);">C (Silver 10%)</strong> ได้ค่าลิขสิทธิ์<br>
-              = 10% &#xD7; 100 = <strong>10 &#xE3F;</strong><br><br>
+              = 10% &#xD7; 20 = <strong>2 &#xE3F;</strong><br><br>
               <strong style="color:var(--accent-orange);">B (Gold 30%)</strong> ได้ค่าลิขสิทธิ์<br>
-              = 30% &#xD7; 10 = <strong>3 &#xE3F;</strong><br><br>
+              = 30% &#xD7; 2 = <strong>0.60 &#xE3F;</strong><br><br>
               <strong style="color:var(--accent-purple);">A (Platinum 50%)</strong> ได้ค่าลิขสิทธิ์<br>
-              = 50% &#xD7; 3 = <strong>1.5 &#xE3F;</strong>
+              = 50% &#xD7; 0.60 = <strong>0.30 &#xE3F;</strong>
             </div>
           </div>
         </div>
         <div class="col-section anim-item">
           <div class="section-label">Cascade Flow</div>
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="card" style="text-align:center;padding:10px;width:100%;border-color:var(--accent-purple);border-width:2px;background:rgba(139,92,246,0.06);">
+              <div style="font-weight:700;color:var(--accent-purple);">Royalty Pool (2% ของยอดขาย)</div>
+              <div style="font-size:clamp(11px,1vw,14px);">2% &#xD7; 1,000 = <strong>20 &#xE3F;</strong></div>
+            </div>
+            <div style="font-size:18px;color:var(--text-muted);">&#x2B07;</div>
             <div class="card" style="text-align:center;padding:10px;width:100%;border-color:var(--primary);border-width:2px;">
               <div style="font-weight:700;color:var(--primary);">D — คนขาย</div>
-              <div style="font-size:clamp(11px,1vw,14px);">ค่านายหน้า <strong>100 &#xE3F;</strong></div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่านายหน้า 5% = <strong>50 &#xE3F;</strong> (จาก Seller)</div>
             </div>
-            <div style="font-size:18px;color:var(--text-muted);">&#x2B07; 10%</div>
+            <div style="font-size:18px;color:var(--text-muted);">&#x2B07; 10% ของ Pool</div>
             <div class="card" style="text-align:center;padding:10px;width:100%;border-color:rgba(192,192,192,0.5);border-width:2px;">
-              <div style="font-weight:700;">C — Silver</div>
-              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>10 &#xE3F;</strong></div>
+              <div style="font-weight:700;">C — Silver (แม่ทีมของ D)</div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>2 &#xE3F;</strong></div>
             </div>
             <div style="font-size:18px;color:var(--text-muted);">&#x2B07; 30%</div>
             <div class="card" style="text-align:center;padding:10px;width:100%;border-color:rgba(245,158,11,0.5);border-width:2px;">
-              <div style="font-weight:700;color:var(--accent-orange);">B — Gold</div>
-              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>3 &#xE3F;</strong></div>
+              <div style="font-weight:700;color:var(--accent-orange);">B — Gold (แม่ทีมของ C)</div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>0.60 &#xE3F;</strong></div>
             </div>
             <div style="font-size:18px;color:var(--text-muted);">&#x2B07; 50%</div>
             <div class="card" style="text-align:center;padding:10px;width:100%;border-color:rgba(139,92,246,0.5);border-width:2px;">
-              <div style="font-weight:700;color:var(--accent-purple);">A — Platinum</div>
-              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>1.5 &#xE3F;</strong></div>
+              <div style="font-weight:700;color:var(--accent-purple);">A — Platinum (แม่ทีมของ B)</div>
+              <div style="font-size:clamp(11px,1vw,14px);">ค่าลิขสิทธิ์ <strong>0.30 &#xE3F;</strong></div>
             </div>
           </div>
           <div style="font-size:clamp(10px,0.9vw,12px);color:var(--accent-purple);margin-top:8px;text-align:center;font-weight:600;">
-            คิดจากค่านายหน้าของลูกทีม ส่งต่อขึ้นเรื่อยๆ — จ่ายจาก Growth Fund
+            คิดจาก Royalty Pool (2% ของยอดขาย) ส่งต่อขึ้นเรื่อยๆ ตาม Tier — จ่ายจาก Growth Fund
           </div>
         </div>
       </div>
@@ -2196,7 +2216,7 @@
   <div class="slide" data-slide="8">
     <div class="slide-header"><div class="slide-badge" style="background:rgba(239,68,68,0.1);color:var(--accent-red);border-color:rgba(239,68,68,0.3);"><span class="dot" style="background:var(--accent-red);"></span>รายได้ประเภท 5</div><div class="slide-number">09</div></div>
     <div class="slide-title">5. โบนัสพิเศษ (Campaign-based)</div>
-    <div class="slide-subtitle">แทนโบนัสไตรมาสแบบ V2.2 → เปลี่ยนเป็น Campaign-based ที่บริษัทจัดเป็นครั้งๆ</div>
+    <div class="slide-subtitle">โบนัสพิเศษแบบ Campaign-based — บริษัทจัดเป็นรอบๆ ตามสถานการณ์</div>
     <div class="slide-content">
       <div class="two-col">
         <div class="col-section anim-item">
@@ -2218,18 +2238,18 @@
           </div>
         </div>
         <div class="col-section anim-item">
-          <div class="section-label">ต่างจาก V2.2 อย่างไร?</div>
+          <div class="section-label">รูปแบบ Campaign</div>
           <table class="comm-table">
-            <tr><th>V2.2</th><th>V3 (3 เม.ย.)</th></tr>
-            <tr><td>โบนัสไตรมาส (ทุก 3 เดือน)</td><td style="font-weight:700;color:var(--primary);">โบนัสพิเศษ (Campaign)</td></tr>
-            <tr><td>คำนวณจากค่าเฉลี่ยค่านายหน้า</td><td style="font-weight:700;color:var(--primary);">บริษัทกำหนดเงื่อนไขเป็นรอบๆ</td></tr>
-            <tr><td>Gold 25% / Plat 50% / Wis 100%</td><td style="font-weight:700;color:var(--primary);">ไม่ผูกกับ % ของ Tier</td></tr>
-            <tr><td>จ่ายเป็นเงิน</td><td style="font-weight:700;color:var(--primary);">รางวัลพิเศษ (ทริป, สินค้า ฯลฯ)</td></tr>
+            <tr><th>รายละเอียด</th><th>คำอธิบาย</th></tr>
+            <tr><td>ระยะเวลา</td><td style="font-weight:700;color:var(--primary);">บริษัทกำหนดเป็นรอบๆ (3, 6 เดือน, รายปี)</td></tr>
+            <tr><td>เงื่อนไข</td><td style="font-weight:700;color:var(--primary);">เช่น ค่านายหน้าสะสม 100,000 &#xE3F;</td></tr>
+            <tr><td>สิทธิ์</td><td style="font-weight:700;color:var(--primary);">Gold ขึ้นไป</td></tr>
+            <tr><td>รางวัล</td><td style="font-weight:700;color:var(--primary);">ทริป, สินค้า, โบนัสพิเศษ</td></tr>
           </table>
           <div class="principle-box anim-item" style="margin-top:12px;">
             <div class="principle-icon">&#x1F4A1;</div>
             <div class="principle-text">
-              บริษัทสามารถจัด Campaign ได้ตลอดปี ไม่จำกัดจำนวนครั้ง — ยืดหยุ่นกว่าโบนัสไตรมาสแบบตายตัว
+              บริษัทสามารถจัด Campaign ได้ตลอดปี ไม่จำกัดจำนวนครั้ง — ยืดหยุ่นตามสถานการณ์
             </div>
           </div>
         </div>

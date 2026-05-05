@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PordeeConnect — Partner Portal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --primary-light: #10B981;
+      --secondary: #0D9488;
+      --accent-orange: #F59E0B;
+      --accent-red: #EF4444;
+      --accent-purple: #8B5CF6;
+      --accent-pink: #EC4899;
+      --accent-blue: #3B82F6;
+      --bg: #F0FDF4;
+      --bg-white: #FFFFFF;
+      --bg-card: rgba(5,150,105,0.04);
+      --text-primary: #0A2E1B;
+      --text-secondary: #3D6B50;
+      --text-muted: #7DA88A;
+      --border: rgba(5,150,105,0.12);
+      --border-light: rgba(5,150,105,0.06);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+    .app { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 256px; background: var(--bg-white); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    }
+    .sidebar-logo {
+      padding: 20px 20px; border-bottom: 1px solid var(--border-light);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 14px;
+    }
+    .logo-text { font-weight: 700; font-size: 15px; }
+    .logo-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+    .sidebar-nav { flex: 1; padding: 12px; overflow-y: auto; }
+    .nav-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-muted); padding: 8px 12px 4px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: var(--radius-sm); cursor: pointer; font-size: 14px;
+      font-weight: 500; color: var(--text-secondary); transition: all 0.15s ease;
+      text-decoration: none; position: relative; border: none; background: none;
+      width: 100%; text-align: left; font-family: inherit;
+    }
+    .nav-item:hover { background: var(--bg-card); color: var(--text-primary); }
+    .nav-item.active {
+      background: rgba(5,150,105,0.1); color: var(--primary); font-weight: 600;
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 20px; background: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto; font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 10px;
+      background: rgba(5,150,105,0.1); color: var(--primary);
+    }
+
+    .sidebar-back {
+      padding: 12px; border-bottom: 1px solid var(--border-light);
+    }
+    .back-link {
+      display: flex; align-items: center; gap: 6px; font-size: 12px;
+      color: var(--text-muted); text-decoration: none; font-weight: 500;
+      padding: 6px 8px; border-radius: 6px; transition: all 0.15s;
+    }
+    .back-link:hover { color: var(--primary); background: var(--bg-card); }
+
+    .sidebar-profile {
+      padding: 14px 16px; border-top: 1px solid var(--border-light);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .profile-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 13px;
+    }
+    .profile-name { font-size: 13px; font-weight: 600; }
+    .profile-rank { font-size: 11px; color: var(--accent-orange); font-weight: 600; }
+
+    /* ── Main ── */
+    .main { flex: 1; margin-left: 256px; }
+
+    .topbar {
+      background: var(--bg-white); border-bottom: 1px solid var(--border);
+      padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-size: 18px; font-weight: 700; }
+
+    .role-switcher {
+      display: flex; background: var(--bg); border-radius: var(--radius-sm);
+      padding: 3px; border: 1px solid var(--border);
+    }
+    .role-btn {
+      padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 600; font-family: inherit;
+      background: transparent; color: var(--text-muted); transition: all 0.15s ease;
+    }
+    .role-btn.active { background: var(--primary); color: white; }
+    .role-btn:hover:not(.active) { color: var(--text-primary); }
+
+    .content { padding: 24px 28px; }
+
+    /* ── Stats Grid ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stats-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .stat-card {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden;
+    }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .stat-card.green::before { background: var(--primary); }
+    .stat-card.orange::before { background: var(--accent-orange); }
+    .stat-card.purple::before { background: var(--accent-purple); }
+    .stat-card.blue::before { background: var(--accent-blue); }
+    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 800; font-family: 'Inter', sans-serif; line-height: 1; }
+    .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+    .stat-sub .up { color: var(--primary); font-weight: 600; }
+
+    /* ── Mini chart ── */
+    .mini-chart { display: flex; align-items: flex-end; gap: 4px; height: 48px; margin-top: 12px; }
+    .mini-bar { flex: 1; border-radius: 3px 3px 0 0; min-height: 4px; }
+
+    /* ── Progress ── */
+    .progress-bar { height: 8px; background: var(--border-light); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; }
+
+    /* ── Panel ── */
+    .panel {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
+    }
+    .panel-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border-light);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title { font-size: 14px; font-weight: 700; }
+    .panel-body { padding: 20px; }
+
+    /* ── Table ── */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      text-align: left; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--text-muted); padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border-light);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--bg-card); }
+
+    /* ── Tags ── */
+    .tag {
+      display: inline-flex; align-items: center; font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 10px;
+    }
+    .tag-green { background: #ECFDF5; color: #065F46; }
+    .tag-orange { background: #FFF7ED; color: #9A3412; }
+    .tag-purple { background: #F5F3FF; color: #5B21B6; }
+    .tag-red { background: #FEF2F2; color: #991B1B; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      cursor: pointer; border: none; transition: all 0.15s ease;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+    .btn-outline:hover { background: var(--bg-card); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ── Rank badges ── */
+    .rank-badge {
+      font-size: 10px; font-weight: 600; padding: 2px 8px;
+      border-radius: 10px; white-space: nowrap;
+    }
+    .badge-starter { background: #ECFDF5; color: #065F46; }
+    .badge-silver { background: #F1F5F9; color: #475569; }
+    .badge-gold { background: #FEF3C7; color: #92400E; }
+    .badge-platinum { background: #EDE9FE; color: #5B21B6; }
+    .badge-wisdom { background: #FCE7F3; color: #9D174D; }
+
+    /* ── Rank dots ── */
+    .rank-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+
+    /* ── Tree ── */
+    .tree-node {
+      display: flex; align-items: flex-start; gap: 12px; padding: 10px 0;
+    }
+    .tree-level { padding-left: 32px; position: relative; }
+    .tree-level::before {
+      content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
+      width: 1px; background: var(--border);
+    }
+    .tree-connector {
+      position: absolute; left: 15px; top: 22px;
+      width: 17px; height: 1px; background: var(--border);
+    }
+    .tree-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; color: white; flex-shrink: 0;
+    }
+    .tree-info { flex: 1; }
+    .tree-name { font-size: 13px; font-weight: 600; }
+    .tree-role { font-size: 11px; color: var(--text-muted); }
+    .tree-stats { display: flex; gap: 16px; margin-top: 4px; }
+    .tree-stat { font-size: 11px; color: var(--text-secondary); }
+    .tree-stat strong { font-weight: 600; color: var(--text-primary); }
+
+    /* ── Income cards ── */
+    .income-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .income-card {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .income-card-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    }
+    .income-type { font-size: 13px; font-weight: 700; }
+    .income-amount { font-size: 24px; font-weight: 800; font-family: 'Inter', sans-serif; }
+    .income-desc { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+    .income-bar { height: 6px; background: var(--border-light); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+    .income-bar-fill { height: 100%; border-radius: 3px; }
+
+    .qual-status { display: flex; align-items: center; gap: 6px; }
+    .qual-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .qual-dot.pass { background: var(--primary); }
+    .qual-dot.fail { background: var(--accent-red); }
+
+    /* ── Structure diagram ── */
+    .struct-diagram { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px; }
+    .struct-row { display: flex; align-items: center; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .struct-box {
+      padding: 12px 20px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; text-align: center;
+      border: 2px solid; min-width: 140px;
+    }
+    .struct-arrow { color: var(--text-muted); font-size: 20px; line-height: 1; }
+
+    /* ── Page switching ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Watermark ── */
+    .mockup-watermark {
+      position: fixed; bottom: 12px; right: 16px;
+      font-size: 11px; color: var(--text-muted); font-weight: 500;
+      background: rgba(255,255,255,0.85); padding: 4px 12px;
+      border-radius: 20px; border: 1px solid var(--border-light); z-index: 999;
+    }
+
+    /* ── Member list item ── */
+    .member-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 8px; transition: background 0.1s;
+    }
+    .member-row:nth-child(odd) { background: var(--bg); }
+    .member-row .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 11px; color: white; flex-shrink: 0;
+    }
+
+    /* ── Disabled nav ── */
+    .nav-item.disabled {
+      opacity: 0.4; pointer-events: none;
+    }
+    .nav-item.disabled::after {
+      content: 'ยังไม่มีลูกทีม'; font-size: 10px; color: var(--text-muted);
+      margin-left: auto; font-weight: 400;
+    }
+
+    /* ── Hidden by role ── */
+    .hide-for-member { display: none; }
+
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .income-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+      <div class="sidebar-back">
+        <a href="hub.html" class="back-link">← กลับ Hub</a>
+      </div>
+      <div class="sidebar-logo">
+        <div class="logo-icon">PC</div>
+        <div>
+          <div class="logo-text">PordeeConnect</div>
+          <div class="logo-sub">Partner Portal</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-label">เมนูหลัก</div>
+        <button class="nav-item active" onclick="showPage('dashboard', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          แดชบอร์ด
+        </button>
+        <button class="nav-item" onclick="showPage('income', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          รายได้ของฉัน
+        </button>
+        <button class="nav-item" onclick="showPage('products', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          สินค้าที่ขายได้
+        </button>
+        <button class="nav-item" onclick="showPage('links', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          ลิงก์ของฉัน
+        </button>
+        <button class="nav-item" onclick="showPage('campaigns', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          แคมเปญ
+        </button>
+        <button class="nav-item leader-only" id="navTeam" onclick="showPage('team', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          ทีมของฉัน
+          <span class="nav-badge" id="navTeamBadge">24</span>
+        </button>
+      </nav>
+      <div class="sidebar-profile" id="sidebarProfile">
+        <div class="profile-avatar" id="profileAvatar">SP</div>
+        <div>
+          <div class="profile-name" id="profileName">สมหญิง พอดีนะ</div>
+          <div class="profile-rank" id="profileRank">★ Gold Member</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title" id="pageTitle">แดชบอร์ด</div>
+        <div class="role-switcher">
+          <button class="role-btn active" onclick="switchRole(this,'leader')">แม่ทีม</button>
+          <button class="role-btn" onclick="switchRole(this,'member')">สมาชิก</button>
+        </div>
+      </header>
+
+      <div class="content">
+
+        <!-- ═══════════ PAGE: Dashboard ═══════════ -->
+        <div class="page active" id="page-dashboard">
+          <div class="stats-grid">
+            <div class="stat-card green">
+              <div class="stat-label">รายได้รวมเดือนนี้</div>
+              <div class="stat-value" style="color:var(--primary)">฿18,450</div>
+              <div class="stat-sub"><span class="up">↑ 12.5%</span> จากเดือนก่อน</div>
+              <div class="mini-chart">
+                <div class="mini-bar" style="height:40%;background:rgba(5,150,105,0.2)"></div>
+                <div class="mini-bar" style="height:55%;background:rgba(5,150,105,0.25)"></div>
+                <div class="mini-bar" style="height:45%;background:rgba(5,150,105,0.2)"></div>
+                <div class="mini-bar" style="height:70%;background:rgba(5,150,105,0.3)"></div>
+                <div class="mini-bar" style="height:60%;background:rgba(5,150,105,0.25)"></div>
+                <div class="mini-bar" style="height:80%;background:rgba(5,150,105,0.35)"></div>
+                <div class="mini-bar" style="height:100%;background:var(--primary)"></div>
+              </div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-label">ยอดขายส่วนตัว</div>
+              <div class="stat-value" style="color:var(--accent-orange)">฿45,200</div>
+              <div class="stat-sub"><span class="up">↑ 8.2%</span> จากเดือนก่อน</div>
+            </div>
+            <div class="stat-card purple leader-only-content">
+              <div class="stat-label">สมาชิกในทีม</div>
+              <div class="stat-value" style="color:var(--accent-purple)">24</div>
+              <div class="stat-sub"><span class="up">↑ 3</span> สมาชิกใหม่เดือนนี้</div>
+            </div>
+            <div class="stat-card blue">
+              <div class="stat-label">ตำแหน่งปัจจุบัน</div>
+              <div class="stat-value" style="color:var(--accent-orange);font-size:22px;">Gold</div>
+              <div class="stat-sub">เหลืออีก ฿4,800 ถึง Platinum</div>
+              <div class="progress-bar" style="margin-top:8px;">
+                <div class="progress-fill" style="width:72%;background:var(--accent-orange)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two columns -->
+          <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:20px;" id="dashboardColumns">
+            <!-- Income summary -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">สรุปรายได้เดือนนี้ (พ.ค. 2569)</div>
+              </div>
+              <div class="panel-body" style="padding:0;">
+                <table class="data-table">
+                  <thead><tr><th>ประเภทรายได้</th><th style="text-align:right">จำนวน (฿)</th><th style="text-align:center">สถานะ</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="rank-dot" style="background:var(--primary)"></span>ค่าคอมมิชชั่น Affiliate</td>
+                      <td style="text-align:right;font-weight:700;font-family:'Inter'">8,200</td>
+                      <td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-dot" style="background:var(--accent-purple)"></span>Royalty / Licensing (2%)</td>
+                      <td style="text-align:right;font-weight:700;font-family:'Inter'">4,500</td>
+                      <td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-dot" style="background:var(--accent-orange)"></span>Team Management Fee (1%)</td>
+                      <td style="text-align:right;font-weight:700;font-family:'Inter'">2,350</td>
+                      <td style="text-align:center"><span class="tag tag-orange">รอจ่าย</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-dot" style="background:var(--accent-blue)"></span>Sales Sharing (1%)</td>
+                      <td style="text-align:right;font-weight:700;font-family:'Inter'">2,100</td>
+                      <td style="text-align:center"><span class="tag tag-orange">รอจ่าย</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="rank-dot" style="background:var(--accent-pink)"></span>Special Bonus (1%)</td>
+                      <td style="text-align:right;font-weight:700;font-family:'Inter'">1,300</td>
+                      <td style="text-align:center"><span class="tag tag-purple">รอรอบ Q2</span></td>
+                    </tr>
+                    <tr style="background:var(--bg-card)">
+                      <td style="font-weight:700">รวมทั้งหมด</td>
+                      <td style="text-align:right;font-weight:800;font-family:'Inter';font-size:16px;color:var(--primary)">18,450</td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Team quick view -->
+            <div class="panel leader-only-content">
+              <div class="panel-header">
+                <div class="panel-title">ทีมล่าสุด</div>
+                <button class="btn btn-sm btn-outline" onclick="showPage('team',document.querySelectorAll('.nav-item')[1])">ดูทั้งหมด</button>
+              </div>
+              <div class="panel-body" style="padding:8px 12px;">
+                <div class="member-row">
+                  <div class="avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">วร</div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">วรรณา สุขใจ</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿12,400</div></div>
+                  <span class="rank-badge badge-gold">Gold</span>
+                </div>
+                <div class="member-row">
+                  <div class="avatar" style="background:linear-gradient(135deg,#94A3B8,#64748B)">ปร</div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">ประวิทย์ มั่นคง</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿8,700</div></div>
+                  <span class="rank-badge badge-silver">Silver</span>
+                </div>
+                <div class="member-row">
+                  <div class="avatar" style="background:linear-gradient(135deg,#10B981,#059669)">นิ</div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">นิภา จันทร์ดี</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿3,200</div></div>
+                  <span class="rank-badge badge-starter">Starter</span>
+                </div>
+                <div class="member-row">
+                  <div class="avatar" style="background:linear-gradient(135deg,#EC4899,#DB2777)">กม</div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">กมลวรรณ รุ่งเรือง</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿28,300</div></div>
+                  <span class="rank-badge badge-wisdom">Wisdom</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Promo Banner -->
+          <div style="margin-top:20px;background:linear-gradient(135deg,#059669,#0D9488);border-radius:var(--radius-lg);padding:24px 28px;color:white;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:12px;font-weight:600;opacity:0.8;text-transform:uppercase;letter-spacing:0.05em;">โปรโมชั่นพิเศษ Q2/2569</div>
+              <div style="font-size:20px;font-weight:800;margin:6px 0;">🎌 ทริปญี่ปุ่น — เป้าหมาย ฿100,000</div>
+              <div style="font-size:13px;opacity:0.9;">สะสมรายได้คอมมิชชั่น ฿100,000 ภายใน 6 เดือน รับ 1 ที่นั่ง</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:36px;font-weight:900;font-family:'Inter';">68%</div>
+              <div style="font-size:12px;opacity:0.8;">฿68,000 / ฿100,000</div>
+              <div style="height:6px;width:120px;background:rgba(255,255,255,0.2);border-radius:3px;margin-top:6px;"><div style="height:100%;width:68%;background:white;border-radius:3px;"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ PAGE: Team ═══════════ -->
+        <div class="page" id="page-team">
+          <div class="stats-grid cols-3">
+            <div class="stat-card green">
+              <div class="stat-label">สมาชิกทั้งหมด</div>
+              <div class="stat-value" style="color:var(--primary)">24</div>
+              <div class="stat-sub">ลูกทีมตรง 5 · ทั้งหมด 24</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-label">ยอดขายรวมทีม</div>
+              <div class="stat-value" style="color:var(--accent-orange)">฿324,500</div>
+              <div class="stat-sub"><span class="up">↑ 15.3%</span> จากเดือนก่อน</div>
+            </div>
+            <div class="stat-card purple">
+              <div class="stat-label">คอมมิชชั่นรวมทีม</div>
+              <div class="stat-value" style="color:var(--accent-purple)">฿48,200</div>
+              <div class="stat-sub"><span class="up">↑ 9.1%</span> จากเดือนก่อน</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">โครงสร้างทีม (Genealogy Tree)</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-sm btn-primary" id="btnTree" onclick="switchTeamView('tree')">แผนภูมิ</button>
+                <button class="btn btn-sm btn-outline" id="btnList" onclick="switchTeamView('list')">รายการ</button>
+              </div>
+            </div>
+
+            <!-- ── Tree View (Accordion) ── -->
+            <div class="panel-body" id="teamTreeView"></div>
+
+            <!-- ── List View ── -->
+            <div id="teamListView" style="display:none;">
+              <!-- Filter bar -->
+              <div style="padding:12px 20px;border-bottom:1px solid var(--border-light);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <span style="font-size:12px;font-weight:600;color:var(--text-muted);">ฟิลเตอร์:</span>
+                <select class="form-select" id="filterLevel" onchange="renderListView()" style="font-size:12px;padding:5px 10px;">
+                  <option value="all">ทุกชั้น</option>
+                  <option value="1">ชั้น 1</option>
+                  <option value="2">ชั้น 2</option>
+                  <option value="3">ชั้น 3</option>
+                </select>
+                <select class="form-select" id="filterTier" onchange="renderListView()" style="font-size:12px;padding:5px 10px;">
+                  <option value="all">ทุกตำแหน่ง</option>
+                  <option value="Starter">Starter</option>
+                  <option value="Silver">Silver</option>
+                  <option value="Gold">Gold</option>
+                  <option value="Platinum">Platinum</option>
+                  <option value="Wisdom">Wisdom</option>
+                </select>
+                <span id="listCount" style="font-size:11px;color:var(--text-muted);margin-left:auto;"></span>
+              </div>
+              <div style="padding:0;overflow-x:auto;" id="listTableWrap"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ PAGE: Income ═══════════ -->
+        <div class="page" id="page-income">
+          <div class="stats-grid cols-3">
+            <div class="stat-card green">
+              <div class="stat-label">รายได้รวมเดือนนี้</div>
+              <div class="stat-value" style="color:var(--primary)">฿18,450</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-label">รายได้รวมปีนี้</div>
+              <div class="stat-value" style="color:var(--accent-orange)">฿87,200</div>
+            </div>
+            <div class="stat-card purple">
+              <div class="stat-label">รอจ่าย</div>
+              <div class="stat-value" style="color:var(--accent-purple)">฿4,450</div>
+            </div>
+          </div>
+
+          <div class="income-grid">
+            <div class="income-card">
+              <div class="income-card-header">
+                <div class="income-type">ค่าคอมมิชชั่น Affiliate</div>
+                <span class="tag tag-green">ผู้ขายกำหนด</span>
+              </div>
+              <div class="income-amount" style="color:var(--primary)">฿8,200</div>
+              <div class="income-desc">คอมมิชชั่นจากการแนะนำสินค้า ผู้ขายกำหนด % เอง (5-20%)<br><strong>แหล่งที่มา:</strong> ยอดขายจากลิงก์ affiliate</div>
+              <div class="income-bar"><div class="income-bar-fill" style="width:75%;background:var(--primary)"></div></div>
+            </div>
+
+            <div class="income-card">
+              <div class="income-card-header">
+                <div class="income-type">Royalty / Licensing Fee</div>
+                <span class="tag tag-purple">2%</span>
+              </div>
+              <div class="income-amount" style="color:var(--accent-purple)">฿4,500</div>
+              <div class="income-desc">คำนวณแบบ cascade ตามตำแหน่ง จากรายได้ลูกทีม<br><strong>Gold ได้รับ:</strong> 30% ของรายได้ขั้นก่อนหน้า</div>
+              <div class="income-bar"><div class="income-bar-fill" style="width:55%;background:var(--accent-purple)"></div></div>
+            </div>
+
+            <div class="income-card">
+              <div class="income-card-header">
+                <div class="income-type">Team Management Fee</div>
+                <span class="tag tag-orange">1%</span>
+              </div>
+              <div class="income-amount" style="color:var(--accent-orange)">฿2,350</div>
+              <div class="income-desc">1% ของรายได้คอมมิชชั่นรวมทีม → pool → จ่ายตามตำแหน่ง<br><strong>Gold ได้รับ:</strong> 10% ของ pool</div>
+              <div class="income-bar"><div class="income-bar-fill" style="width:40%;background:var(--accent-orange)"></div></div>
+              <div style="margin-top:10px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:11px;">
+                <strong>เงื่อนไข:</strong> ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน
+                <div class="qual-status" style="margin-top:4px;"><span class="qual-dot pass"></span><span style="color:var(--primary);font-weight:600;">ผ่านเกณฑ์</span></div>
+              </div>
+            </div>
+
+            <div class="income-card">
+              <div class="income-card-header">
+                <div class="income-type">Sales Sharing</div>
+                <span class="tag" style="background:#EFF6FF;color:#1E40AF;">1%</span>
+              </div>
+              <div class="income-amount" style="color:var(--accent-blue)">฿2,100</div>
+              <div class="income-desc">1% ของยอดขายรวมบริษัท → แบ่งตามตำแหน่ง → หารจำนวนคน<br><strong>Gold pool:</strong> 10% · ผู้ผ่านเกณฑ์ 15 คน</div>
+              <div class="income-bar"><div class="income-bar-fill" style="width:35%;background:var(--accent-blue)"></div></div>
+              <div style="margin-top:10px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:11px;">
+                <strong>เงื่อนไข:</strong> ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿10,000/เดือน
+                <div class="qual-status" style="margin-top:4px;"><span class="qual-dot fail"></span><span style="color:var(--accent-red);font-weight:600;">ยังไม่ผ่าน (฿8,200 / ฿10,000)</span></div>
+              </div>
+            </div>
+
+            <!-- Campaign / Promotional Bonus -->
+            <div style="grid-column:1/-1;background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <div style="font-size:14px;font-weight:700;">แคมเปญรางวัลพิเศษ</div>
+                <span class="tag" style="background:#FCE7F3;color:#9D174D;">Campaign</span>
+              </div>
+
+              <!-- Campaign 1 -->
+              <div style="background:var(--bg);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div style="font-size:13px;font-weight:700;">🎌 ทริปญี่ปุ่น Q2/2569</div>
+                  <span class="tag tag-green" style="font-size:10px;">กำลังดำเนินการ</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">สะสมค่านายหน้า ฿100,000 ภายใน 6 เดือน (ม.ค. — มิ.ย. 2569) = 1 ที่นั่ง · สูงสุด 2 ที่นั่ง</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:10px;">
+                  <div style="flex:1;">
+                    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px;">
+                      <span>ยอดสะสมค่านายหน้า</span>
+                      <span style="font-weight:700;color:var(--accent-pink);">฿68,000 / ฿100,000</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:68%;background:var(--accent-pink)"></div></div>
+                  </div>
+                  <div style="text-align:center;min-width:60px;">
+                    <div style="font-size:20px;font-weight:800;color:var(--accent-pink);font-family:'Inter';">68%</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">เหลืออีก ฿32,000 · เหลือเวลา 42 วัน</div>
+              </div>
+
+              <!-- Campaign 2 -->
+              <div style="background:var(--bg);border-radius:var(--radius-sm);padding:16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div style="font-size:13px;font-weight:700;">🇭🇰 ทริปฮ่องกง ปี 2569</div>
+                  <span class="tag tag-green" style="font-size:10px;">กำลังดำเนินการ</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">สะสมค่านายหน้า ฿200,000 ภายใน 12 เดือน (ม.ค. — ธ.ค. 2569) = 1 ที่นั่ง · สูงสุด 2 ที่นั่ง</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:10px;">
+                  <div style="flex:1;">
+                    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px;">
+                      <span>ยอดสะสมค่านายหน้า</span>
+                      <span style="font-weight:700;color:var(--accent-orange);">฿68,000 / ฿200,000</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:34%;background:var(--accent-orange)"></div></div>
+                  </div>
+                  <div style="text-align:center;min-width:60px;">
+                    <div style="font-size:20px;font-weight:800;color:var(--accent-orange);font-family:'Inter';">34%</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">เหลืออีก ฿132,000 · เหลือเวลา 224 วัน</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ PAGE: Products (สินค้าที่ขายได้) ═══════════ -->
+        <div class="page" id="page-products">
+          <!-- Filter bar -->
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">ช่วงเวลา:</span>
+              <input type="month" value="2026-05" class="form-select" style="font-size:12px;padding:6px 10px;font-family:'Inter';">
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">สถานะ:</span>
+              <select class="form-select" style="font-size:12px;padding:6px 10px;">
+                <option value="all">ทุกสถานะ</option>
+                <option value="completed">จ่ายแล้ว</option>
+                <option value="processing">กำลังดำเนินการ</option>
+                <option value="shipping">กำลังจัดส่ง</option>
+                <option value="pending">รอยืนยัน</option>
+                <option value="cancelled">ยกเลิก</option>
+                <option value="refunded">คืนเงิน</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+            <div class="stat-card green">
+              <div class="stat-label">สินค้าที่ขายได้</div>
+              <div class="stat-value" style="color:var(--primary)">38</div>
+              <div class="stat-sub">ชิ้น · พ.ค. 2569</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-label">ยอดขายรวม</div>
+              <div class="stat-value" style="color:var(--accent-orange)">฿45,200</div>
+            </div>
+            <div class="stat-card purple">
+              <div class="stat-label">ค่าคอมมิชชั่นรวม</div>
+              <div class="stat-value" style="color:var(--accent-purple)">฿8,200</div>
+            </div>
+            <div class="stat-card blue">
+              <div class="stat-label">ออเดอร์ทั้งหมด</div>
+              <div class="stat-value" style="color:var(--accent-blue)">16</div>
+              <div class="stat-sub">สำเร็จ 12 · รอ 2 · ยกเลิก 2</div>
+            </div>
+          </div>
+
+          <!-- Charts: Donut (สัดส่วนสินค้า) + Stacked Bar (ขายเอง vs ลูกทีม) -->
+          <div style="display:grid;grid-template-columns:340px 1fr;gap:20px;margin-bottom:24px;">
+            <!-- Donut: สัดส่วนสินค้าที่ขายได้ -->
+            <div class="panel">
+              <div class="panel-header"><div class="panel-title">สัดส่วนสินค้าที่ขายได้</div></div>
+              <div class="panel-body" style="display:flex;flex-direction:column;align-items:center;gap:0;">
+                <div style="position:relative;width:220px;height:220px;margin-bottom:20px;">
+                  <div style="width:220px;height:220px;border-radius:50%;background:conic-gradient(#059669 0% 26%,#3B82F6 26% 49%,#F59E0B 49% 69%,#8B5CF6 69% 82%,#EC4899 82% 92%,#94A3B8 92% 100%);"></div>
+                  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:130px;height:130px;border-radius:50%;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                    <div style="font-size:32px;font-weight:800;font-family:'Inter';color:var(--text-primary);">61</div>
+                    <div style="font-size:11px;color:var(--text-muted);">ชิ้น · ฿45.2k</div>
+                  </div>
+                </div>
+                <div style="width:100%;display:flex;flex-direction:column;gap:6px;">
+                  <div style="display:flex;align-items:center;font-size:12px;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#059669;flex-shrink:0;"></span><span style="flex:1;">เซรั่มบำรุงผิว</span><strong style="font-family:'Inter';white-space:nowrap;">16 ชิ้น</strong><span style="color:var(--text-muted);font-family:'Inter';font-size:11px;min-width:50px;text-align:right;">26%</span></div>
+                  <div style="display:flex;align-items:center;font-size:12px;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#3B82F6;flex-shrink:0;"></span><span style="flex:1;">ครีมกันแดด</span><strong style="font-family:'Inter';white-space:nowrap;">14 ชิ้น</strong><span style="color:var(--text-muted);font-family:'Inter';font-size:11px;min-width:50px;text-align:right;">23%</span></div>
+                  <div style="display:flex;align-items:center;font-size:12px;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#F59E0B;flex-shrink:0;"></span><span style="flex:1;">วิตามินซี</span><strong style="font-family:'Inter';white-space:nowrap;">12 ชิ้น</strong><span style="color:var(--text-muted);font-family:'Inter';font-size:11px;min-width:50px;text-align:right;">20%</span></div>
+                  <div style="display:flex;align-items:center;font-size:12px;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#8B5CF6;flex-shrink:0;"></span><span style="flex:1;">คอลลาเจนผง</span><strong style="font-family:'Inter';white-space:nowrap;">8 ชิ้น</strong><span style="color:var(--text-muted);font-family:'Inter';font-size:11px;min-width:50px;text-align:right;">13%</span></div>
+                  <div style="display:flex;align-items:center;font-size:12px;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#EC4899;flex-shrink:0;"></span><span style="flex:1;">แชมพูสมุนไพร</span><strong style="font-family:'Inter';white-space:nowrap;">6 ชิ้น</strong><span style="color:var(--text-muted);font-family:'Inter';font-size:11px;min-width:50px;text-align:right;">10%</span></div>
+                  <div style="display:flex;align-items:center;font-size:12px;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#94A3B8;flex-shrink:0;"></span><span style="flex:1;">อื่นๆ</span><strong style="font-family:'Inter';white-space:nowrap;">5 ชิ้น</strong><span style="color:var(--text-muted);font-family:'Inter';font-size:11px;min-width:50px;text-align:right;">8%</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!--
+              Top 5 ค่าลิขสิทธิ์สูงสุด — เรียงต่างจาก donut (ตาม royalty ไม่ใช่ชิ้น)
+              อันดับต่างจาก donut เพราะสินค้าราคาสูง+ลูกทีมขายเยอะ = ลิขสิทธิ์สูง
+              1. คอลลาเจน ฿690 → ลูกทีม 25ชิ้น = ฿103.50   ขายเอง 8ชิ้น คอม ฿552
+              2. เซรั่ม ฿890 → ลูกทีม 11ชิ้น = ฿58.74        ขายเอง 16ชิ้น คอม ฿1,424
+              3. กันแดด ฿450 → ลูกทีม 18ชิ้น = ฿48.60        ขายเอง 14ชิ้น คอม ฿630
+              4. วิตามิน ฿350 → ลูกทีม 20ชิ้น = ฿42.00       ขายเอง 12ชิ้น คอม ฿997
+              5. สบู่สมุนไพร ฿150 → ลูกทีม 30ชิ้น = ฿27.00   ขายเอง 3ชิ้น คอม ฿22.50
+              รวม ฿279.84
+            -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Top 5 ค่าลิขสิทธิ์จากลูกทีม</div>
+              </div>
+              <div class="panel-body" style="display:flex;flex-direction:column;gap:18px;">
+                <div style="display:flex;gap:16px;font-size:11px;color:var(--text-muted);">
+                  <div style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#8B5CF6;display:inline-block;"></span><strong style="color:var(--text-secondary);">ค่าลิขสิทธิ์</strong></div>
+                  <div style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#E5E7EB;display:inline-block;"></span><strong style="color:var(--text-secondary);">ค่าคอมขายเอง</strong> (เปรียบเทียบ)</div>
+                </div>
+
+                <!-- #1 คอลลาเจน -->
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:700;">1. คอลลาเจนผง</span><span style="font-size:11px;color:var(--text-muted);">ลูกทีมขาย 25 ชิ้น</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                    <span style="font-size:10px;color:var(--accent-purple);font-weight:600;min-width:55px;">ลิขสิทธิ์</span>
+                    <div style="flex:1;height:22px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:100%;background:linear-gradient(90deg,#8B5CF6,#A78BFA);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-weight:700;">฿103.50</div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:10px;color:var(--text-muted);min-width:55px;">ค่าคอม</span>
+                    <div style="flex:1;height:14px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:80%;background:#E5E7EB;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:9px;color:#4B5563;font-weight:600;">ขายเอง 8 ชิ้น · คอม ฿552</div></div>
+                  </div>
+                </div>
+
+                <!-- #2 เซรั่ม -->
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:700;">2. เซรั่มบำรุงผิว</span><span style="font-size:11px;color:var(--text-muted);">ลูกทีมขาย 11 ชิ้น</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                    <span style="font-size:10px;color:var(--accent-purple);font-weight:600;min-width:55px;">ลิขสิทธิ์</span>
+                    <div style="flex:1;height:22px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:57%;background:linear-gradient(90deg,#8B5CF6,#A78BFA);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-weight:700;">฿58.74</div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:10px;color:var(--text-muted);min-width:55px;">ค่าคอม</span>
+                    <div style="flex:1;height:14px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:100%;background:#E5E7EB;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:9px;color:#4B5563;font-weight:600;">ขายเอง 16 ชิ้น · คอม ฿1,424</div></div>
+                  </div>
+                </div>
+
+                <!-- #3 กันแดด -->
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:700;">3. ครีมกันแดด SPF50+</span><span style="font-size:11px;color:var(--text-muted);">ลูกทีมขาย 18 ชิ้น</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                    <span style="font-size:10px;color:var(--accent-purple);font-weight:600;min-width:55px;">ลิขสิทธิ์</span>
+                    <div style="flex:1;height:22px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:47%;background:linear-gradient(90deg,#8B5CF6,#A78BFA);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-weight:700;">฿48.60</div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:10px;color:var(--text-muted);min-width:55px;">ค่าคอม</span>
+                    <div style="flex:1;height:14px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:44%;background:#E5E7EB;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:9px;color:#4B5563;font-weight:600;">ขายเอง 14 ชิ้น · คอม ฿630</div></div>
+                  </div>
+                </div>
+
+                <!-- #4 วิตามิน -->
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:700;">4. วิตามินซี 1000mg</span><span style="font-size:11px;color:var(--text-muted);">ลูกทีมขาย 20 ชิ้น</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                    <span style="font-size:10px;color:var(--accent-purple);font-weight:600;min-width:55px;">ลิขสิทธิ์</span>
+                    <div style="flex:1;height:22px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:41%;background:linear-gradient(90deg,#8B5CF6,#A78BFA);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-weight:700;">฿42.00</div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:10px;color:var(--text-muted);min-width:55px;">ค่าคอม</span>
+                    <div style="flex:1;height:14px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:70%;background:#E5E7EB;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:9px;color:#4B5563;font-weight:600;">ขายเอง 12 ชิ้น · คอม ฿997</div></div>
+                  </div>
+                </div>
+
+                <!-- #5 สบู่ -->
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:700;">5. สบู่สมุนไพร</span><span style="font-size:11px;color:var(--text-muted);">ลูกทีมขาย 30 ชิ้น</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                    <span style="font-size:10px;color:var(--accent-purple);font-weight:600;min-width:55px;">ลิขสิทธิ์</span>
+                    <div style="flex:1;height:22px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:26%;background:linear-gradient(90deg,#8B5CF6,#A78BFA);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-weight:700;">฿27.00</div></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:10px;color:var(--text-muted);min-width:55px;">ค่าคอม</span>
+                    <div style="flex:1;height:14px;background:var(--border-light);border-radius:4px;overflow:hidden;"><div style="height:100%;width:5%;min-width:120px;background:#E5E7EB;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:9px;color:#4B5563;font-weight:600;">ขายเอง 3 ชิ้น · คอม ฿22.50</div></div>
+                  </div>
+                </div>
+
+                <div style="padding-top:8px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12px;color:var(--text-muted);">รวมค่าลิขสิทธิ์เดือนนี้</span>
+                  <span style="font-weight:800;color:var(--accent-purple);font-family:'Inter';font-size:16px;">฿279.84</span>
+                </div>
+                <div style="font-size:10px;color:var(--text-muted);line-height:1.5;">
+                  เรียงตามค่าลิขสิทธิ์รวมสูงสุด · อันดับต่างจากกราฟซ้ายเพราะขึ้นกับราคาสินค้าและจำนวนที่ลูกทีมขาย
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Table -->
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">รายการออเดอร์ล่าสุด</div></div>
+            <div style="padding:0;overflow-x:auto;">
+              <table class="data-table" style="min-width:800px;">
+                <thead><tr>
+                  <th>สินค้า</th><th style="text-align:center">จำนวน</th><th style="text-align:right">ราคา/ชิ้น</th><th style="text-align:right">ยอดขาย</th><th style="text-align:center">คอม %</th><th style="text-align:right">ค่าคอม</th><th style="text-align:center">สถานะ</th><th>วันที่</th>
+                </tr></thead>
+                <tbody>
+                  <tr><td style="font-weight:600;">เซรั่มบำรุงผิว Premium</td><td style="text-align:center;font-family:'Inter';font-weight:600;">5</td><td style="text-align:right;font-family:'Inter';">฿890</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿4,450</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿445</td><td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td><td style="font-size:12px;color:var(--text-muted);">5 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">วิตามินซี 1000mg</td><td style="text-align:center;font-family:'Inter';font-weight:600;">4</td><td style="text-align:right;font-family:'Inter';">฿350</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿1,400</td><td style="text-align:center;font-family:'Inter';">15%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿210</td><td style="text-align:center"><span class="tag" style="background:#DBEAFE;color:#1E40AF;">กำลังจัดส่ง</span></td><td style="font-size:12px;color:var(--text-muted);">4 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">ครีมกันแดด SPF50+</td><td style="text-align:center;font-family:'Inter';font-weight:600;">6</td><td style="text-align:right;font-family:'Inter';">฿450</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿2,700</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿270</td><td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td><td style="font-size:12px;color:var(--text-muted);">3 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">คอลลาเจนผง</td><td style="text-align:center;font-family:'Inter';font-weight:600;">3</td><td style="text-align:right;font-family:'Inter';">฿690</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿2,070</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿207</td><td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td><td style="font-size:12px;color:var(--text-muted);">3 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">เซรั่มบำรุงผิว Premium</td><td style="text-align:center;font-family:'Inter';font-weight:600;">3</td><td style="text-align:right;font-family:'Inter';">฿890</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿2,670</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿267</td><td style="text-align:center"><span class="tag" style="background:#FEF3C7;color:#92400E;">กำลังดำเนินการ</span></td><td style="font-size:12px;color:var(--text-muted);">2 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">แชมพูสมุนไพร</td><td style="text-align:center;font-family:'Inter';font-weight:600;">3</td><td style="text-align:right;font-family:'Inter';">฿280</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿840</td><td style="text-align:center;font-family:'Inter';">5%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿42</td><td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td><td style="font-size:12px;color:var(--text-muted);">2 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">ครีมกันแดด SPF50+</td><td style="text-align:center;font-family:'Inter';font-weight:600;">4</td><td style="text-align:right;font-family:'Inter';">฿450</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿1,800</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿180</td><td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td><td style="font-size:12px;color:var(--text-muted);">1 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">วิตามินซี 1000mg</td><td style="text-align:center;font-family:'Inter';font-weight:600;">3</td><td style="text-align:right;font-family:'Inter';">฿350</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿1,050</td><td style="text-align:center;font-family:'Inter';">15%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿157</td><td style="text-align:center"><span class="tag" style="background:#F3F4F6;color:#6B7280;">รอยืนยัน</span></td><td style="font-size:12px;color:var(--text-muted);">1 พ.ค. 69</td></tr>
+                  <tr><td style="font-weight:600;">เซรั่มบำรุงผิว Premium</td><td style="text-align:center;font-family:'Inter';font-weight:600;">8</td><td style="text-align:right;font-family:'Inter';">฿890</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿7,120</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿712</td><td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td><td style="font-size:12px;color:var(--text-muted);">28 เม.ย. 69</td></tr>
+                  <tr><td style="font-weight:600;">คอลลาเจนผง</td><td style="text-align:center;font-family:'Inter';font-weight:600;">5</td><td style="text-align:right;font-family:'Inter';">฿690</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿3,450</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿345</td><td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td><td style="font-size:12px;color:var(--text-muted);">27 เม.ย. 69</td></tr>
+                  <tr style="opacity:0.5;"><td style="font-weight:600;">สบู่สมุนไพร</td><td style="text-align:center;font-family:'Inter';font-weight:600;">2</td><td style="text-align:right;font-family:'Inter';">฿150</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿300</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-family:'Inter';text-decoration:line-through;color:var(--text-muted);">฿30</td><td style="text-align:center"><span class="tag" style="background:#FEF2F2;color:#991B1B;">ยกเลิก</span></td><td style="font-size:12px;color:var(--text-muted);">26 เม.ย. 69</td></tr>
+                  <tr style="opacity:0.5;"><td style="font-weight:600;">ครีมบำรุงมือ</td><td style="text-align:center;font-family:'Inter';font-weight:600;">1</td><td style="text-align:right;font-family:'Inter';">฿220</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿220</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-family:'Inter';text-decoration:line-through;color:var(--text-muted);">฿22</td><td style="text-align:center"><span class="tag" style="background:#FFF7ED;color:#9A3412;">คืนเงิน</span></td><td style="font-size:12px;color:var(--text-muted);">25 เม.ย. 69</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- สถานะคำอธิบาย -->
+          <div style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 0;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><span class="tag tag-green" style="font-size:10px;">จ่ายแล้ว</span> สำเร็จ · ค่าคอมจ่ายแล้ว</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><span class="tag" style="background:#FEF3C7;color:#92400E;font-size:10px;">กำลังดำเนินการ</span> รอแพ็คส่ง</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><span class="tag" style="background:#DBEAFE;color:#1E40AF;font-size:10px;">กำลังจัดส่ง</span> รอรับของ</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><span class="tag" style="background:#F3F4F6;color:#6B7280;font-size:10px;">รอยืนยัน</span> รอ Seller</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><span class="tag" style="background:#FEF2F2;color:#991B1B;font-size:10px;">ยกเลิก</span> ไม่ได้คอม</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><span class="tag" style="background:#FFF7ED;color:#9A3412;font-size:10px;">คืนเงิน</span> หักคอมคืน</div>
+          </div>
+        </div>
+
+        <!-- ═══════════ PAGE: Links (ลิงก์ของฉัน) ═══════════ -->
+        <div class="page" id="page-links">
+          <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="stat-card green">
+              <div class="stat-label">จำนวนคลิกทั้งหมด</div>
+              <div class="stat-value" style="color:var(--primary)">1,247</div>
+              <div class="stat-sub"><span class="up">↑ 18%</span> จากเดือนก่อน</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-label">ยอดขายจากลิงก์</div>
+              <div class="stat-value" style="color:var(--accent-orange)">฿45,200</div>
+            </div>
+            <div class="stat-card purple">
+              <div class="stat-label">Conversion Rate</div>
+              <div class="stat-value" style="color:var(--accent-purple)">3.2%</div>
+              <div class="stat-sub">38 ออเดอร์ / 1,247 คลิก</div>
+            </div>
+          </div>
+
+          <!-- ลิงก์หลัก -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">ลิงก์ Affiliate ของฉัน</div>
+              <button class="btn btn-sm btn-primary">+ สร้างลิงก์ใหม่</button>
+            </div>
+            <div style="padding:0;overflow-x:auto;">
+              <table class="data-table" style="min-width:700px;">
+                <thead>
+                  <tr>
+                    <th>ชื่อลิงก์</th>
+                    <th>URL</th>
+                    <th style="text-align:center">คลิก</th>
+                    <th style="text-align:center">ออเดอร์</th>
+                    <th style="text-align:right">ยอดขาย</th>
+                    <th style="text-align:center">CVR</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-weight:600;">ลิงก์หลัก (ร้านค้า)</td>
+                    <td style="font-size:12px;font-family:'Inter';color:var(--primary);">pordee.co/sp001</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">824</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">28</td>
+                    <td style="text-align:right;font-weight:700;font-family:'Inter';">฿32,400</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">3.4%</td>
+                    <td><button class="btn btn-sm btn-outline" style="font-size:11px;">คัดลอก</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600;">โปรเซรั่ม</td>
+                    <td style="font-size:12px;font-family:'Inter';color:var(--primary);">pordee.co/sp001-serum</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">312</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">8</td>
+                    <td style="text-align:right;font-weight:700;font-family:'Inter';">฿7,120</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">2.6%</td>
+                    <td><button class="btn btn-sm btn-outline" style="font-size:11px;">คัดลอก</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600;">แคมเปญ IG Story</td>
+                    <td style="font-size:12px;font-family:'Inter';color:var(--primary);">pordee.co/sp001-ig</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">111</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">2</td>
+                    <td style="text-align:right;font-weight:700;font-family:'Inter';">฿5,680</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">1.8%</td>
+                    <td><button class="btn btn-sm btn-outline" style="font-size:11px;">คัดลอก</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ PAGE: Campaigns (แคมเปญ) ═══════════ -->
+        <div class="page" id="page-campaigns">
+          <div style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">แคมเปญรางวัลพิเศษที่กำลังเปิดอยู่ สะสมยอดตามเงื่อนไขเพื่อรับรางวัล</div>
+
+          <!-- Campaign 1 -->
+          <div class="panel" style="margin-bottom:16px;">
+            <div class="panel-header" style="background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(139,92,246,0.05));">
+              <div>
+                <div class="panel-title">🎌 ทริปญี่ปุ่น Q2/2569</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">ม.ค. — มิ.ย. 2569</div>
+              </div>
+              <span class="tag tag-green">กำลังดำเนินการ</span>
+            </div>
+            <div class="panel-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div>
+                  <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">
+                    <strong>เงื่อนไข:</strong> สะสมค่านายหน้า ฿100,000 ภายใน 6 เดือน<br>
+                    <strong>รางวัล:</strong> 1 ที่นั่งทริปญี่ปุ่น<br>
+                    <strong>สูงสุด:</strong> 2 ที่นั่ง (฿200,000)
+                  </div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                    <span>ยอดสะสมค่านายหน้า</span>
+                    <span style="font-weight:700;color:var(--accent-pink);">฿68,000 / ฿100,000</span>
+                  </div>
+                  <div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:68%;background:linear-gradient(90deg,var(--accent-pink),var(--accent-purple));"></div></div>
+                  <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;">
+                    <span style="color:var(--text-muted);">เหลืออีก ฿32,000</span>
+                    <span style="font-weight:700;color:var(--accent-pink);">68%</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">เหลือเวลา 42 วัน</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campaign 2 -->
+          <div class="panel" style="margin-bottom:16px;">
+            <div class="panel-header" style="background:rgba(245,158,11,0.05);">
+              <div>
+                <div class="panel-title">🇭🇰 ทริปฮ่องกง ปี 2569</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">ม.ค. — ธ.ค. 2569</div>
+              </div>
+              <span class="tag tag-green">กำลังดำเนินการ</span>
+            </div>
+            <div class="panel-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div>
+                  <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">
+                    <strong>เงื่อนไข:</strong> สะสมค่านายหน้า ฿200,000 ภายใน 12 เดือน<br>
+                    <strong>รางวัล:</strong> 1 ที่นั่งทริปฮ่องกง<br>
+                    <strong>สูงสุด:</strong> 2 ที่นั่ง (฿400,000)
+                  </div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                    <span>ยอดสะสมค่านายหน้า</span>
+                    <span style="font-weight:700;color:var(--accent-orange);">฿68,000 / ฿200,000</span>
+                  </div>
+                  <div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:34%;background:var(--accent-orange);"></div></div>
+                  <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;">
+                    <span style="color:var(--text-muted);">เหลืออีก ฿132,000</span>
+                    <span style="font-weight:700;color:var(--accent-orange);">34%</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">เหลือเวลา 224 วัน</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campaign 3 (upcoming) -->
+          <div class="panel" style="opacity:0.6;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">🏆 Gold Award Q3/2569</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">ก.ค. — ก.ย. 2569</div>
+              </div>
+              <span class="tag" style="background:#F3F4F6;color:#6B7280;">เร็วๆ นี้</span>
+            </div>
+            <div class="panel-body">
+              <div style="font-size:13px;color:var(--text-secondary);">
+                <strong>เงื่อนไข:</strong> สะสมค่านายหน้า ฿50,000 ภายใน 3 เดือน<br>
+                <strong>รางวัล:</strong> ทองคำ 1 สลึง<br>
+                <div style="margin-top:8px;font-size:12px;color:var(--text-muted);">แคมเปญยังไม่เปิด · เริ่ม ก.ค. 2569</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div class="mockup-watermark">MOCKUP — PordeeConnect Partner Portal v0.1</div>
+
+  <script>
+    const titles = {
+      dashboard: 'แดชบอร์ด',
+      income: 'รายได้ของฉัน',
+      products: 'สินค้าที่ขายได้',
+      links: 'ลิงก์ของฉัน',
+      campaigns: 'แคมเปญ',
+      team: 'ทีมของฉัน'
+    };
+
+    function showPage(id, navEl) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + id)?.classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      if (navEl) navEl.classList.add('active');
+      document.getElementById('pageTitle').textContent = titles[id] || id;
+    }
+
+    // ── Team Data (3 levels deep) ──
+    // Total: สมหญิง 17 คน, วรรณา 5, ประวิทย์ 3, กมลวรรณ 3, อรอุมา 1
+    const TEAM = {
+      id:'SP', name:'สมหญิง พอดีนะ (คุณ)', code:'#PN-001', tier:'Gold', color:'#F59E0B,#D97706',
+      sales:45200, comm:8200, level:0, parent:'—',
+      children: [
+        { id:'วร', name:'วรรณา สุขใจ', code:'#PN-012', tier:'Gold', color:'#F59E0B,#D97706',
+          sales:12400, comm:3200, level:1, parent:'สมหญิง',
+          children: [ // วรรณา: 5 คน (3 ตรง + 2 ชั้น3)
+            { id:'สุ', name:'สุรเชษฐ์ ดีเด่น', code:'#PN-045', tier:'Platinum', color:'#8B5CF6,#6D28D9',
+              sales:15800, comm:5100, level:2, parent:'วรรณา',
+              children: [ // สุรเชษฐ์: 2 ชั้น3
+                { id:'พร', name:'พรชัย มีสุข', code:'#PN-088', tier:'Starter', color:'#10B981,#059669', sales:1800, comm:0, level:3, parent:'สุรเชษฐ์', children:[] },
+                { id:'ดา', name:'ดารา แสงทอง', code:'#PN-091', tier:'Silver', color:'#94A3B8,#64748B', sales:4200, comm:840, level:3, parent:'สุรเชษฐ์', children:[] },
+              ]},
+            { id:'มน', name:'มนัส ใจดี', code:'#PN-052', tier:'Starter', color:'#10B981,#059669',
+              sales:2100, comm:0, level:2, parent:'วรรณา', children:[] },
+            { id:'สม', name:'สมศรี รักดี', code:'#PN-058', tier:'Silver', color:'#94A3B8,#64748B',
+              sales:6800, comm:1360, level:2, parent:'วรรณา', children:[] },
+          ]},
+        { id:'ปร', name:'ประวิทย์ มั่นคง', code:'#PN-018', tier:'Silver', color:'#94A3B8,#64748B',
+          sales:8700, comm:0, level:1, parent:'สมหญิง',
+          children: [ // ประวิทย์: 3 คน (2 ตรง + 1 ชั้น3)
+            { id:'จิ', name:'จิราภา วงษ์สว่าง', code:'#PN-071', tier:'Gold', color:'#F59E0B,#D97706',
+              sales:9500, comm:1900, level:2, parent:'ประวิทย์',
+              children: [
+                { id:'ณั', name:'ณัฐพล คงมั่น', code:'#PN-102', tier:'Starter', color:'#10B981,#059669', sales:2400, comm:0, level:3, parent:'จิราภา', children:[] },
+              ]},
+            { id:'อา', name:'อารยา จันทร์เพ็ญ', code:'#PN-075', tier:'Starter', color:'#10B981,#059669', sales:1500, comm:0, level:2, parent:'ประวิทย์', children:[] },
+          ]},
+        { id:'นิ', name:'นิภา จันทร์ดี', code:'#PN-067', tier:'Starter', color:'#10B981,#059669',
+          sales:3200, comm:0, level:1, parent:'สมหญิง', children:[] },
+        { id:'กม', name:'กมลวรรณ รุ่งเรือง', code:'#PN-005', tier:'Wisdom', color:'#EC4899,#DB2777',
+          sales:28300, comm:9200, level:1, parent:'สมหญิง',
+          children: [ // กมลวรรณ: 3 คน (2 ตรง + 1 ชั้น3)
+            { id:'วิ', name:'วิภาวดี สุขสันต์', code:'#PN-031', tier:'Gold', color:'#F59E0B,#D97706',
+              sales:11200, comm:2240, level:2, parent:'กมลวรรณ',
+              children: [
+                { id:'ปิ', name:'ปิยะ ศรีสุข', code:'#PN-110', tier:'Starter', color:'#10B981,#059669', sales:3100, comm:0, level:3, parent:'วิภาวดี', children:[] },
+              ]},
+            { id:'ธน', name:'ธนภัทร ก้าวหน้า', code:'#PN-038', tier:'Silver', color:'#94A3B8,#64748B', sales:7400, comm:1480, level:2, parent:'กมลวรรณ', children:[] },
+          ]},
+        { id:'อร', name:'อรอุมา สมบูรณ์', code:'#PN-023', tier:'Silver', color:'#94A3B8,#64748B',
+          sales:5600, comm:1120, level:1, parent:'สมหญิง',
+          children: [ // อรอุมา: 1 คน
+            { id:'รั', name:'รัชนี พงษ์พันธ์', code:'#PN-082', tier:'Starter', color:'#10B981,#059669', sales:2800, comm:0, level:2, parent:'อรอุมา', children:[] },
+          ]},
+      ]
+    };
+
+    const tierBadge = t => {
+      const cls = {Starter:'badge-starter',Silver:'badge-silver',Gold:'badge-gold',Platinum:'badge-platinum',Wisdom:'badge-wisdom'};
+      return `<span class="rank-badge ${cls[t]||''}" style="margin-left:8px;">${t}</span>`;
+    };
+    const av = (id,color,sz=36,fs=13) => `<div class="tree-avatar" style="background:linear-gradient(135deg,${color});width:${sz}px;height:${sz}px;font-size:${fs}px;">${id}</div>`;
+    const fmtB = n => n ? '฿'+n.toLocaleString() : '—';
+    const countAll = node => node.children.reduce((s,c) => s + 1 + countAll(c), 0);
+
+    // ── Tree View (Accordion) ──
+    function renderTreeNode(node, depth) {
+      const hasKids = node.children.length > 0;
+      const totalKids = countAll(node);
+      const isRoot = depth === 0;
+      const toggleId = 'acc_' + node.code.replace('#','');
+      let html = `<div class="tree-node" style="position:relative;cursor:${hasKids?'pointer':'default'};" ${hasKids && !isRoot ? `onclick="toggleAcc('${toggleId}')"` : ''}>`;
+      if (depth > 0) html += `<div class="tree-connector"></div>`;
+      html += av(node.id, node.color);
+      html += `<div class="tree-info">
+        <div class="tree-name">${node.name} ${tierBadge(node.tier)} ${hasKids && !isRoot ? '<span style="font-size:11px;color:var(--text-muted);margin-left:6px;">▼</span>':''}</div>
+        <div class="tree-role">${isRoot?'แม่ทีม':'ลูกทีมชั้น '+depth} · ${node.code}</div>
+        <div class="tree-stats">
+          <div class="tree-stat">ยอดขาย: <strong>${fmtB(node.sales)}</strong></div>
+          ${node.comm ? `<div class="tree-stat">คอมมิชชั่น: <strong>${fmtB(node.comm)}</strong></div>` : ''}
+          ${hasKids ? `<div class="tree-stat">ลูกทีม: <strong>${totalKids} คน</strong></div>` : ''}
+        </div></div></div>`;
+      if (hasKids) {
+        const open = isRoot ? '' : 'style="display:none;"';
+        html += `<div class="tree-level" id="${toggleId}" ${open}>`;
+        node.children.forEach(c => { html += renderTreeNode(c, depth+1); });
+        html += `</div>`;
+      }
+      return html;
+    }
+    function renderTreeView() {
+      document.getElementById('teamTreeView').innerHTML = renderTreeNode(TEAM, 0);
+    }
+
+    function toggleAcc(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const arrow = el.previousElementSibling?.querySelector('.tree-name span:last-child');
+      if (el.style.display === 'none') {
+        el.style.display = '';
+        if (arrow) arrow.textContent = '▼';
+      } else {
+        el.style.display = 'none';
+        if (arrow) arrow.textContent = '▶';
+      }
+    }
+
+    // ── List View (Expandable Table + Filter) ──
+    function flattenTree(node, arr=[]) {
+      arr.push(node);
+      node.children.forEach(c => flattenTree(c, arr));
+      return arr;
+    }
+
+    let listExpandState = {}; // track which rows are expanded
+
+    function toggleListRow(code) {
+      listExpandState[code] = !listExpandState[code];
+      renderListView();
+    }
+
+    function renderListView() {
+      const all = flattenTree(TEAM);
+      const fLevel = document.getElementById('filterLevel').value;
+      const fTier = document.getElementById('filterTier').value;
+
+      const members = all.filter(m => m.level > 0); // exclude root (me)
+      const isFiltering = fLevel !== 'all' || fTier !== 'all';
+
+      let filtered;
+      if (isFiltering) {
+        filtered = members.filter(m => {
+          if (fLevel !== 'all' && m.level !== +fLevel) return false;
+          if (fTier !== 'all' && m.tier !== fTier) return false;
+          return true;
+        });
+      }
+
+      const shownCount = isFiltering ? filtered.length : members.length;
+      document.getElementById('listCount').textContent = `แสดง ${shownCount} / ${members.length} คน`;
+
+      let html = `<table class="data-table" style="min-width:800px;">
+        <thead><tr>
+          <th style="width:24px;"></th>
+          <th>ชื่อ</th>
+          <th>รหัส</th>
+          <th style="text-align:center">ตำแหน่ง</th>
+          <th style="text-align:center">ชั้น</th>
+          <th>แม่ทีม</th>
+          <th style="text-align:right">ยอดขาย</th>
+          <th style="text-align:right">คอมมิชชั่น</th>
+          <th style="text-align:center">ลูกทีม</th>
+        </tr></thead><tbody>`;
+
+      if (isFiltering) {
+        filtered.forEach(m => {
+          const totalKids = countAll(m);
+          html += listRow(m, totalKids, false, 0, false, true);
+        });
+      } else {
+        // Expandable tree
+        html += renderExpandableRows(TEAM, 0, true);
+      }
+
+      html += `</tbody></table>`;
+      document.getElementById('listTableWrap').innerHTML = html;
+    }
+
+    function renderExpandableRows(node, indent, parentVisible) {
+      const totalKids = countAll(node);
+      const hasKids = node.children.length > 0;
+      const isExpanded = !!listExpandState[node.code];
+      let html = '';
+
+      if (node.level === 0) {
+        // Root: skip row, render children as level 1 (always visible)
+        node.children.forEach(child => {
+          html += renderExpandableRows(child, 0, true);
+        });
+      } else {
+        // Render this row
+        const expandable = hasKids && node.level < 3;
+        html += listRow(node, totalKids, expandable, indent, isExpanded, parentVisible);
+
+        // Render children only if THIS node is expanded AND this row is visible
+        if (hasKids) {
+          const childrenVisible = parentVisible && isExpanded;
+          node.children.forEach(child => {
+            html += renderExpandableRows(child, indent + 1, childrenVisible);
+          });
+        }
+      }
+      return html;
+    }
+
+    function listRow(m, totalKids, expandable, indent, isExpanded, visible) {
+      // สีพื้นหลังแยกชัดตามชั้น
+      const bgColors = { 1:'#ffffff', 2:'#F0FDFA', 3:'#F5F3FF' };
+      const bg = bgColors[m.level] || '#fff';
+      const borderLeft = { 1:'none', 2:'3px solid #A8E6CF', 3:'3px solid #DDD6FE' };
+      const bl = borderLeft[m.level] || 'none';
+      const vis = visible === false ? 'display:none;' : '';
+
+      // indent สำหรับ avatar + ชื่อ
+      const padLeft = 12 + (indent || 0) * 32;
+
+      // expand/collapse button
+      let expBtn = '';
+      if (expandable) {
+        const arrow = isExpanded ? '▾' : '▸';
+        expBtn = `<span onclick="toggleListRow('${m.code}')" style="cursor:pointer;font-size:16px;color:var(--primary);user-select:none;font-weight:700;">${arrow}</span>`;
+      }
+
+      return `<tr style="background:${bg};border-left:${bl};${vis}" data-level="${m.level}">
+        <td style="text-align:center;padding:8px 4px;width:24px;">${expBtn}</td>
+        <td style="padding:10px 6px 10px ${padLeft}px;white-space:nowrap;" colspan="1">
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${av(m.id, m.color, 30, 10)}
+            <span style="font-weight:600;">${m.name}</span>
+          </div>
+        </td>
+        <td style="font-size:12px;color:var(--text-muted);font-family:'Inter';">${m.code}</td>
+        <td style="text-align:center">${tierBadge(m.tier)}</td>
+        <td style="text-align:center;font-family:'Inter';">${m.level}</td>
+        <td style="font-size:12px;">${m.parent}</td>
+        <td style="text-align:right;font-weight:700;font-family:'Inter';">${fmtB(m.sales)}</td>
+        <td style="text-align:right;${m.comm?'font-weight:700;':'color:var(--text-muted);'}font-family:'Inter';">${fmtB(m.comm)}</td>
+        <td style="text-align:center;${totalKids?'font-weight:700;':'color:var(--text-muted);'}">${totalKids}</td>
+      </tr>`;
+    }
+
+    function switchTeamView(view) {
+      const treeView = document.getElementById('teamTreeView');
+      const listView = document.getElementById('teamListView');
+      const btnTree = document.getElementById('btnTree');
+      const btnList = document.getElementById('btnList');
+      if (view === 'tree') {
+        treeView.style.display = '';
+        listView.style.display = 'none';
+        btnTree.className = 'btn btn-sm btn-primary';
+        btnList.className = 'btn btn-sm btn-outline';
+      } else {
+        treeView.style.display = 'none';
+        listView.style.display = '';
+        btnTree.className = 'btn btn-sm btn-outline';
+        btnList.className = 'btn btn-sm btn-primary';
+        renderListView();
+      }
+    }
+
+    function switchRole(btn, role) {
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const navTeam = document.getElementById('navTeam');
+      const navTeamBadge = document.getElementById('navTeamBadge');
+
+      if (role === 'leader') {
+        // แม่ทีม: เห็นทุกอย่าง
+        document.getElementById('profileName').textContent = 'สมหญิง พอดีนะ';
+        document.getElementById('profileRank').textContent = '★ Gold Member';
+        document.getElementById('profileAvatar').textContent = 'SP';
+        navTeam.classList.remove('disabled');
+        if (navTeamBadge) navTeamBadge.style.display = '';
+        // แสดง stat ทีม + ทีมล่าสุด
+        document.querySelectorAll('.leader-only-content').forEach(el => el.style.display = '');
+      } else {
+        // สมาชิก: ซ่อนทีม disable เมนูทีม
+        document.getElementById('profileName').textContent = 'นิภา จันทร์ดี';
+        document.getElementById('profileRank').textContent = 'Starter';
+        document.getElementById('profileAvatar').textContent = 'นิ';
+        navTeam.classList.add('disabled');
+        if (navTeamBadge) navTeamBadge.style.display = 'none';
+        // ซ่อน stat ทีม + ทีมล่าสุด
+        document.querySelectorAll('.leader-only-content').forEach(el => el.style.display = 'none');
+        // ถ้ากำลังอยู่หน้าทีม ให้กลับ dashboard
+        if (document.getElementById('page-team').classList.contains('active')) {
+          showPage('dashboard', document.querySelectorAll('.nav-item')[0]);
+        }
+      }
+    }
+
+    // Init
+    renderTreeView();
+  </script>
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PordeeNomad — เครื่องคำนวณค่าคอมมิชชั่น</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --secondary: #0D9488;
+      --accent-orange: #F59E0B;
+      --accent-purple: #8B5CF6;
+      --accent-pink: #EC4899;
+      --accent-blue: #3B82F6;
+      --bg: #F0FDF4;
+      --bg-white: #FFFFFF;
+      --text-primary: #0A2E1B;
+      --text-secondary: #3D6B50;
+      --text-muted: #7DA88A;
+      --border: rgba(5,150,105,0.12);
+      --border-light: rgba(5,150,105,0.06);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'IBM Plex Sans Thai','Inter',sans-serif;
+      background:var(--bg); color:var(--text-primary);
+      -webkit-font-smoothing:antialiased;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:
+        linear-gradient(rgba(5,150,105,0.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(5,150,105,0.04) 1px,transparent 1px);
+      background-size:48px 48px;
+    }
+    .container { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:32px 24px 80px; }
+
+    .header { margin-bottom:28px; }
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px; font-size:13px;
+      color:var(--text-muted); text-decoration:none; font-weight:500;
+      margin-bottom:16px; padding:6px 12px; border-radius:6px;
+      border:1px solid var(--border-light); background:var(--bg-white); transition:all 0.15s;
+    }
+    .back-link:hover { color:var(--primary); border-color:var(--primary); }
+    .page-title {
+      font-size:28px; font-weight:800; margin-bottom:6px;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .page-desc { font-size:14px; color:var(--text-secondary); }
+
+    /* ── Panel ── */
+    .panel {
+      background:var(--bg-white); border:1px solid var(--border);
+      border-radius:var(--radius-lg); overflow:hidden; margin-bottom:24px;
+    }
+    .panel-header {
+      padding:16px 24px; border-bottom:1px solid var(--border-light);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .panel-num {
+      width:28px; height:28px; border-radius:50%; display:inline-flex;
+      align-items:center; justify-content:center; font-size:13px; font-weight:700;
+      color:white; margin-right:10px; flex-shrink:0; font-family:'Inter';
+    }
+    .panel-title { font-size:15px; font-weight:700; display:flex; align-items:center; }
+    .panel-body { padding:24px; }
+
+    /* ── Form ── */
+    .form-row {
+      display:flex; align-items:center; gap:12px; margin-bottom:14px;
+    }
+    .form-label {
+      font-size:13px; font-weight:600; min-width:200px; flex-shrink:0;
+    }
+    .form-label small { display:block; font-size:11px; color:var(--text-muted); font-weight:400; }
+    .form-input {
+      width:140px; padding:8px 12px; border:1px solid var(--border);
+      border-radius:var(--radius-sm); font-size:14px; font-weight:600;
+      font-family:'Inter',sans-serif; text-align:right; background:var(--bg);
+      outline:none; transition:border-color 0.15s;
+    }
+    .form-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(5,150,105,0.1); }
+    .form-unit { font-size:13px; color:var(--text-muted); font-weight:500; min-width:30px; }
+    .form-select {
+      padding:8px 12px; border:1px solid var(--border);
+      border-radius:var(--radius-sm); font-size:13px; font-weight:600;
+      font-family:inherit; background:var(--bg); outline:none;
+      cursor:pointer; transition:border-color 0.15s;
+    }
+    .form-select:focus { border-color:var(--primary); }
+
+    /* ── Tier selector ── */
+    .tier-row {
+      display:flex; align-items:center; gap:10px; padding:8px 0;
+      padding-left:212px;
+    }
+    .tier-label { font-size:12px; font-weight:600; min-width:60px; color:var(--text-secondary); }
+
+    /* ── Result ── */
+    .result-box {
+      border:2px solid var(--primary); border-radius:var(--radius);
+      background:#ECFDF5; padding:20px 24px; margin-top:16px;
+    }
+    .result-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--primary); margin-bottom:12px; }
+    .result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+    .result-item { background:white; border-radius:var(--radius-sm); padding:14px; border:1px solid var(--border-light); }
+    .result-label { font-size:11px; color:var(--text-muted); font-weight:500; margin-bottom:4px; }
+    .result-value { font-size:22px; font-weight:800; font-family:'Inter',sans-serif; }
+    .result-sub { font-size:11px; color:var(--text-secondary); margin-top:2px; }
+
+    .result-table { width:100%; border-collapse:collapse; margin-top:12px; }
+    .result-table th {
+      text-align:left; font-size:11px; font-weight:600; text-transform:uppercase;
+      letter-spacing:0.05em; color:var(--text-muted); padding:8px 12px;
+      border-bottom:2px solid var(--border);
+    }
+    .result-table td {
+      padding:10px 12px; font-size:13px; border-bottom:1px solid var(--border-light);
+    }
+    .result-table .val { font-weight:700; font-family:'Inter',sans-serif; }
+    .result-table .formula { font-size:11px; color:var(--text-muted); }
+
+    /* ── Note ── */
+    .note {
+      margin-top:12px; padding:10px 14px; border-radius:var(--radius-sm);
+      font-size:12px; line-height:1.6; display:flex; align-items:flex-start; gap:8px;
+    }
+    .note-info { background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE; }
+    .note-warn { background:#FFF7ED; color:#9A3412; border:1px solid #FFCBA4; }
+
+    /* ── Divider ── */
+    .section-divider {
+      display:flex; align-items:center; gap:16px; margin:32px 0 20px;
+    }
+    .section-divider .line { flex:1; height:1px; background:var(--border); }
+    .section-divider .text {
+      font-size:11px; font-weight:600; text-transform:uppercase;
+      letter-spacing:0.08em; color:var(--text-muted);
+    }
+
+    /* ── Rank colors ── */
+    .rank-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:middle; }
+
+    .mockup-watermark {
+      position:fixed; bottom:12px; right:16px;
+      font-size:11px; color:var(--text-muted); font-weight:500;
+      background:rgba(255,255,255,0.85); padding:4px 12px;
+      border-radius:20px; border:1px solid var(--border-light); z-index:999;
+    }
+
+    @media (max-width:640px) {
+      .form-row { flex-direction:column; align-items:flex-start; }
+      .form-label { min-width:auto; }
+      .tier-row { padding-left:0; }
+      .result-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <a href="hub.html" class="back-link">← กลับ Hub</a>
+    <div class="page-title">เครื่องคำนวณค่าคอมมิชชั่น</div>
+    <div class="page-desc">กรอกตัวเลข แล้วระบบจะคำนวณรายได้ทุกประเภทให้อัตโนมัติ</div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- 1. ค่าลิขสิทธิ์ (Royalty / Licensing) -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-num" style="background:var(--accent-purple);">1</span>
+        ค่าลิขสิทธิ์ (Royalty / Licensing Fee — 2%)
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-label">ราคาสินค้า</div>
+        <input class="form-input" id="r_price" type="number" value="1000" oninput="calcRoyalty();calcSummary()">
+        <span class="form-unit">บาท</span>
+      </div>
+      <div class="form-row">
+        <div class="form-label">ค่านายหน้า Affiliate<small>ผู้ขายกำหนดเอง (5-20%)</small></div>
+        <input class="form-input" id="r_affiliate" type="number" value="10" min="5" max="20" oninput="calcRoyalty();calcSummary()">
+        <span class="form-unit">%</span>
+      </div>
+      <div class="form-row">
+        <div class="form-label">ค่า Platform Fee<small>แพลตฟอร์มหัก</small></div>
+        <input class="form-input" id="r_platform" type="number" value="10" oninput="calcRoyalty();calcSummary()">
+        <span class="form-unit">%</span>
+      </div>
+
+      <div style="height:1px;background:var(--border-light);margin:16px 0;"></div>
+
+      <div class="form-row">
+        <div class="form-label">จำนวนชั้นลูกทีม<small>cascade สูงสุด 3 ชั้น</small></div>
+        <select class="form-select" id="r_levels" onchange="renderTiers();calcRoyalty()">
+          <option value="1">1 ชั้น</option>
+          <option value="2" selected>2 ชั้น</option>
+          <option value="3">3 ชั้น</option>
+        </select>
+      </div>
+
+      <div id="tierSelectors"></div>
+
+      <!-- Result -->
+      <div class="result-box" id="royaltyResult"></div>
+
+      <div class="note note-info">
+        <span>ℹ️</span>
+        <span>
+          <strong>Royalty Pool:</strong> 2% ของยอดขาย — มาจาก Growth Fund ใน Platform Fee (ไม่ใช่จากค่านายหน้า)<br>
+          <strong>สูตร Cascade:</strong> ชั้นที่ 1 ได้ = Royalty Pool × % ของ tier → ชั้นถัดไปได้ = ผลลัพธ์ชั้นก่อนหน้า × % ของ tier<br>
+          <strong>ค่านายหน้า Affiliate:</strong> Seller จ่ายให้คนขาย (D) โดยตรง แยกจาก Royalty<br>
+          <strong>ไม่มีเกณฑ์:</strong> ได้ตาม tree โดยไม่ต้องมียอดขายขั้นต่ำ
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- 2. ค่าบริหารทีม (Team Management Fee) -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-num" style="background:var(--accent-orange);">2</span>
+        ค่าบริหารทีม (Team Management Fee — 1%)
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-label">ยอดคอมมิชชั่นทีม<small>รายได้คอมมิชชั่นรวมทั้งทีม/เดือน</small></div>
+        <input class="form-input" id="tm_commission" type="number" value="100000" oninput="calcTeamMgmt()">
+        <span class="form-unit">บาท</span>
+      </div>
+
+      <div class="result-box" id="teamMgmtResult"></div>
+
+      <div class="note note-info">
+        <span>ℹ️</span>
+        <span>
+          <strong>สูตร:</strong> Pool = ยอดคอมมิชชั่นทีม × 1% → แต่ละ tier ได้ = Pool × % ของ tier<br>
+          <strong>Pool มาจาก:</strong> 1% ของรายได้คอมมิชชั่นทีม (ไม่ใช่ยอดขาย)<br>
+          <strong>เกณฑ์:</strong> ยอดขายส่วนตัว ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- 3. ส่วนแบ่งยอดขาย (Sales Sharing)    -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="panel-num" style="background:var(--accent-blue);">3</span>
+        ส่วนแบ่งยอดขาย (Sales Sharing — 1%)
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-label">ยอดขายรวมบริษัท<small>ยอดขายทั้งบริษัท/เดือน</small></div>
+        <input class="form-input" id="ss_sales" type="number" value="1000000" oninput="calcSalesSharing()">
+        <span class="form-unit">บาท</span>
+      </div>
+
+      <div style="height:1px;background:var(--border-light);margin:16px 0;"></div>
+
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px;">จำนวนคนที่ผ่านเงื่อนไขในแต่ละ tier:</div>
+
+      <div class="form-row">
+        <div class="form-label"><span class="rank-dot" style="background:#F59E0B"></span>Gold</div>
+        <input class="form-input" id="ss_gold" type="number" value="15" oninput="calcSalesSharing()">
+        <span class="form-unit">คน</span>
+      </div>
+      <div class="form-row">
+        <div class="form-label"><span class="rank-dot" style="background:#8B5CF6"></span>Platinum</div>
+        <input class="form-input" id="ss_plat" type="number" value="8" oninput="calcSalesSharing()">
+        <span class="form-unit">คน</span>
+      </div>
+      <div class="form-row">
+        <div class="form-label"><span class="rank-dot" style="background:#EC4899"></span>Wisdom</div>
+        <input class="form-input" id="ss_wisdom" type="number" value="3" oninput="calcSalesSharing()">
+        <span class="form-unit">คน</span>
+      </div>
+
+      <div class="result-box" id="salesSharingResult"></div>
+
+      <div class="note note-info">
+        <span>ℹ️</span>
+        <span>
+          <strong>สูตร:</strong> Pool = ยอดขายบริษัท × 1% → แต่ละ tier ได้ = Pool × % ของ tier → หารจำนวนคนที่ผ่านเกณฑ์ใน tier นั้น<br>
+          <strong>Pool มาจาก:</strong> 1% ของยอดขายรวมบริษัท<br>
+          <strong>เกณฑ์:</strong> ยอดขายส่วนตัว ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿10,000/เดือน<br>
+          <strong>หมายเหตุ:</strong> Starter/Silver ไม่ได้รับ Sales Sharing
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 4. สรุปภาพรวมต่อออเดอร์ -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="panel" style="border:2px solid var(--primary);">
+    <div class="panel-header" style="background:#ECFDF5;">
+      <div class="panel-title">
+        <span class="panel-num" style="background:var(--primary);">4</span>
+        สรุปภาพรวมต่อออเดอร์ — เงินไปไหนบ้าง?
+      </div>
+      <span style="font-size:11px;color:var(--text-muted);">ใช้ค่าจากส่วนที่ 1 อัตโนมัติ</span>
+    </div>
+    <div class="panel-body">
+      <div class="result-box" id="summaryResult" style="border-color:var(--primary);"></div>
+
+      <div class="note note-info">
+        <span>ℹ️</span>
+        <span>
+          <strong>ค่านายหน้า Affiliate:</strong> Seller จ่ายโดยตรง (แยกจาก Platform Fee)<br>
+          <strong>Platform Fee 10%:</strong> แพลตฟอร์มหักจาก Seller แบ่งเป็น 3 กลุ่ม (สนับสนุน 5% + โครงสร้าง 2% + แพลตฟอร์ม 3%)<br>
+          <strong>Royalty จ่ายจริง:</strong> คำนวณตาม cascade ที่เลือกในส่วนที่ 1 — ส่วนที่เหลือจาก Royalty Pool จะเข้าบริษัท<br>
+          <strong>สำรองจ่ายรายเดือน:</strong> 3% (ค่าบริหาร 1% + ส่วนแบ่ง 1% + โบนัส 1%) สะสมไว้จ่ายเป็น Pool ทุกสิ้นเดือน
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="mockup-watermark">PordeeNomad — Commission Calculator v1.0</div>
+
+<script>
+  // ── Tier data ──
+  const TIERS = {
+    starter: { name:'Starter', royalty:0,  teamMgmt:0,  salesShare:0,  color:'#10B981' },
+    silver:  { name:'Silver',  royalty:10, teamMgmt:5,  salesShare:0,  color:'#94A3B8' },
+    gold:    { name:'Gold',    royalty:30, teamMgmt:10, salesShare:10, color:'#F59E0B' },
+    platinum:{ name:'Platinum',royalty:50, teamMgmt:15, salesShare:15, color:'#8B5CF6' },
+    wisdom:  { name:'Wisdom',  royalty:50, teamMgmt:20, salesShare:20, color:'#EC4899' },
+  };
+
+  const fmt = n => n.toLocaleString('th-TH', { minimumFractionDigits:2, maximumFractionDigits:2 });
+
+  // ── Render tier selectors ──
+  function renderTiers() {
+    const levels = +document.getElementById('r_levels').value;
+    const container = document.getElementById('tierSelectors');
+    const opts = ['silver','gold','platinum','wisdom'];
+    const defaults = ['silver','gold','platinum'];
+    let html = '';
+    for (let i = 0; i < levels; i++) {
+      html += `<div class="tier-row">
+        <span class="tier-label">ชั้นที่ ${i+1}:</span>
+        <select class="form-select" id="tier_${i}" onchange="calcRoyalty();calcSummary()">
+          ${opts.map(k => `<option value="${k}" ${k===defaults[i]?'selected':''}>${TIERS[k].name} (${TIERS[k].royalty}%)</option>`).join('')}
+        </select>
+      </div>`;
+    }
+    container.innerHTML = html;
+  }
+
+  // ── 1. Royalty Calculation ──
+  function calcRoyalty() {
+    const price = +document.getElementById('r_price').value || 0;
+    const affPct = +document.getElementById('r_affiliate').value || 0;
+    const platPct = +document.getElementById('r_platform').value || 0;
+    const levels = +document.getElementById('r_levels').value;
+
+    const affiliateAmt = price * affPct / 100;
+    const platformAmt = price * platPct / 100;
+    const sellerReceive = price - affiliateAmt - platformAmt;
+    const royaltyPool = price * 2 / 100; // Royalty Pool = 2% ของยอดขาย (จาก Growth Fund)
+
+    // Cascade: เริ่มจาก Royalty Pool → ชั้นแรกได้ % ของ Pool → ชั้นถัดไปได้ % ของชั้นก่อนหน้า
+    let cascadeRows = [];
+    let prevAmount = royaltyPool;
+    for (let i = 0; i < levels; i++) {
+      const tierKey = document.getElementById('tier_'+i)?.value || 'silver';
+      const tier = TIERS[tierKey];
+      const amount = prevAmount * tier.royalty / 100;
+      cascadeRows.push({
+        level: i+1,
+        tierName: tier.name,
+        tierPct: tier.royalty,
+        tierColor: tier.color,
+        base: prevAmount,
+        amount: amount,
+      });
+      prevAmount = amount;
+    }
+
+    let html = `
+      <div class="result-title">ผลการคำนวณ — ค่าลิขสิทธิ์ (Royalty Cascade)</div>
+      <div class="result-grid" style="margin-bottom:16px;">
+        <div class="result-item">
+          <div class="result-label">ราคาสินค้า</div>
+          <div class="result-value" style="color:var(--text-primary);font-size:18px;">฿${fmt(price)}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">ค่านายหน้า Affiliate (${affPct}%)</div>
+          <div class="result-value" style="color:var(--primary);font-size:18px;">฿${fmt(affiliateAmt)}</div>
+          <div class="result-sub">${fmt(price)} × ${affPct}% — จาก Seller โดยตรง</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Platform Fee (${platPct}%)</div>
+          <div class="result-value" style="color:var(--accent-blue);font-size:18px;">฿${fmt(platformAmt)}</div>
+          <div class="result-sub">${fmt(price)} × ${platPct}%</div>
+        </div>
+        <div class="result-item" style="border:2px solid var(--accent-purple);">
+          <div class="result-label">Royalty Pool (2% ของยอดขาย)</div>
+          <div class="result-value" style="color:var(--accent-purple);font-size:18px;">฿${fmt(royaltyPool)}</div>
+          <div class="result-sub">${fmt(price)} × 2% — จาก Growth Fund ใน Platform Fee</div>
+        </div>
+      </div>
+      <table class="result-table">
+        <thead><tr>
+          <th>ชั้น</th>
+          <th>ตำแหน่ง</th>
+          <th style="text-align:right">ฐานคำนวณ</th>
+          <th style="text-align:center">Royalty %</th>
+          <th style="text-align:right">ได้รับ</th>
+          <th>สูตร</th>
+        </tr></thead>
+        <tbody>
+          <tr style="background:#F0FDF4;">
+            <td>—</td>
+            <td style="font-weight:600;">D — คนขาย (Affiliate)</td>
+            <td style="text-align:right" class="val">฿${fmt(price)}</td>
+            <td style="text-align:center">${affPct}%</td>
+            <td style="text-align:right" class="val">฿${fmt(affiliateAmt)}</td>
+            <td class="formula">ค่านายหน้า ${affPct}% ของ ฿${fmt(price)} — จาก Seller</td>
+          </tr>`;
+
+    const labels = ['C','B','A'];
+    const roleLabels = ['แม่ทีมของ D','แม่ทีมของ C','แม่ทีมของ B'];
+    cascadeRows.forEach((r, idx) => {
+      html += `<tr>
+        <td style="font-weight:600;">ชั้นที่ ${r.level}</td>
+        <td><span class="rank-dot" style="background:${r.tierColor}"></span><strong>${labels[idx] || ''} — ${r.tierName}</strong><br><span style="font-size:11px;color:var(--text-muted);">${roleLabels[idx] || ''}</span></td>
+        <td style="text-align:right" class="val">฿${fmt(r.base)}</td>
+        <td style="text-align:center;font-weight:700;">${r.tierPct}%</td>
+        <td style="text-align:right;font-weight:700;color:${r.tierColor};">฿${fmt(r.amount)}</td>
+        <td class="formula">${r.tierPct}% ของ ฿${fmt(r.base)}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    document.getElementById('royaltyResult').innerHTML = html;
+  }
+
+  // ── 2. Team Management Fee ──
+  function calcTeamMgmt() {
+    const commission = +document.getElementById('tm_commission').value || 0;
+    const pool = commission * 0.01;
+
+    const tiers = [
+      { key:'silver',  ...TIERS.silver },
+      { key:'gold',    ...TIERS.gold },
+      { key:'platinum',...TIERS.platinum },
+      { key:'wisdom',  ...TIERS.wisdom },
+    ];
+
+    let html = `
+      <div class="result-title">ผลการคำนวณ — ค่าบริหารทีม</div>
+      <div class="result-grid" style="margin-bottom:16px;">
+        <div class="result-item">
+          <div class="result-label">ยอดคอมมิชชั่นทีม</div>
+          <div class="result-value" style="color:var(--text-primary);font-size:18px;">฿${fmt(commission)}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Pool ค่าบริหาร (1%)</div>
+          <div class="result-value" style="color:var(--accent-orange);font-size:18px;">฿${fmt(pool)}</div>
+          <div class="result-sub">${fmt(commission)} × 1%</div>
+        </div>
+      </div>
+      <table class="result-table">
+        <thead><tr>
+          <th>ตำแหน่ง</th>
+          <th style="text-align:center">% จาก Pool</th>
+          <th style="text-align:right">ได้รับ/คน</th>
+          <th>สูตร</th>
+        </tr></thead>
+        <tbody>`;
+
+    tiers.forEach(t => {
+      const amount = pool * t.teamMgmt / 100;
+      html += `<tr>
+        <td><span class="rank-dot" style="background:${t.color}"></span><strong>${t.name}</strong></td>
+        <td style="text-align:center;font-weight:700;">${t.teamMgmt}%</td>
+        <td style="text-align:right" class="val">฿${fmt(amount)}</td>
+        <td class="formula">${fmt(pool)} × ${t.teamMgmt}%</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>
+      <div class="note note-warn" style="margin-top:12px;">
+        <span>⚠️</span>
+        <span><strong>หมายเหตุ:</strong> Pool 1% คิดจากยอดคอมมิชชั่นทีม (ไม่ใช่ยอดขาย) · Starter ไม่ได้รับค่าบริหารทีม · Silver ได้รับเท่ากับ 5%</span>
+      </div>`;
+    document.getElementById('teamMgmtResult').innerHTML = html;
+  }
+
+  // ── 3. Sales Sharing ──
+  function calcSalesSharing() {
+    const sales = +document.getElementById('ss_sales').value || 0;
+    const pool = sales * 0.01;
+
+    const tiers = [
+      { name:'Gold',    pct:10, color:'#F59E0B', count: +document.getElementById('ss_gold').value || 0 },
+      { name:'Platinum',pct:15, color:'#8B5CF6', count: +document.getElementById('ss_plat').value || 0 },
+      { name:'Wisdom',  pct:20, color:'#EC4899', count: +document.getElementById('ss_wisdom').value || 0 },
+    ];
+
+    let html = `
+      <div class="result-title">ผลการคำนวณ — ส่วนแบ่งยอดขาย</div>
+      <div class="result-grid" style="margin-bottom:16px;">
+        <div class="result-item">
+          <div class="result-label">ยอดขายรวมบริษัท</div>
+          <div class="result-value" style="color:var(--text-primary);font-size:18px;">฿${fmt(sales)}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Pool ส่วนแบ่งยอดขาย (1%)</div>
+          <div class="result-value" style="color:var(--accent-blue);font-size:18px;">฿${fmt(pool)}</div>
+          <div class="result-sub">${fmt(sales)} × 1%</div>
+        </div>
+      </div>
+      <table class="result-table">
+        <thead><tr>
+          <th>ตำแหน่ง</th>
+          <th style="text-align:center">% จาก Pool</th>
+          <th style="text-align:right">Pool ของ tier</th>
+          <th style="text-align:center">จำนวนคน</th>
+          <th style="text-align:right">ได้รับ/คน</th>
+          <th>สูตร</th>
+        </tr></thead>
+        <tbody>`;
+
+    tiers.forEach(t => {
+      const tierPool = pool * t.pct / 100;
+      const perPerson = t.count > 0 ? tierPool / t.count : 0;
+      html += `<tr>
+        <td><span class="rank-dot" style="background:${t.color}"></span><strong>${t.name}</strong></td>
+        <td style="text-align:center;font-weight:700;">${t.pct}%</td>
+        <td style="text-align:right" class="val">฿${fmt(tierPool)}</td>
+        <td style="text-align:center;font-weight:700;">${t.count} คน</td>
+        <td style="text-align:right" class="val" style="color:${t.color};">฿${fmt(perPerson)}</td>
+        <td class="formula">${fmt(tierPool)} ÷ ${t.count} คน</td>
+      </tr>`;
+    });
+
+    const totalPaid = tiers.reduce((sum,t) => sum + pool * t.pct / 100, 0);
+    const totalPct = tiers.reduce((sum,t) => sum + t.pct, 0);
+    const remaining = pool - totalPaid;
+
+    html += `<tr style="background:var(--bg);">
+      <td style="font-weight:700;">รวมจ่าย</td>
+      <td style="text-align:center;font-weight:700;">${totalPct}%</td>
+      <td style="text-align:right;font-weight:700;font-family:'Inter';">฿${fmt(totalPaid)}</td>
+      <td></td><td></td><td></td>
+    </tr>
+    <tr>
+      <td style="font-weight:700;color:var(--text-muted);">เหลือใน Pool</td>
+      <td style="text-align:center;font-weight:700;color:var(--text-muted);">${100-totalPct}%</td>
+      <td style="text-align:right;font-weight:700;font-family:'Inter';color:var(--text-muted);">฿${fmt(remaining)}</td>
+      <td></td><td></td>
+      <td class="formula">ส่วนที่ยังไม่ได้จัดสรร</td>
+    </tr>`;
+
+    html += `</tbody></table>
+      <div class="note note-warn" style="margin-top:12px;">
+        <span>⚠️</span>
+        <span><strong>หมายเหตุ:</strong> Pool 1% คิดจากยอดขายรวมบริษัท · Starter/Silver ไม่ได้รับ Sales Sharing · ภายใน tier เดียวกัน หารเท่าๆ กัน · เกณฑ์: ยอดขาย ≥ ฿1,000 + คอมมิชชั่น ≥ ฿10,000/เดือน</span>
+      </div>`;
+    document.getElementById('salesSharingResult').innerHTML = html;
+  }
+
+  // ── 4. Summary per order (reads from section 1 inputs) ──
+  function calcSummary() {
+    const price = +document.getElementById('r_price').value || 0;
+    const affPct = +document.getElementById('r_affiliate').value || 0;
+    const levels = +document.getElementById('r_levels').value;
+
+    const affiliateAmt = price * affPct / 100;
+    const platformFee = price * 10 / 100;
+
+    // Platform Fee breakdown
+    const royaltyPool = price * 2 / 100;
+    const teamMgmt = price * 1 / 100;
+    const salesShare = price * 1 / 100;
+    const bonus = price * 1 / 100;
+    const internalMgmt = price * 1 / 100;
+    const training = price * 1 / 100;
+    const platformGP = price * 3 / 100;
+
+    const sellerReceive = price - affiliateAmt - platformFee;
+
+    // Royalty จ่ายจริงตาม cascade ที่เลือก
+    let royaltyPaid = 0;
+    let cascadeDetail = [];
+    let prev = royaltyPool;
+    for (let i = 0; i < levels; i++) {
+      const tierKey = document.getElementById('tier_'+i)?.value || 'silver';
+      const tier = TIERS[tierKey];
+      const amt = prev * tier.royalty / 100;
+      royaltyPaid += amt;
+      cascadeDetail.push(`${tier.name} ฿${fmt(amt)}`);
+      prev = amt;
+    }
+    const royaltyRemaining = royaltyPool - royaltyPaid;
+
+    const reserveForPayout = teamMgmt + salesShare + bonus;
+    const companyDirect = internalMgmt + training + platformGP; // 5% โครงสร้าง+GP
+    const companyTotal = companyDirect + royaltyRemaining; // + Royalty ที่เหลือจากจ่าย cascade
+
+    let html = `
+      <div class="result-title">ภาพรวมต่อออเดอร์ — เงินไปไหนบ้าง</div>
+      <div class="result-grid" style="margin-bottom:16px;">
+        <div class="result-item">
+          <div class="result-label">ราคาสินค้า</div>
+          <div class="result-value" style="font-size:20px;">฿${fmt(price)}</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">Seller ได้รับสุทธิ</div>
+          <div class="result-value" style="font-size:20px;color:var(--text-secondary);">฿${fmt(sellerReceive)}</div>
+          <div class="result-sub">${fmt(price)} − ${fmt(affiliateAmt)} − ${fmt(platformFee)}</div>
+        </div>
+        <div class="result-item" style="border:2px solid var(--primary);">
+          <div class="result-label">Platform หักทั้งหมด</div>
+          <div class="result-value" style="font-size:20px;color:var(--primary);">฿${fmt(platformFee)}</div>
+          <div class="result-sub">10% ของ ฿${fmt(price)}</div>
+        </div>
+      </div>
+
+      <table class="result-table">
+        <thead><tr>
+          <th colspan="2">รายการ</th>
+          <th style="text-align:center">%</th>
+          <th style="text-align:right">จำนวน (฿)</th>
+          <th>การจ่าย</th>
+        </tr></thead>
+        <tbody>
+          <tr style="background:#F0FDF4;">
+            <td colspan="2" style="font-weight:700;">ค่านายหน้า Affiliate</td>
+            <td style="text-align:center" class="val">${affPct}%</td>
+            <td style="text-align:right" class="val">฿${fmt(affiliateAmt)}</td>
+            <td class="formula">Seller จ่ายให้คนขาย (D) ทันที</td>
+          </tr>
+          <tr style="background:#FAFAFA;">
+            <td colspan="5" style="font-weight:700;color:var(--primary);font-size:12px;letter-spacing:0.05em;">PLATFORM FEE 10% — แพลตฟอร์มหักจาก Seller</td>
+          </tr>
+          <tr>
+            <td rowspan="4" style="font-weight:600;font-size:12px;color:var(--primary);vertical-align:top;width:30px;">5%</td>
+            <td><span class="rank-dot" style="background:var(--accent-purple)"></span>ค่าลิขสิทธิ์ (Royalty Pool)</td>
+            <td style="text-align:center" class="val">2%</td>
+            <td style="text-align:right" class="val">฿${fmt(royaltyPool)}</td>
+            <td class="formula">Pool สำหรับจ่าย cascade</td>
+          </tr>
+          <tr style="background:#F8F5FF;">
+            <td style="padding-left:32px;font-size:12px;">↳ จ่าย cascade จริง (${levels} ชั้น)</td>
+            <td style="text-align:center"></td>
+            <td style="text-align:right;font-weight:700;color:var(--accent-purple);">−฿${fmt(royaltyPaid)}</td>
+            <td class="formula">${cascadeDetail.join(' + ')}</td>
+          </tr>
+          <tr style="background:#F0FDF4;">
+            <td style="padding-left:32px;font-size:12px;">↳ เหลือเข้าบริษัท</td>
+            <td style="text-align:center"></td>
+            <td style="text-align:right;font-weight:700;color:#065F46;">฿${fmt(royaltyRemaining)}</td>
+            <td class="formula">${fmt(royaltyPool)} − ${fmt(royaltyPaid)}</td>
+          </tr>
+          <tr>
+            <td><span class="rank-dot" style="background:var(--accent-orange)"></span>ค่าบริหารทีม</td>
+            <td style="text-align:center" class="val">1%</td>
+            <td style="text-align:right" class="val">฿${fmt(teamMgmt)}</td>
+            <td class="formula">สำรองไว้ → จ่าย Pool รายเดือน</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><span class="rank-dot" style="background:var(--accent-blue)"></span>ส่วนแบ่งยอดขาย</td>
+            <td style="text-align:center" class="val">1%</td>
+            <td style="text-align:right" class="val">฿${fmt(salesShare)}</td>
+            <td class="formula">สำรองไว้ → จ่าย Pool รายเดือน</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><span class="rank-dot" style="background:var(--accent-pink)"></span>โบนัสพิเศษ (Campaign)</td>
+            <td style="text-align:center" class="val">1%</td>
+            <td style="text-align:right" class="val">฿${fmt(bonus)}</td>
+            <td class="formula">สำรองไว้ → จ่ายตามแคมเปญ</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="font-weight:600;font-size:12px;color:var(--secondary);vertical-align:top;">2%</td>
+            <td>บริหารภายในบริษัท</td>
+            <td style="text-align:center" class="val">1%</td>
+            <td style="text-align:right" class="val">฿${fmt(internalMgmt)}</td>
+            <td class="formula">เข้าบริษัท</td>
+          </tr>
+          <tr>
+            <td>ค่าจัดเทรนนิ่ง/สัมมนา</td>
+            <td style="text-align:center" class="val">1%</td>
+            <td style="text-align:right" class="val">฿${fmt(training)}</td>
+            <td class="formula">เข้าบริษัท</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;font-size:12px;color:var(--accent-purple);vertical-align:top;">3%</td>
+            <td style="font-weight:600;">ค่าธรรมเนียมแพลตฟอร์ม (GP)</td>
+            <td style="text-align:center" class="val">3%</td>
+            <td style="text-align:right" class="val">฿${fmt(platformGP)}</td>
+            <td class="formula">เข้าบริษัท</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;">
+        <div style="background:#F5F3FF;border:2px solid #DDD6FE;border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:11px;color:#5B21B6;font-weight:600;">Royalty จ่ายจริง</div>
+          <div style="font-size:11px;color:#5B21B6;margin-bottom:4px;">(cascade ${levels} ชั้น)</div>
+          <div style="font-size:22px;font-weight:800;color:#5B21B6;font-family:'Inter';">฿${fmt(royaltyPaid)}</div>
+          <div style="font-size:11px;color:#5B21B6;">จาก Pool ฿${fmt(royaltyPool)}</div>
+        </div>
+        <div style="background:#FFF7ED;border:2px solid #FFCBA4;border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:11px;color:#9A3412;font-weight:600;">สำรองจ่ายรายเดือน</div>
+          <div style="font-size:11px;color:#9A3412;margin-bottom:4px;">(บริหาร+ส่วนแบ่ง+โบนัส)</div>
+          <div style="font-size:22px;font-weight:800;color:#9A3412;font-family:'Inter';">฿${fmt(reserveForPayout)}</div>
+          <div style="font-size:11px;color:#9A3412;">3% ของ ฿${fmt(price)}</div>
+        </div>
+        <div style="background:#ECFDF5;border:2px solid #A7F3D0;border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:11px;color:#065F46;font-weight:600;">เข้าบริษัททั้งหมด</div>
+          <div style="font-size:11px;color:#065F46;margin-bottom:4px;">(โครงสร้าง+GP+Royalty เหลือ)</div>
+          <div style="font-size:22px;font-weight:800;color:#065F46;font-family:'Inter';">฿${fmt(companyTotal)}</div>
+          <div style="font-size:11px;color:#065F46;">5% + Royalty เหลือ ฿${fmt(royaltyRemaining)}</div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('summaryResult').innerHTML = html;
+  }
+
+  // ── Init ──
+  renderTiers();
+  calcRoyalty();
+  calcTeamMgmt();
+  calcSalesSharing();
+  calcSummary();
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PordeeNomad — Flow การจัดการทีม</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --primary-light: #10B981;
+      --secondary: #0D9488;
+      --accent-orange: #F59E0B;
+      --accent-red: #EF4444;
+      --accent-purple: #8B5CF6;
+      --accent-pink: #EC4899;
+      --accent-blue: #3B82F6;
+      --bg: #F0FDF4;
+      --bg-white: #FFFFFF;
+      --text-primary: #0A2E1B;
+      --text-secondary: #3D6B50;
+      --text-muted: #7DA88A;
+      --border: rgba(5,150,105,0.12);
+      --border-light: rgba(5,150,105,0.06);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      background: var(--bg); color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(5,150,105,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(5,150,105,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .container { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 32px 24px 64px; }
+
+    /* ── Header ── */
+    .header { margin-bottom: 32px; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+      color: var(--text-muted); text-decoration: none; font-weight: 500;
+      margin-bottom: 16px; padding: 6px 12px; border-radius: 6px;
+      border: 1px solid var(--border-light); background: var(--bg-white);
+      transition: all 0.15s;
+    }
+    .back-link:hover { color: var(--primary); border-color: var(--primary); }
+    .page-title {
+      font-size: 28px; font-weight: 800; margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .page-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── Flow Diagram ── */
+    .flow-container {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 32px; margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .flow-title { font-size: 16px; font-weight: 700; margin-bottom: 24px; text-align: center; }
+
+    .flow { display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 500px; }
+
+    .flow-row { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; flex-wrap: wrap; }
+
+    .flow-node {
+      padding: 14px 20px; border-radius: var(--radius); text-align: center;
+      font-size: 13px; font-weight: 600; min-width: 160px; max-width: 220px;
+      border: 2px solid;
+    }
+    .flow-node small { display: block; font-size: 11px; font-weight: 400; margin-top: 4px; opacity: 0.8; }
+
+    .node-start { background: #ECFDF5; border-color: #A7F3D0; color: #065F46; }
+    .node-action { background: #D0F4E2; border-color: #A8E6CF; color: #1B5E20; }
+    .node-buyer { background: #D0E8F2; border-color: #A8D8EA; color: #0D47A1; }
+    .node-auto { background: #FFF7ED; border-color: #FFCBA4; color: #8B3A00; }
+    .node-success { background: #D5F2E4; border-color: #B5EAD7; color: #1B5E20; border-width: 3px; }
+    .node-result { background: #F5F3FF; border-color: #DDD6FE; color: #5B21B6; }
+
+    .flow-arrow {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      color: var(--text-muted); font-size: 20px; padding: 4px 0;
+    }
+    .flow-arrow .arrow-label {
+      font-size: 10px; font-weight: 600; color: var(--text-muted);
+      background: var(--bg); padding: 2px 8px; border-radius: 10px;
+    }
+
+    /* ── Actor zones ── */
+    .actor-zone {
+      border: 2px dashed; border-radius: var(--radius-lg);
+      padding: 20px; margin: 8px 0; width: 100%;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+    }
+    .actor-zone-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 3px 12px; border-radius: 10px;
+      margin-bottom: 12px; align-self: flex-start;
+    }
+    .zone-member { border-color: #A8E6CF; background: rgba(16,185,129,0.03); }
+    .zone-member .actor-zone-label { background: #ECFDF5; color: #065F46; }
+    .zone-customer { border-color: #A8D8EA; background: rgba(59,130,246,0.03); }
+    .zone-customer .actor-zone-label { background: #D0E8F2; color: #0D47A1; }
+    .zone-platform { border-color: #D4B8E8; background: rgba(139,92,246,0.03); }
+    .zone-platform .actor-zone-label { background: #E5D5F0; color: #4A148C; }
+
+    /* ── Rules panel ── */
+    .rules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .rule-card {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; text-align: center;
+    }
+    .rule-icon { font-size: 28px; margin-bottom: 8px; }
+    .rule-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .rule-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── Status Table ── */
+    .panel {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 24px;
+    }
+    .panel-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border-light);
+      font-size: 14px; font-weight: 700;
+    }
+    .panel-body { padding: 20px; }
+
+    .status-table { width: 100%; border-collapse: collapse; }
+    .status-table th {
+      text-align: left; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--text-muted); padding: 10px 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    .status-table td {
+      padding: 12px 16px; font-size: 13px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .status-table tr:hover td { background: rgba(5,150,105,0.03); }
+    .check { color: var(--primary); font-weight: 700; }
+    .cross { color: var(--accent-red); }
+    .maybe { color: var(--accent-orange); font-weight: 600; }
+
+    /* ── Watermark ── */
+    .mockup-watermark {
+      position: fixed; bottom: 12px; right: 16px;
+      font-size: 11px; color: var(--text-muted); font-weight: 500;
+      background: rgba(255,255,255,0.85); padding: 4px 12px;
+      border-radius: 20px; border: 1px solid var(--border-light); z-index: 999;
+    }
+
+    @media (max-width: 768px) {
+      .rules-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <a href="hub.html" class="back-link">← กลับ Hub</a>
+      <div class="page-title">Flow การจัดการทีม — PordeeNomad</div>
+      <div class="page-desc">โครงสร้างการเข้าทีม การผูกสมาชิก และสิทธิ์ที่ได้ในแต่ละสถานะ</div>
+    </div>
+
+    <!-- ── กฎหลัก 3 ข้อ ── -->
+    <div class="rules-grid">
+      <div class="rule-card" style="border-top:3px solid var(--primary);">
+        <div class="rule-icon">🛒</div>
+        <div class="rule-title">ซื้อของ = เข้าทีม</div>
+        <div class="rule-desc">ลูกค้าที่ซื้อผ่านลิงก์ จะกลายเป็นสมาชิกและลูกทีมของคนที่แชร์ลิงก์โดยอัตโนมัติ</div>
+      </div>
+      <div class="rule-card" style="border-top:3px solid var(--accent-purple);">
+        <div class="rule-icon">🔗</div>
+        <div class="rule-title">ผูกทีมถาวร</div>
+        <div class="rule-desc">เมื่อเข้าทีมแล้วจะผูกกับแม่ทีมตลอด ย้ายทีมไม่ได้ ไม่ถูกตัดออก</div>
+      </div>
+      <div class="rule-card" style="border-top:3px solid var(--accent-orange);">
+        <div class="rule-icon">👥</div>
+        <div class="rule-title">ทุกคนเท่าเทียม</div>
+        <div class="rule-desc">สมาชิกทุกคนมีสิทธิ์เหมือนกัน มี Dashboard และลิงก์ Affiliate พร้อมแชร์ได้ทันที</div>
+      </div>
+    </div>
+
+    <!-- ── Flow Diagram หลัก ── -->
+    <div class="flow-container">
+      <div class="flow-title">Flow การเข้าทีมและสร้าง Genealogy Tree</div>
+      <div class="flow">
+
+        <div class="actor-zone zone-member">
+          <div class="actor-zone-label">สมาชิก / แม่ทีม</div>
+          <div class="flow-node node-start">สมาชิกแชร์ลิงก์สินค้า<small>Affiliate Link เพียงอย่างเดียว</small></div>
+        </div>
+
+        <div class="flow-arrow">↓<div class="arrow-label">ลูกค้าคลิกลิงก์</div></div>
+
+        <div class="actor-zone zone-customer">
+          <div class="actor-zone-label">ลูกค้าใหม่</div>
+          <div class="flow-node node-buyer">ลูกค้าคลิกลิงก์สินค้า</div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-node node-buyer">ลูกค้าซื้อสินค้า + สมัครสมาชิก<small>ขั้นตอนเดียว</small></div>
+        </div>
+
+        <div class="flow-arrow">↓<div class="arrow-label">ระบบทำงานอัตโนมัติ</div></div>
+
+        <div class="actor-zone zone-platform">
+          <div class="actor-zone-label">ระบบ PordeeNomad (อัตโนมัติ)</div>
+          <div class="flow-row">
+            <div class="flow-node node-auto">ผูกเป็นลูกทีมถาวร<small>อยู่ใต้คนที่แชร์ลิงก์ · ย้ายไม่ได้</small></div>
+            <div class="flow-node node-auto">จ่ายคอมมิชชั่น Affiliate<small>ให้คนที่แชร์ลิงก์</small></div>
+            <div class="flow-node node-auto">สร้าง Dashboard + ลิงก์ Affiliate<small>พร้อมแชร์ได้ทันที</small></div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓<div class="arrow-label">ลูกค้าเป็นสมาชิกแล้ว</div></div>
+
+        <div class="actor-zone zone-member">
+          <div class="actor-zone-label">สมาชิก — ทุกคนเหมือนกัน</div>
+          <div class="flow-node node-success" style="min-width:320px;">
+            สมาชิกเต็มตัว<small>เห็น Dashboard · มีลิงก์ Affiliate · แชร์ได้ทันที</small>
+          </div>
+          <div class="flow-arrow">↓<div class="arrow-label">ถ้าแชร์ลิงก์แล้วมีคนซื้อ</div></div>
+          <div class="flow-node node-action" style="min-width:320px;">
+            มีลูกทีม → กลายเป็น "แม่ทีม" อัตโนมัติ<small>เห็นโครงสร้างทีม + ได้ Royalty ตาม tree</small>
+          </div>
+          <div class="flow-arrow">↓<div class="arrow-label">ลูกทีมแชร์ต่อ</div></div>
+          <div class="flow-node node-result" style="min-width:360px;">
+            Genealogy Tree โตอัตโนมัติ<small>ทุกคนที่ซื้อผ่านลิงก์ = เข้าทีม · ผูกถาวร · ย้ายไม่ได้</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── สิทธิ์ตามสถานะ ── -->
+    <div class="panel">
+      <div class="panel-header">สิทธิ์ที่ได้ตามสถานะ</div>
+      <div class="panel-body" style="padding:0;overflow-x:auto;">
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>สิ่งที่เห็น / ทำได้</th>
+              <th style="text-align:center">สมาชิก<br><small>(ยังไม่มีลูกทีม)</small></th>
+              <th style="text-align:center">แม่ทีม<br><small>(มีลูกทีมแล้ว)</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ซื้อสินค้าได้</td>
+              <td style="text-align:center" class="check">✅</td>
+              <td style="text-align:center" class="check">✅</td>
+            </tr>
+            <tr>
+              <td>มี Dashboard</td>
+              <td style="text-align:center" class="check">✅</td>
+              <td style="text-align:center" class="check">✅</td>
+            </tr>
+            <tr>
+              <td>มีลิงก์ Affiliate แชร์ได้</td>
+              <td style="text-align:center" class="check">✅</td>
+              <td style="text-align:center" class="check">✅</td>
+            </tr>
+            <tr>
+              <td>รับคอมมิชชั่น Affiliate</td>
+              <td style="text-align:center" class="check">✅ ถ้ามีคนซื้อผ่านลิงก์</td>
+              <td style="text-align:center" class="check">✅</td>
+            </tr>
+            <tr>
+              <td>เห็นโครงสร้างทีม (Genealogy Tree)</td>
+              <td style="text-align:center" class="cross">— ยังไม่มีลูกทีม</td>
+              <td style="text-align:center" class="check">✅</td>
+            </tr>
+            <tr>
+              <td>รับ Royalty (cascade)</td>
+              <td style="text-align:center" class="cross">— ยังไม่มีลูกทีม</td>
+              <td style="text-align:center" class="check">✅ ได้ตาม tree ไม่มีเกณฑ์</td>
+            </tr>
+            <tr>
+              <td>รับ Team Management Fee</td>
+              <td style="text-align:center" class="cross">— ต้องมีทีม + ผ่านเกณฑ์</td>
+              <td style="text-align:center" class="check">✅ ถ้าผ่านเกณฑ์</td>
+            </tr>
+            <tr>
+              <td>รับ Sales Sharing</td>
+              <td style="text-align:center" class="cross">— เกณฑ์สูง</td>
+              <td style="text-align:center" class="check">✅ ถ้าผ่านเกณฑ์</td>
+            </tr>
+            <tr>
+              <td>เข้าร่วมแคมเปญโบนัส</td>
+              <td style="text-align:center" class="check">✅</td>
+              <td style="text-align:center" class="check">✅</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── ตัวอย่าง Genealogy ── -->
+    <div class="flow-container">
+      <div class="flow-title">ตัวอย่าง: ทีมโตอย่างไร</div>
+      <div style="font-size:14px;line-height:2;font-family:'Inter','IBM Plex Sans Thai',sans-serif;max-width:600px;margin:0 auto;">
+        <div style="font-weight:700;color:var(--primary);">สมหญิง (Gold)</div>
+        <div style="padding-left:24px;border-left:2px solid #A8E6CF;">
+          <div>├── <strong>วรรณา</strong> (Gold) — ซื้อผ่านลิงก์สมหญิง</div>
+          <div style="padding-left:24px;border-left:2px solid #A8D8EA;">
+            <div>├── <strong>สุรเชษฐ์</strong> (Platinum) — ซื้อผ่านลิงก์วรรณา</div>
+            <div>└── <strong>มนัส</strong> (Starter) — ซื้อผ่านลิงก์วรรณา</div>
+          </div>
+          <div>├── <strong>ประวิทย์</strong> (Silver) — ซื้อผ่านลิงก์สมหญิง</div>
+          <div>├── <strong>นิภา</strong> (Starter) — ซื้อผ่านลิงก์สมหญิง</div>
+          <div>└── <strong>กมลวรรณ</strong> (Wisdom) — ซื้อผ่านลิงก์สมหญิง</div>
+        </div>
+        <div style="margin-top:16px;font-size:12px;color:var(--text-muted);line-height:1.6;">
+          ทุกคนเข้าทีมจากการซื้อสินค้าผ่านลิงก์ · ผูกกับแม่ทีมถาวร · ย้ายไม่ได้<br>
+          ถ้าสมาชิกแชร์ลิงก์ต่อแล้วมีคนซื้อ → สมาชิกคนนั้นกลายเป็นแม่ทีมอัตโนมัติ
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mockup-watermark">PordeeNomad — Flow การจัดการทีม v1.0</div>
+</body>
+</html>

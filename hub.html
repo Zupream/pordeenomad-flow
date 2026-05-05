@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PordeeNomad — Document Hub</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --primary-light: #10B981;
+      --secondary: #0D9488;
+      --accent-orange: #F59E0B;
+      --accent-purple: #8B5CF6;
+      --accent-pink: #EC4899;
+      --accent-blue: #3B82F6;
+      --bg: #F0FDF4;
+      --bg-white: #FFFFFF;
+      --text-primary: #0A2E1B;
+      --text-secondary: #3D6B50;
+      --text-muted: #7DA88A;
+      --border: rgba(5,150,105,0.12);
+      --border-light: rgba(5,150,105,0.06);
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03);
+      --shadow-hover: 0 4px 20px rgba(5,150,105,0.12), 0 1px 4px rgba(0,0,0,0.04);
+      --radius: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Subtle grid background ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(5,150,105,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(5,150,105,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 0%, rgba(5,150,105,0.08) 0%, transparent 60%);
+    }
+
+    .container {
+      position: relative; z-index: 1;
+      max-width: 720px; margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    /* ── Header ── */
+    .header { text-align: center; margin-bottom: 48px; }
+
+    .header-title {
+      font-size: 36px; font-weight: 800;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .header-sub {
+      font-size: 16px; color: var(--text-secondary); font-weight: 400;
+      margin-bottom: 12px;
+    }
+    .header-version {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 500;
+      color: var(--primary); background: rgba(5,150,105,0.08);
+      border: 1px solid rgba(5,150,105,0.15);
+    }
+
+    /* ── Cards ── */
+    .cards { display: flex; flex-direction: column; gap: 16px; }
+
+    .card {
+      display: flex; align-items: center; gap: 20px;
+      background: var(--bg-white); border: 1px solid var(--border-light);
+      border-radius: var(--radius); padding: 24px 28px;
+      box-shadow: var(--shadow-card);
+      text-decoration: none; color: inherit;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+      border-color: rgba(5,150,105,0.2);
+    }
+
+    .card-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+    }
+
+    .card-body { flex: 1; min-width: 0; }
+    .card-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .card-desc {
+      font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .card-action {
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .card-badge {
+      font-size: 12px; font-weight: 600; padding: 4px 14px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .card-arrow {
+      font-size: 20px; color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+    .card:hover .card-arrow { transform: translateX(4px); }
+
+    /* ── Badge colors ── */
+    .badge-green { background: #ECFDF5; color: #065F46; }
+    .badge-teal { background: #F0FDFA; color: #0F766E; }
+    .badge-orange { background: #FFF7ED; color: #9A3412; }
+    .badge-purple { background: #F5F3FF; color: #5B21B6; }
+    .badge-blue { background: #EFF6FF; color: #1E40AF; }
+    .badge-pink { background: #FDF2F8; color: #9D174D; }
+
+    /* ── Icon backgrounds ── */
+    .icon-green { background: #ECFDF5; }
+    .icon-teal { background: #F0FDFA; }
+    .icon-orange { background: #FFF7ED; }
+    .icon-purple { background: #F5F3FF; }
+    .icon-blue { background: #EFF6FF; }
+    .icon-pink { background: #FDF2F8; }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex; align-items: center; gap: 16px;
+      margin: 24px 0 16px;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-text {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-muted);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center; margin-top: 48px;
+      font-size: 13px; color: var(--text-muted);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .container { padding: 32px 16px 48px; }
+      .header-title { font-size: 28px; }
+      .card { padding: 18px 20px; gap: 14px; }
+      .card-icon { width: 44px; height: 44px; font-size: 22px; border-radius: 11px; }
+      .card-desc { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-title">PordeeNomad</div>
+      <div class="header-sub">Document Hub</div>
+      <span class="header-version">v1.0 · May 2026</span>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+
+      <!-- Commission Flow (index.html) -->
+      <a class="card" href="index.html">
+        <div class="card-icon icon-green">💰</div>
+        <div class="card-body">
+          <div class="card-title">Commission & Affiliate Flow</div>
+          <div class="card-desc">โครงสร้างรายได้ ค่าคอมมิชชั่น และ Platform Fee — Interactive Slides</div>
+        </div>
+        <div class="card-action">
+          <span class="card-badge badge-green">Flow</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Commission Calculator -->
+      <a class="card" href="commission-calculator.html">
+        <div class="card-icon icon-orange">🧮</div>
+        <div class="card-body">
+          <div class="card-title">เครื่องคำนวณค่าคอมมิชชั่น</div>
+          <div class="card-desc">กรอกตัวเลข คำนวณ Royalty, ค่าบริหารทีม, ส่วนแบ่งยอดขาย พร้อมสูตรอ้างอิง</div>
+        </div>
+        <div class="card-action">
+          <span class="card-badge badge-orange">Calc</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Team Model Flow -->
+      <a class="card" href="team-model-flow.html">
+        <div class="card-icon icon-teal">🔀</div>
+        <div class="card-body">
+          <div class="card-title">Flow การจัดการทีม</div>
+          <div class="card-desc">โครงสร้างการเข้าทีม การผูกสมาชิก สิทธิ์ตามสถานะ และตัวอย่าง Genealogy Tree</div>
+        </div>
+        <div class="card-action">
+          <span class="card-badge badge-green">Team</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">Mockup — ระบบ Dashboard</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- PordeeConnect — Member Portal -->
+      <a class="card" href="partner-portal.html">
+        <div class="card-icon icon-teal">👥</div>
+        <div class="card-body">
+          <div class="card-title">PordeeConnect — Partner Portal</div>
+          <div class="card-desc">Dashboard สำหรับ แม่ทีม / ลูกทีม / สมาชิก — ดูรายได้ ทีม ตำแหน่ง โปรโมชั่น</div>
+        </div>
+        <div class="card-action">
+          <span class="card-badge badge-teal">Member</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Admin Console -->
+      <a class="card" href="admin-console.html">
+        <div class="card-icon icon-purple">⚙️</div>
+        <div class="card-body">
+          <div class="card-title">Pordee Admin Console</div>
+          <div class="card-desc">ตั้งค่าตำแหน่ง เปอร์เซ็นต์คอมมิชชั่น ค่าธรรมเนียม และจัดการแคมเปญโบนัส</div>
+        </div>
+        <div class="card-action">
+          <span class="card-badge badge-purple">Admin</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">เอกสารประกอบ</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Meeting Minutes -->
+      <a class="card" href="https://docs.google.com/document/d/16E4-Lpy03G941F2NrLIXdd1vfZsH9dtt59eIguLrwNI/edit?tab=t.0#heading=h.1q3bmckqczk5" target="_blank">
+        <div class="card-icon icon-orange">📋</div>
+        <div class="card-body">
+          <div class="card-title">Minutes of Meeting</div>
+          <div class="card-desc">บันทึกการประชุม PordeeNomad — รายละเอียดโมเดล Commission & Platform Fee</div>
+        </div>
+        <div class="card-action">
+          <span class="card-badge badge-orange">MOM</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Calculation Reference -->
+      <a class="card" href="https://docs.google.com/spreadsheets/d/1eH4vsOUxu-_ZCa4oL82bj9OrpcTINDIGFOMjNxpR3rU/edit?usp=sharing" target="_blank">
+        <div class="card-icon icon-blue">📊</div>
+        <div class="card-body">
+          <div class="card-title">ไฟล์อ้างอิงการคำนวณ</div>
+          <div class="card-desc">ตารางคำนวณรายได้ คอมมิชชั่น และ Platform Fee — Google Sheets</div>
+        </div>
+        <div class="card-action">
+          <span class="card-badge badge-blue">Sheet</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      PordeeNomad © 2026 · Realfeactory
+    </div>
+  </div>
+</body>
+</html>
