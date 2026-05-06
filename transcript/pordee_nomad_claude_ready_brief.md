@@ -45,7 +45,7 @@ Working example: if a seller sells a product for 100 THB, the platform deducts 1
 | Item | % | Notes |
 |---|---:|---|
 | Royalty / Licensing fee | 2% | Calculated using existing model |
-| Team management fee | 1% | Pool from team commission income |
+| Team management fee | 1% | Per-person: 1% of downline (3 levels) affiliate commission × tier% |
 | Sales sharing | 1% | Pool from total company sales |
 | Special/quarterly/other bonus | 1% | Pool from total company sales, used for promotional rewards |
 
@@ -96,40 +96,41 @@ The team confirmed this item is clear and can continue with the same logic.
 ## Item 3 — Team Management Fee: 1%
 
 ### Pool source
-- 1% from **total team commission income**, not from sales.
+- 1% from **affiliate commission of downline levels 1, 2, and 3 combined** (not from sales).
+- **Calculated per person** — each qualifying partner calculates from their own downline's commissions, 3 levels deep.
 
-### Eligibility / qualification discussed
+### Eligibility / qualification
 A person must have:
 - personal sales of at least 1,000 THB/month, and
 - affiliate/agent commission income of at least 1,000 THB/month.
 
-### Payout concept
-The pool is calculated as a lump sum, then paid according to rank/level percentage.
+### Payout concept (updated)
+Each qualifying partner's team management fee is calculated individually:
+1. Sum all affiliate commissions of their downline levels 1, 2, and 3.
+2. Calculate 1% of that total sum.
+3. Multiply by the partner's own tier percentage.
 
 Example:
-- Team commission income = 10,000 THB.
-- 1% pool = 100 THB.
-- Payout by rank:
-  - Silver or entry level: 5% of 100 = 5 THB.
-  - Gold: 10% of 100 = 10 THB.
-  - Platinum: 15% of 100 = 15 THB.
-  - Wisdom: 20% of 100 = 20 THB.
+- Partner is Gold tier.
+- Downline level 1 commissions (10 people) = 50,000 THB.
+- Downline level 2 commissions (20 people) = 30,000 THB.
+- Downline level 3 commissions (20 people) = 20,000 THB.
+- Total downline commissions = 100,000 THB.
+- 1% pool = 1,000 THB.
+- Gold (10%) = 1,000 × 10% = **100 THB**.
 
-### Important clarification
-There was discussion about whether this should be limited to 3 levels/layers. The conclusion leaned toward:
+Tier percentages:
+  - Starter: 0% (not eligible).
+  - Silver: 5% of pool.
+  - Gold: 10% of pool.
+  - Platinum: 15% of pool.
+  - Wisdom: 20% of pool.
 
-- Do not calculate as “only 3 layers”.
-- Calculate as a pool/lump sum.
-- Qualified people receive according to their rank percentage.
-
-### Concern raised
-Potential overpay if many qualified people exist in a stacked/downline structure.
-
-### Resolution / clarification
-The concern was reduced because:
-- the source pool is only 1% of team commission income, not sales,
-- eligibility requires the person to generate enough commission income,
-- the calculation should be based on commission income pool, not raw sales.
+### Key clarifications
+- The calculation covers **exactly 3 levels deep** (direct downline + 2 more levels).
+- **Every qualifying partner** receives team management fee calculated from their own downline.
+- The pool source is affiliate commission income of downline members, not their sales amounts.
+- Overpay risk is mitigated because the source is only 1% and is capped by actual commission income generated.
 
 ---
 
@@ -220,7 +221,7 @@ The team discussed avoiding conversion into “points,” because points could c
 2. Seller controls affiliate commission rate.
 3. Platform controls fee deduction rate and internal allocation.
 4. Royalty/licensing continues using existing logic.
-5. Team management is based on team commission income, not sales.
+5. Team management fee is calculated per person: 1% of their downline's (3 levels) affiliate commission × tier percentage.
 6. Sales sharing and special bonus are based on total company sales.
 7. Special bonuses should be campaign-based and flexible.
 8. Avoid using points unless legally reviewed.
@@ -238,7 +239,7 @@ The team discussed avoiding conversion into “points,” because points could c
    - Platinum: 15%?
    - Wisdom: 20%?
 4. Confirm royalty rank names and cascade percentages.
-5. Confirm whether Team Management Fee should always pay all qualified members or require any additional cap.
+5. ~~Confirm whether Team Management Fee should always pay all qualified members or require any additional cap.~~ **RESOLVED:** Pays all qualified members; calculated per person from their own downline 3 levels; no additional cap needed.
 6. Confirm whether Sales Sharing eligibility is exactly:
    - personal sales >= 1,000 THB/month,
    - affiliate commission income >= 10,000 THB/month.
@@ -282,7 +283,7 @@ Key model:
   - 1% Sales Sharing,
   - 1% Special/Promotional Bonus.
 - Royalty follows existing cascade logic.
-- Team Management uses 1% of team commission income and pays qualified members by rank percentage.
+- Team Management is calculated per person: sum affiliate commissions of downline 3 levels, take 1%, multiply by partner's tier percentage. All qualifying partners receive this from their own downline.
 - Sales Sharing uses 1% of company sales and allocates by rank, then splits among qualified members in each rank.
 - Special Bonus uses 1% of company sales and should be campaign-based; avoid point conversion due to legal complexity.
 - Promotions should use conditions such as affiliate commission earned within a period, e.g. 100,000 THB in 6 months gets 1 trip seat.

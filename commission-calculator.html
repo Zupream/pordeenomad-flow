@@ -238,10 +238,35 @@
       </div>
     </div>
     <div class="panel-body">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--accent-orange);">ค่าคอมมิชชั่น Affiliate ของลูกทีมแต่ละชั้น:</div>
+
       <div class="form-row">
-        <div class="form-label">ยอดคอมมิชชั่นทีม<small>รายได้คอมมิชชั่นรวมทั้งทีม/เดือน</small></div>
-        <input class="form-input" id="tm_commission" type="number" value="100000" oninput="calcTeamMgmt()">
+        <div class="form-label">ค่าคอมลูกทีมชั้น 1<small>Direct downline</small></div>
+        <input class="form-input" id="tm_lv1" type="number" value="50000" oninput="calcTeamMgmt()">
         <span class="form-unit">บาท</span>
+      </div>
+      <div class="form-row">
+        <div class="form-label">ค่าคอมลูกทีมชั้น 2<small>Downline ชั้นที่ 2</small></div>
+        <input class="form-input" id="tm_lv2" type="number" value="30000" oninput="calcTeamMgmt()">
+        <span class="form-unit">บาท</span>
+      </div>
+      <div class="form-row">
+        <div class="form-label">ค่าคอมลูกทีมชั้น 3<small>Downline ชั้นที่ 3</small></div>
+        <input class="form-input" id="tm_lv3" type="number" value="20000" oninput="calcTeamMgmt()">
+        <span class="form-unit">บาท</span>
+      </div>
+
+      <div style="height:1px;background:var(--border-light);margin:16px 0;"></div>
+
+      <div class="form-row">
+        <div class="form-label">ตำแหน่งของคุณ<small>Tier ปัจจุบัน</small></div>
+        <select class="form-select" id="tm_tier" onchange="calcTeamMgmt()">
+          <option value="starter">Starter (0%)</option>
+          <option value="silver">Silver (5%)</option>
+          <option value="gold" selected>Gold (10%)</option>
+          <option value="platinum">Platinum (15%)</option>
+          <option value="wisdom">Wisdom (20%)</option>
+        </select>
       </div>
 
       <div class="result-box" id="teamMgmtResult"></div>
@@ -249,9 +274,10 @@
       <div class="note note-info">
         <span>ℹ️</span>
         <span>
-          <strong>สูตร:</strong> Pool = ยอดคอมมิชชั่นทีม × 1% → แต่ละ tier ได้ = Pool × % ของ tier<br>
-          <strong>Pool มาจาก:</strong> 1% ของรายได้คอมมิชชั่นทีม (ไม่ใช่ยอดขาย)<br>
-          <strong>เกณฑ์:</strong> ยอดขายส่วนตัว ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน
+          <strong>สูตร:</strong> รวมค่าคอมลูกทีมชั้น 1+2+3 → คิด 1% → คูณ % ตาม Tier ของตัวเอง<br>
+          <strong>ฐานคำนวณ:</strong> ค่าคอมมิชชั่น Affiliate ของลูกทีม 3 ชั้นรวมกัน (ไม่ใช่ยอดขาย)<br>
+          <strong>เกณฑ์:</strong> ยอดขายส่วนตัว ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน<br>
+          <strong>หมายเหตุ:</strong> คำนวณรายคน — ทุกคนที่ผ่านเงื่อนไขจะได้ค่าบริหารทีมจาก downline ของตัวเอง 3 ชั้น
         </span>
       </div>
     </div>
@@ -459,29 +485,69 @@
 
   // ── 2. Team Management Fee ──
   function calcTeamMgmt() {
-    const commission = +document.getElementById('tm_commission').value || 0;
-    const pool = commission * 0.01;
-
-    const tiers = [
-      { key:'silver',  ...TIERS.silver },
-      { key:'gold',    ...TIERS.gold },
-      { key:'platinum',...TIERS.platinum },
-      { key:'wisdom',  ...TIERS.wisdom },
-    ];
+    const lv1 = +document.getElementById('tm_lv1').value || 0;
+    const lv2 = +document.getElementById('tm_lv2').value || 0;
+    const lv3 = +document.getElementById('tm_lv3').value || 0;
+    const totalCommission = lv1 + lv2 + lv3;
+    const pool = totalCommission * 0.01;
+    const tierKey = document.getElementById('tm_tier').value;
+    const tier = TIERS[tierKey];
+    const tierPct = tier.teamMgmt;
+    const result = pool * tierPct / 100;
 
     let html = `
-      <div class="result-title">ผลการคำนวณ — ค่าบริหารทีม</div>
+      <div class="result-title">ผลการคำนวณ — ค่าบริหารทีม (รายคน)</div>
       <div class="result-grid" style="margin-bottom:16px;">
         <div class="result-item">
-          <div class="result-label">ยอดคอมมิชชั่นทีม</div>
-          <div class="result-value" style="color:var(--text-primary);font-size:18px;">฿${fmt(commission)}</div>
+          <div class="result-label">ค่าคอมลูกทีม 3 ชั้นรวม</div>
+          <div class="result-value" style="color:var(--text-primary);font-size:18px;">฿${fmt(totalCommission)}</div>
+          <div class="result-sub">${fmt(lv1)} + ${fmt(lv2)} + ${fmt(lv3)}</div>
         </div>
         <div class="result-item">
-          <div class="result-label">Pool ค่าบริหาร (1%)</div>
+          <div class="result-label">Pool 1%</div>
           <div class="result-value" style="color:var(--accent-orange);font-size:18px;">฿${fmt(pool)}</div>
-          <div class="result-sub">${fmt(commission)} × 1%</div>
+          <div class="result-sub">${fmt(totalCommission)} × 1%</div>
+        </div>
+        <div class="result-item">
+          <div class="result-label">ค่าบริหารทีมที่ได้</div>
+          <div class="result-value" style="color:var(--primary);font-size:22px;font-weight:800;">฿${fmt(result)}</div>
+          <div class="result-sub">${fmt(pool)} × ${tierPct}% (${tier.name})</div>
         </div>
       </div>
+
+      <table class="result-table">
+        <thead><tr>
+          <th>ชั้น</th>
+          <th style="text-align:right">ค่าคอมรวม</th>
+          <th>รายละเอียด</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>ชั้น 1</strong> <span style="font-size:11px;color:var(--text-muted);">Direct</span></td>
+            <td style="text-align:right" class="val">฿${fmt(lv1)}</td>
+            <td class="formula">ลูกทีมตรง</td>
+          </tr>
+          <tr>
+            <td><strong>ชั้น 2</strong></td>
+            <td style="text-align:right" class="val">฿${fmt(lv2)}</td>
+            <td class="formula">ลูกทีมของลูกทีม</td>
+          </tr>
+          <tr>
+            <td><strong>ชั้น 3</strong></td>
+            <td style="text-align:right" class="val">฿${fmt(lv3)}</td>
+            <td class="formula">ชั้นที่ 3</td>
+          </tr>
+          <tr style="border-top:2px solid var(--border);font-weight:700;">
+            <td>รวม</td>
+            <td style="text-align:right">฿${fmt(totalCommission)}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="height:1px;background:var(--border-light);margin:16px 0;"></div>
+
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">เปรียบเทียบทุก Tier:</div>
       <table class="result-table">
         <thead><tr>
           <th>ตำแหน่ง</th>
@@ -491,12 +557,14 @@
         </tr></thead>
         <tbody>`;
 
-    tiers.forEach(t => {
-      const amount = pool * t.teamMgmt / 100;
-      html += `<tr>
-        <td><span class="rank-dot" style="background:${t.color}"></span><strong>${t.name}</strong></td>
+    ['silver','gold','platinum','wisdom'].forEach(k => {
+      const t = TIERS[k];
+      const amt = pool * t.teamMgmt / 100;
+      const isActive = k === tierKey;
+      html += `<tr style="${isActive ? 'background:rgba(5,150,105,0.06);' : ''}">
+        <td><span class="rank-dot" style="background:${t.color}"></span><strong>${t.name}</strong>${isActive ? ' ← คุณ' : ''}</td>
         <td style="text-align:center;font-weight:700;">${t.teamMgmt}%</td>
-        <td style="text-align:right" class="val">฿${fmt(amount)}</td>
+        <td style="text-align:right;font-weight:${isActive ? '800' : '600'};${isActive ? 'color:var(--primary);' : ''}" class="val">฿${fmt(amt)}</td>
         <td class="formula">${fmt(pool)} × ${t.teamMgmt}%</td>
       </tr>`;
     });
@@ -504,7 +572,7 @@
     html += `</tbody></table>
       <div class="note note-warn" style="margin-top:12px;">
         <span>⚠️</span>
-        <span><strong>หมายเหตุ:</strong> Pool 1% คิดจากยอดคอมมิชชั่นทีม (ไม่ใช่ยอดขาย) · Starter ไม่ได้รับค่าบริหารทีม · Silver ได้รับเท่ากับ 5%</span>
+        <span><strong>หมายเหตุ:</strong> คำนวณรายคนจาก downline 3 ชั้นของตัวเอง · Pool 1% คิดจากค่าคอมลูกทีม (ไม่ใช่ยอดขาย) · Starter ไม่ได้รับค่าบริหารทีม</span>
       </div>`;
     document.getElementById('teamMgmtResult').innerHTML = html;
   }
@@ -680,7 +748,7 @@
             <td><span class="rank-dot" style="background:var(--accent-orange)"></span>ค่าบริหารทีม</td>
             <td style="text-align:center" class="val">1%</td>
             <td style="text-align:right" class="val">฿${fmt(teamMgmt)}</td>
-            <td class="formula">สำรองไว้ → จ่าย Pool รายเดือน</td>
+            <td class="formula">สำรองไว้ → จ่ายรายคนจากค่าคอม downline 3 ชั้น</td>
           </tr>
           <tr>
             <td></td>

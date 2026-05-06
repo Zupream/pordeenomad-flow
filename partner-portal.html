@@ -143,7 +143,7 @@
     .stats-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
     .stat-card {
       background: var(--bg-white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden;
+      border-radius: var(--radius); padding: 20px; position: relative; overflow: visible;
     }
     .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
     .stat-card.green::before { background: var(--primary); }
@@ -198,6 +198,23 @@
     .tag-orange { background: #FFF7ED; color: #9A3412; }
     .tag-purple { background: #F5F3FF; color: #5B21B6; }
     .tag-red { background: #FEF2F2; color: #991B1B; }
+
+    /* ── Tooltip ── */
+    .has-tooltip { position: relative; cursor: help; }
+    .has-tooltip .tt {
+      display: none;
+      position: absolute; top: calc(100% + 6px); left: 0;
+      background: #1E293B; color: #F8FAFC; padding: 8px 12px;
+      border-radius: 8px; font-size: 11px; line-height: 1.5;
+      white-space: nowrap; z-index: 20;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .has-tooltip:hover .tt { display: block; }
+
+    /* ── Clickable Card ── */
+    .stat-card.clickable { cursor: pointer; transition: all 0.15s ease; }
+    .stat-card.clickable:hover { box-shadow: 0 4px 16px rgba(5,150,105,0.12); transform: translateY(-1px); }
 
     /* ── Buttons ── */
     .btn {
@@ -347,13 +364,17 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           แดชบอร์ด
         </button>
+        <button class="nav-item" onclick="showPage('products', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          สินค้าที่ขายได้
+        </button>
         <button class="nav-item" onclick="showPage('income', this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           รายได้ของฉัน
         </button>
-        <button class="nav-item" onclick="showPage('products', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          สินค้าที่ขายได้
+        <button class="nav-item" onclick="showPage('withdraw', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><path d="M12 16v-3m0 0l-2 2m2-2l2 2"/></svg>
+          ถอนเงิน
         </button>
         <button class="nav-item" onclick="showPage('links', this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -366,15 +387,23 @@
         <button class="nav-item leader-only" id="navTeam" onclick="showPage('team', this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           ทีมของฉัน
-          <span class="nav-badge" id="navTeamBadge">24</span>
+          <span class="nav-badge" id="navTeamBadge">19</span>
         </button>
       </nav>
-      <div class="sidebar-profile" id="sidebarProfile">
+      <div class="sidebar-profile" id="sidebarProfile" onclick="showPage('settings', this.querySelector('.nav-item-hidden'))" style="cursor:pointer;position:relative;">
         <div class="profile-avatar" id="profileAvatar">SP</div>
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="profile-name" id="profileName">สมหญิง พอดีนะ</div>
           <div class="profile-rank" id="profileRank">★ Gold Member</div>
         </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="width:18px;flex-shrink:0;opacity:.6;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <button class="nav-item-hidden" style="display:none;"></button>
+      </div>
+      <div style="padding:8px 16px 16px;">
+        <button onclick="document.getElementById('logoutModal').style.display='flex'" style="width:100%;padding:8px 12px;border:1px solid #FECACA;border-radius:var(--radius-sm);background:#FEF2F2;color:#991B1B;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'IBM Plex Sans Thai';transition:all .15s;" onmouseover="this.style.background='#FEE2E2'" onmouseout="this.style.background='#FEF2F2'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          ออกจากระบบ
+        </button>
       </div>
     </aside>
 
@@ -393,37 +422,29 @@
         <!-- ═══════════ PAGE: Dashboard ═══════════ -->
         <div class="page active" id="page-dashboard">
           <div class="stats-grid">
-            <div class="stat-card green">
-              <div class="stat-label">รายได้รวมเดือนนี้</div>
-              <div class="stat-value" style="color:var(--primary)">฿18,450</div>
+            <div class="stat-card green clickable has-tooltip" onclick="showPage('income',document.querySelectorAll('.nav-item')[2])">
+              <div class="stat-label">รายได้รวมเดือนนี้ <span style="font-size:10px;color:var(--text-muted);">ⓘ</span></div>
+              <span class="tt" style="white-space:normal;max-width:240px;">คอมมิชชั่น + Royalty + Team Mgmt Fee + Sales Sharing<br>เฉพาะยอดที่ settled แล้ว</span>
+              <div class="stat-value" style="color:var(--primary)">฿17,150</div>
               <div class="stat-sub"><span class="up">↑ 12.5%</span> จากเดือนก่อน</div>
-              <div class="mini-chart">
-                <div class="mini-bar" style="height:40%;background:rgba(5,150,105,0.2)"></div>
-                <div class="mini-bar" style="height:55%;background:rgba(5,150,105,0.25)"></div>
-                <div class="mini-bar" style="height:45%;background:rgba(5,150,105,0.2)"></div>
-                <div class="mini-bar" style="height:70%;background:rgba(5,150,105,0.3)"></div>
-                <div class="mini-bar" style="height:60%;background:rgba(5,150,105,0.25)"></div>
-                <div class="mini-bar" style="height:80%;background:rgba(5,150,105,0.35)"></div>
-                <div class="mini-bar" style="height:100%;background:var(--primary)"></div>
-              </div>
             </div>
-            <div class="stat-card orange">
-              <div class="stat-label">ยอดขายส่วนตัว</div>
+            <div class="stat-card orange clickable has-tooltip" onclick="showPage('products',document.querySelectorAll('.nav-item')[1])">
+              <div class="stat-label">ยอดขายส่วนตัว <span style="font-size:10px;color:var(--text-muted);">ⓘ</span></div>
+              <span class="tt" style="white-space:normal;max-width:220px;">ยอดจากออเดอร์ที่ขายเอง + ซื้อใช้เอง<br>ไม่รวมยอดขายของลูกทีม</span>
               <div class="stat-value" style="color:var(--accent-orange)">฿45,200</div>
               <div class="stat-sub"><span class="up">↑ 8.2%</span> จากเดือนก่อน</div>
             </div>
-            <div class="stat-card purple leader-only-content">
-              <div class="stat-label">สมาชิกในทีม</div>
-              <div class="stat-value" style="color:var(--accent-purple)">24</div>
+            <div class="stat-card purple leader-only-content clickable has-tooltip" onclick="showPage('team',document.getElementById('navTeam'))">
+              <div class="stat-label">สมาชิกในทีม <span style="font-size:10px;color:var(--text-muted);">ⓘ</span></div>
+              <span class="tt" style="white-space:normal;max-width:200px;">ลูกทีมทุกชั้นรวมกัน (ชั้น 1-3)<br>ไม่นับตัวเอง</span>
+              <div class="stat-value" style="color:var(--accent-purple)">19</div>
               <div class="stat-sub"><span class="up">↑ 3</span> สมาชิกใหม่เดือนนี้</div>
             </div>
-            <div class="stat-card blue">
-              <div class="stat-label">ตำแหน่งปัจจุบัน</div>
+            <div class="stat-card blue has-tooltip">
+              <div class="stat-label">ตำแหน่งปัจจุบัน <span style="font-size:10px;color:var(--text-muted);">ⓘ</span></div>
+              <span class="tt" style="white-space:normal;max-width:220px;">Starter → Silver → Gold → Platinum → Wisdom<br>อิงจากยอดขายสะสม</span>
               <div class="stat-value" style="color:var(--accent-orange);font-size:22px;">Gold</div>
               <div class="stat-sub">เหลืออีก ฿4,800 ถึง Platinum</div>
-              <div class="progress-bar" style="margin-top:8px;">
-                <div class="progress-fill" style="width:72%;background:var(--accent-orange)"></div>
-              </div>
             </div>
           </div>
 
@@ -432,41 +453,33 @@
             <!-- Income summary -->
             <div class="panel">
               <div class="panel-header">
-                <div class="panel-title">สรุปรายได้เดือนนี้ (พ.ค. 2569)</div>
+                <div class="panel-title has-tooltip" style="cursor:help;">สรุปรายได้ <span style="font-size:11px;color:var(--text-muted);font-weight:400;">ⓘ</span><span class="tt" style="white-space:normal;max-width:280px;">ยอดที่แสดงคือรายได้จากออเดอร์ที่สำเร็จ (complete)<br>และพ้นระยะเวลาคืนสินค้าแล้ว</span></div>
+                <input type="month" value="2026-05" class="form-select" style="font-size:12px;padding:5px 10px;font-family:'Inter';border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-white);cursor:pointer;">
               </div>
               <div class="panel-body" style="padding:0;">
-                <table class="data-table">
-                  <thead><tr><th>ประเภทรายได้</th><th style="text-align:right">จำนวน (฿)</th><th style="text-align:center">สถานะ</th></tr></thead>
+                <table class="data-table" style="table-layout:fixed;">
+                  <colgroup><col style="width:65%"><col style="width:35%"></colgroup>
+                  <thead><tr><th>ประเภทรายได้</th><th style="text-align:right">จำนวน (฿)</th></tr></thead>
                   <tbody>
                     <tr>
                       <td><span class="rank-dot" style="background:var(--primary)"></span>ค่าคอมมิชชั่น Affiliate</td>
                       <td style="text-align:right;font-weight:700;font-family:'Inter'">8,200</td>
-                      <td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td>
                     </tr>
                     <tr>
                       <td><span class="rank-dot" style="background:var(--accent-purple)"></span>Royalty / Licensing (2%)</td>
                       <td style="text-align:right;font-weight:700;font-family:'Inter'">4,500</td>
-                      <td style="text-align:center"><span class="tag tag-green">จ่ายแล้ว</span></td>
                     </tr>
                     <tr>
-                      <td><span class="rank-dot" style="background:var(--accent-orange)"></span>Team Management Fee (1%)</td>
+                      <td class="has-tooltip"><span class="rank-dot" style="background:var(--accent-orange)"></span>Team Management Fee (1%)<span class="tt">คำนวณจากค่าคอมลูกทีม 3 ชั้น × 1% × % ตาม Tier<br>เงื่อนไข: ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน<br>สถานะ: ✅ ผ่านเกณฑ์</span></td>
                       <td style="text-align:right;font-weight:700;font-family:'Inter'">2,350</td>
-                      <td style="text-align:center"><span class="tag tag-orange">รอจ่าย</span></td>
                     </tr>
                     <tr>
-                      <td><span class="rank-dot" style="background:var(--accent-blue)"></span>Sales Sharing (1%)</td>
+                      <td class="has-tooltip"><span class="rank-dot" style="background:var(--accent-blue)"></span>Sales Sharing (1%)<span class="tt">เงื่อนไข: ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿10,000/เดือน<br>สถานะ: ❌ ยังไม่ผ่าน (฿8,200 / ฿10,000)</span></td>
                       <td style="text-align:right;font-weight:700;font-family:'Inter'">2,100</td>
-                      <td style="text-align:center"><span class="tag tag-orange">รอจ่าย</span></td>
-                    </tr>
-                    <tr>
-                      <td><span class="rank-dot" style="background:var(--accent-pink)"></span>Special Bonus (1%)</td>
-                      <td style="text-align:right;font-weight:700;font-family:'Inter'">1,300</td>
-                      <td style="text-align:center"><span class="tag tag-purple">รอรอบ Q2</span></td>
                     </tr>
                     <tr style="background:var(--bg-card)">
                       <td style="font-weight:700">รวมทั้งหมด</td>
-                      <td style="text-align:right;font-weight:800;font-family:'Inter';font-size:16px;color:var(--primary)">18,450</td>
-                      <td></td>
+                      <td style="text-align:right;font-weight:800;font-family:'Inter';font-size:16px;color:var(--primary)">17,150</td>
                     </tr>
                   </tbody>
                 </table>
@@ -482,22 +495,22 @@
               <div class="panel-body" style="padding:8px 12px;">
                 <div class="member-row">
                   <div class="avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">วร</div>
-                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">วรรณา สุขใจ</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿12,400</div></div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">วรรณา สุขใจ</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ยอดขาย ฿12,400 · <span style="color:var(--primary)">คอม ฿3,200</span></div></div>
                   <span class="rank-badge badge-gold">Gold</span>
                 </div>
                 <div class="member-row">
                   <div class="avatar" style="background:linear-gradient(135deg,#94A3B8,#64748B)">ปร</div>
-                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">ประวิทย์ มั่นคง</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿8,700</div></div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">ประวิทย์ มั่นคง</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ยอดขาย ฿8,700 · <span style="color:var(--primary)">คอม ฿1,800</span></div></div>
                   <span class="rank-badge badge-silver">Silver</span>
                 </div>
                 <div class="member-row">
                   <div class="avatar" style="background:linear-gradient(135deg,#10B981,#059669)">นิ</div>
-                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">นิภา จันทร์ดี</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿3,200</div></div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">นิภา จันทร์ดี</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ยอดขาย ฿3,200 · <span style="color:var(--primary)">คอม ฿480</span></div></div>
                   <span class="rank-badge badge-starter">Starter</span>
                 </div>
                 <div class="member-row">
                   <div class="avatar" style="background:linear-gradient(135deg,#EC4899,#DB2777)">กม</div>
-                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">กมลวรรณ รุ่งเรือง</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ฿28,300</div></div>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:600;">กมลวรรณ รุ่งเรือง</div><div style="font-size:11px;color:var(--text-muted)">ลูกทีมตรง · ยอดขาย ฿28,300 · <span style="color:var(--primary)">คอม ฿7,200</span></div></div>
                   <span class="rank-badge badge-wisdom">Wisdom</span>
                 </div>
               </div>
@@ -505,7 +518,7 @@
           </div>
 
           <!-- Promo Banner -->
-          <div style="margin-top:20px;background:linear-gradient(135deg,#059669,#0D9488);border-radius:var(--radius-lg);padding:24px 28px;color:white;display:flex;align-items:center;justify-content:space-between;">
+          <div style="margin-top:20px;background:linear-gradient(135deg,#059669,#0D9488);border-radius:var(--radius-lg);padding:24px 28px;color:white;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:opacity 0.15s;" onclick="showPage('campaigns',document.querySelectorAll('.nav-item')[4])" onmouseenter="this.style.opacity='0.92'" onmouseleave="this.style.opacity='1'">
             <div>
               <div style="font-size:12px;font-weight:600;opacity:0.8;text-transform:uppercase;letter-spacing:0.05em;">โปรโมชั่นพิเศษ Q2/2569</div>
               <div style="font-size:20px;font-weight:800;margin:6px 0;">🎌 ทริปญี่ปุ่น — เป้าหมาย ฿100,000</div>
@@ -543,16 +556,16 @@
             <div class="panel-header">
               <div class="panel-title">โครงสร้างทีม (Genealogy Tree)</div>
               <div style="display:flex;gap:8px;">
-                <button class="btn btn-sm btn-primary" id="btnTree" onclick="switchTeamView('tree')">แผนภูมิ</button>
-                <button class="btn btn-sm btn-outline" id="btnList" onclick="switchTeamView('list')">รายการ</button>
+                <button class="btn btn-sm btn-outline" id="btnTree" onclick="switchTeamView('tree')">แผนภูมิ</button>
+                <button class="btn btn-sm btn-primary" id="btnList" onclick="switchTeamView('list')">รายการ</button>
               </div>
             </div>
 
             <!-- ── Tree View (Accordion) ── -->
-            <div class="panel-body" id="teamTreeView"></div>
+            <div class="panel-body" id="teamTreeView" style="display:none;"></div>
 
             <!-- ── List View ── -->
-            <div id="teamListView" style="display:none;">
+            <div id="teamListView">
               <!-- Filter bar -->
               <div style="padding:12px 20px;border-bottom:1px solid var(--border-light);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
                 <span style="font-size:12px;font-weight:600;color:var(--text-muted);">ฟิลเตอร์:</span>
@@ -579,18 +592,33 @@
 
         <!-- ═══════════ PAGE: Income ═══════════ -->
         <div class="page" id="page-income">
-          <div class="stats-grid cols-3">
+          <!-- Date Range Filter -->
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+            <div style="display:flex;gap:4px;" id="incomeQuickFilter">
+              <button class="btn btn-sm btn-primary" onclick="setIncomePeriod('month',this)">เดือนนี้</button>
+              <button class="btn btn-sm btn-outline" onclick="setIncomePeriod('lastmonth',this)">เดือนก่อน</button>
+              <button class="btn btn-sm btn-outline" onclick="setIncomePeriod('quarter',this)">ไตรมาสนี้</button>
+              <button class="btn btn-sm btn-outline" onclick="setIncomePeriod('year',this)">ปีนี้</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+              <label style="font-size:12px;color:var(--text-muted);white-space:nowrap;">ช่วงวันที่:</label>
+              <input type="date" id="incomeDateFrom" value="2026-05-01" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <span style="font-size:12px;color:var(--text-muted);">—</span>
+              <input type="date" id="incomeDateTo" value="2026-05-31" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <button class="btn btn-sm btn-primary" onclick="applyIncomeDate()" style="font-size:11px;padding:6px 12px;">ดูข้อมูล</button>
+            </div>
+          </div>
+
+          <div class="stats-grid" style="grid-template-columns:1fr 1fr;">
             <div class="stat-card green">
-              <div class="stat-label">รายได้รวมเดือนนี้</div>
-              <div class="stat-value" style="color:var(--primary)">฿18,450</div>
+              <div class="stat-label" id="incomeStatLabel">รายได้รวมเดือนนี้</div>
+              <div class="stat-value" style="color:var(--primary)">฿17,150</div>
             </div>
             <div class="stat-card orange">
-              <div class="stat-label">รายได้รวมปีนี้</div>
-              <div class="stat-value" style="color:var(--accent-orange)">฿87,200</div>
-            </div>
-            <div class="stat-card purple">
-              <div class="stat-label">รอจ่าย</div>
-              <div class="stat-value" style="color:var(--accent-purple)">฿4,450</div>
+              <div class="stat-label" style="cursor:help;position:relative;" onmouseenter="document.getElementById('incomeTooltip').style.display='block'" onmouseleave="document.getElementById('incomeTooltip').style.display='none'">รอจ่าย <span style="font-size:10px;color:var(--text-muted);font-weight:400;">ⓘ</span>
+                <div id="incomeTooltip" style="display:none;position:absolute;top:32px;left:0;background:#1E293B;color:#F8FAFC;padding:8px 12px;border-radius:8px;font-size:11px;line-height:1.5;white-space:nowrap;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.15);">ยอดค่าคอมจากออเดอร์ที่ยังไม่ complete</div>
+              </div>
+              <div class="stat-value" style="color:var(--accent-orange)">฿4,450</div>
             </div>
           </div>
 
@@ -621,7 +649,7 @@
                 <span class="tag tag-orange">1%</span>
               </div>
               <div class="income-amount" style="color:var(--accent-orange)">฿2,350</div>
-              <div class="income-desc">1% ของรายได้คอมมิชชั่นรวมทีม → pool → จ่ายตามตำแหน่ง<br><strong>Gold ได้รับ:</strong> 10% ของ pool</div>
+              <div class="income-desc">ค่าคอมลูกทีม 3 ชั้นรวมกัน × 1% × % ตามตำแหน่ง<br><strong>Gold ได้รับ:</strong> 10% ของ pool (คำนวณรายคน)</div>
               <div class="income-bar"><div class="income-bar-fill" style="width:40%;background:var(--accent-orange)"></div></div>
               <div style="margin-top:10px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:11px;">
                 <strong>เงื่อนไข:</strong> ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน
@@ -900,72 +928,173 @@
 
         <!-- ═══════════ PAGE: Links (ลิงก์ของฉัน) ═══════════ -->
         <div class="page" id="page-links">
-          <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+          <!-- Stats -->
+          <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
             <div class="stat-card green">
-              <div class="stat-label">จำนวนคลิกทั้งหมด</div>
+              <div class="stat-label">คลิกรวม</div>
               <div class="stat-value" style="color:var(--primary)">1,247</div>
               <div class="stat-sub"><span class="up">↑ 18%</span> จากเดือนก่อน</div>
             </div>
             <div class="stat-card orange">
-              <div class="stat-label">ยอดขายจากลิงก์</div>
-              <div class="stat-value" style="color:var(--accent-orange)">฿45,200</div>
+              <div class="stat-label">ออเดอร์จากลิงก์</div>
+              <div class="stat-value" style="color:var(--accent-orange)">38</div>
+              <div class="stat-sub">CVR 3.0%</div>
+            </div>
+            <div class="stat-card blue">
+              <div class="stat-label">ยอดขายรวม</div>
+              <div class="stat-value" style="color:var(--accent-blue)">฿45,200</div>
             </div>
             <div class="stat-card purple">
-              <div class="stat-label">Conversion Rate</div>
-              <div class="stat-value" style="color:var(--accent-purple)">3.2%</div>
-              <div class="stat-sub">38 ออเดอร์ / 1,247 คลิก</div>
+              <div class="stat-label">สมาชิกใหม่จากลิงก์</div>
+              <div class="stat-value" style="color:var(--accent-purple)">12</div>
+              <div class="stat-sub"><span class="up">↑ 4</span> เดือนนี้</div>
             </div>
           </div>
 
-          <!-- ลิงก์หลัก -->
+          <!-- Filter Tabs + Create -->
           <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">ลิงก์ Affiliate ของฉัน</div>
-              <button class="btn btn-sm btn-primary">+ สร้างลิงก์ใหม่</button>
+            <div class="panel-header" style="flex-wrap:wrap;gap:12px;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="panel-title" style="margin-right:8px;">ลิงก์ทั้งหมด</div>
+                <div style="display:flex;gap:4px;" id="linkFilterTabs">
+                  <button class="btn btn-sm btn-primary" onclick="filterLinks('all',this)">ทั้งหมด <span style="opacity:.7;font-size:10px;">4</span></button>
+                  <button class="btn btn-sm btn-outline" onclick="filterLinks('store',this)">ร้านค้า <span style="opacity:.6;font-size:10px;">1</span></button>
+                  <button class="btn btn-sm btn-outline" onclick="filterLinks('product',this)">สินค้า <span style="opacity:.6;font-size:10px;">3</span></button>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="openCreateLink()">+ สร้างลิงก์ใหม่</button>
             </div>
-            <div style="padding:0;overflow-x:auto;">
-              <table class="data-table" style="min-width:700px;">
+
+            <div style="padding:0;overflow-x:auto;" id="linkTableWrap">
+              <table class="data-table" style="min-width:900px;">
                 <thead>
                   <tr>
                     <th>ชื่อลิงก์</th>
+                    <th style="text-align:center">ประเภท</th>
                     <th>URL</th>
                     <th style="text-align:center">คลิก</th>
                     <th style="text-align:center">ออเดอร์</th>
-                    <th style="text-align:right">ยอดขาย</th>
+                    <th style="text-align:center">สมาชิกใหม่</th>
                     <th style="text-align:center">CVR</th>
-                    <th></th>
+                    <th style="text-align:center">จัดการ</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td style="font-weight:600;">ลิงก์หลัก (ร้านค้า)</td>
-                    <td style="font-size:12px;font-family:'Inter';color:var(--primary);">pordee.co/sp001</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">824</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">28</td>
-                    <td style="text-align:right;font-weight:700;font-family:'Inter';">฿32,400</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">3.4%</td>
-                    <td><button class="btn btn-sm btn-outline" style="font-size:11px;">คัดลอก</button></td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:600;">โปรเซรั่ม</td>
-                    <td style="font-size:12px;font-family:'Inter';color:var(--primary);">pordee.co/sp001-serum</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">312</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">8</td>
-                    <td style="text-align:right;font-weight:700;font-family:'Inter';">฿7,120</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">2.6%</td>
-                    <td><button class="btn btn-sm btn-outline" style="font-size:11px;">คัดลอก</button></td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:600;">แคมเปญ IG Story</td>
-                    <td style="font-size:12px;font-family:'Inter';color:var(--primary);">pordee.co/sp001-ig</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">111</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">2</td>
-                    <td style="text-align:right;font-weight:700;font-family:'Inter';">฿5,680</td>
-                    <td style="text-align:center;font-family:'Inter';font-weight:600;">1.8%</td>
-                    <td><button class="btn btn-sm btn-outline" style="font-size:11px;">คัดลอก</button></td>
-                  </tr>
-                </tbody>
+                <tbody id="linkTableBody"></tbody>
               </table>
+            </div>
+          </div>
+
+          <!-- Quick Share Panel (ซ่อนไว้ เปิดเมื่อกด แชร์/QR) -->
+          <div class="panel" id="linkSharePanel" style="display:none;">
+            <div class="panel-header">
+              <div class="panel-title" id="sharePanelTitle">แชร์ลิงก์</div>
+              <button class="btn btn-sm btn-outline" onclick="document.getElementById('linkSharePanel').style.display='none'" style="font-size:11px;">ปิด ✕</button>
+            </div>
+            <div class="panel-body">
+              <div style="display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;">
+                <!-- QR Code (mock) -->
+                <div style="text-align:center;">
+                  <div id="qrCodeBox" style="width:140px;height:140px;background:#F9FAFB;border:2px dashed var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="width:48px;height:48px;"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/><rect x="18" y="14" width="3" height="3"/></svg>
+                    <span style="font-size:10px;color:var(--text-muted);">QR Code</span>
+                  </div>
+                  <button class="btn btn-sm btn-outline" style="margin-top:8px;font-size:11px;width:100%;">ดาวน์โหลด QR</button>
+                </div>
+                <!-- Link + Share buttons -->
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">URL ลิงก์</div>
+                    <div style="display:flex;gap:8px;">
+                      <input type="text" id="shareUrlInput" readonly style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Inter';font-size:13px;color:var(--primary);background:#F0FDF4;" value="pordee.co/sp001">
+                      <button class="btn btn-sm btn-primary" onclick="copyShareUrl()" id="copyShareBtn">คัดลอก</button>
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">แชร์ไปยัง</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                      <button class="btn btn-sm" style="background:#06C755;color:white;font-size:12px;border:none;border-radius:8px;padding:6px 14px;">LINE</button>
+                      <button class="btn btn-sm" style="background:#1877F2;color:white;font-size:12px;border:none;border-radius:8px;padding:6px 14px;">Facebook</button>
+                      <button class="btn btn-sm" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;font-size:12px;border:none;border-radius:8px;padding:6px 14px;">Instagram</button>
+                      <button class="btn btn-sm" style="background:#000;color:white;font-size:12px;border:none;border-radius:8px;padding:6px 14px;">TikTok</button>
+                    </div>
+                  </div>
+                  <div style="background:#F0FDF4;border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--text-secondary);line-height:1.6;">
+                    <strong>Tip:</strong> คนที่ซื้อผ่านลิงก์นี้จะเข้ามาเป็นสมาชิกในทีมคุณโดยอัตโนมัติ ทั้งได้ค่าคอมและสร้างทีมไปพร้อมกัน
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Create Link Modal Overlay -->
+          <div id="createLinkModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:none;align-items:center;justify-content:center;">
+            <div style="background:white;border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+              <!-- Modal Header -->
+              <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:16px;font-weight:700;">สร้างลิงก์ใหม่</div>
+                <button onclick="closeCreateLink()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);padding:4px;">✕</button>
+              </div>
+
+              <!-- Step 1: เลือกสินค้า -->
+              <div style="padding:24px;" id="createLinkStep1">
+                <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;">เลือกสินค้าที่ต้องการสร้างลิงก์</div>
+                <div style="position:relative;margin-bottom:16px;">
+                  <input type="text" id="productSearchInput" placeholder="ค้นหาสินค้า..." oninput="filterProductList()" style="width:100%;padding:10px 14px 10px 36px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'IBM Plex Sans Thai';outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <div id="productListForLink" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;"></div>
+              </div>
+
+              <!-- Step 2: ตั้งชื่อ + Preview -->
+              <div style="padding:24px;display:none;" id="createLinkStep2">
+                <button onclick="goBackStep1()" style="background:none;border:none;font-size:13px;cursor:pointer;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:4px;">← เลือกสินค้าอื่น</button>
+
+                <div style="background:#F0FDF4;border-radius:var(--radius-sm);padding:14px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+                  <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,var(--primary-light),var(--primary));display:flex;align-items:center;justify-content:center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:22px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                  </div>
+                  <div>
+                    <div style="font-weight:700;font-size:14px;" id="selectedProductName">—</div>
+                    <div style="font-size:12px;color:var(--text-muted);" id="selectedProductPrice">—</div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                  <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">ชื่อลิงก์ (ตั้งเองได้)</label>
+                  <input type="text" id="linkNameInput" placeholder="เช่น โปรเซรั่มเดือน พ.ค." style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'IBM Plex Sans Thai';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'" oninput="updateLinkPreview()">
+                </div>
+
+                <div style="margin-bottom:20px;">
+                  <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">URL ที่จะได้</label>
+                  <div style="padding:10px 14px;background:#F9FAFB;border:1px solid var(--border-light);border-radius:var(--radius-sm);font-family:'Inter';font-size:13px;color:var(--primary);display:flex;align-items:center;gap:4px;">
+                    <span style="color:var(--text-muted);">pordee.co/sp001-</span><span id="linkSlugPreview" style="font-weight:600;">serum</span>
+                  </div>
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">URL สร้างให้อัตโนมัติจากชื่อสินค้า</div>
+                </div>
+
+                <button class="btn btn-sm btn-primary" onclick="confirmCreateLink()" style="width:100%;padding:12px;font-size:14px;font-weight:700;">สร้างลิงก์</button>
+              </div>
+
+              <!-- Step 3: สร้างสำเร็จ -->
+              <div style="padding:24px;display:none;text-align:center;" id="createLinkStep3">
+                <div style="width:64px;height:64px;border-radius:50%;background:#D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" style="width:32px;"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div style="font-size:18px;font-weight:700;margin-bottom:4px;">สร้างลิงก์สำเร็จ!</div>
+                <div style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;">ลิงก์พร้อมใช้งานแล้ว คัดลอกไปแชร์ได้เลย</div>
+
+                <div style="display:flex;gap:8px;margin-bottom:20px;">
+                  <input type="text" id="newLinkUrl" readonly style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Inter';font-size:13px;color:var(--primary);background:#F0FDF4;" value="pordee.co/sp001-serum2">
+                  <button class="btn btn-sm btn-primary" onclick="copyNewLink()" id="copyNewLinkBtn">คัดลอก</button>
+                </div>
+
+                <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px;">
+                  <button class="btn btn-sm" style="background:#06C755;color:white;font-size:12px;border:none;border-radius:8px;padding:8px 16px;">แชร์ LINE</button>
+                  <button class="btn btn-sm" style="background:#1877F2;color:white;font-size:12px;border:none;border-radius:8px;padding:8px 16px;">แชร์ Facebook</button>
+                </div>
+
+                <button class="btn btn-sm btn-outline" onclick="closeCreateLink()" style="font-size:13px;">ปิด</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1061,8 +1190,294 @@
           </div>
         </div>
 
+        <!-- ═══════════ PAGE: Withdraw (ถอนเงิน) ═══════════ -->
+        <div class="page" id="page-withdraw">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <!-- ── ซ้าย: ถอนเงิน ── -->
+            <div style="display:flex;flex-direction:column;gap:20px;">
+
+              <!-- ยอดเงินคงเหลือ -->
+              <div class="panel">
+                <div class="panel-body" style="text-align:center;padding:28px 20px;">
+                  <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">ยอดเงินที่ถอนได้</div>
+                  <div style="font-size:36px;font-weight:900;font-family:'Inter';color:var(--primary);letter-spacing:-1px;" id="withdrawableBalance">฿6,835</div>
+                  <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">ยอดรวมทั้งหมด ฿8,200 · รอดำเนินการ ฿1,365</div>
+                </div>
+              </div>
+
+              <!-- ฟอร์มถอนเงิน -->
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title">ถอนเงิน</div>
+                </div>
+                <div class="panel-body">
+                  <div style="margin-bottom:16px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">จำนวนเงินที่ต้องการถอน (บาท)</label>
+                    <div style="position:relative;">
+                      <input type="text" id="withdrawAmount" placeholder="0.00" oninput="validateWithdraw()" style="width:100%;padding:12px 50px 12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:18px;font-weight:700;font-family:'Inter';outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                      <span style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text-muted);font-weight:600;">THB</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                      <span style="font-size:11px;color:var(--text-muted);">ขั้นต่ำ ฿100</span>
+                      <button onclick="document.getElementById('withdrawAmount').value='6835';validateWithdraw();" style="font-size:11px;color:var(--primary);background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline;">ถอนทั้งหมด</button>
+                    </div>
+                  </div>
+
+                  <!-- ปุ่มเลือกจำนวนเร็ว -->
+                  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+                    <button onclick="document.getElementById('withdrawAmount').value='500';validateWithdraw();" class="btn btn-sm btn-outline" style="font-size:12px;font-family:'Inter';">฿500</button>
+                    <button onclick="document.getElementById('withdrawAmount').value='1000';validateWithdraw();" class="btn btn-sm btn-outline" style="font-size:12px;font-family:'Inter';">฿1,000</button>
+                    <button onclick="document.getElementById('withdrawAmount').value='2000';validateWithdraw();" class="btn btn-sm btn-outline" style="font-size:12px;font-family:'Inter';">฿2,000</button>
+                    <button onclick="document.getElementById('withdrawAmount').value='5000';validateWithdraw();" class="btn btn-sm btn-outline" style="font-size:12px;font-family:'Inter';">฿5,000</button>
+                  </div>
+
+                  <!-- Validation message -->
+                  <div id="withdrawMsg" style="display:none;padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:16px;"></div>
+
+                  <!-- บัญชีปลายทาง -->
+                  <div style="background:#F9FAFB;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:14px;margin-bottom:20px;">
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">โอนเข้าบัญชี</div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                      <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#1E40AF,#3B82F6);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:20px;"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                      </div>
+                      <div style="flex:1;min-width:0;">
+                        <div style="font-weight:700;font-size:14px;">ธ.กรุงเทพ</div>
+                        <div style="font-size:13px;font-family:'Inter';color:var(--text-secondary);letter-spacing:.5px;">123-4-56789-0</div>
+                        <div style="font-size:11px;color:var(--text-muted);">สมหญิง พอดีนะ</div>
+                      </div>
+                      <button class="btn btn-sm btn-outline" style="font-size:10px;" onclick="showPage('settings');showSettingsTab('bank',document.querySelectorAll('#settingsTabs button')[1])">แก้ไข</button>
+                    </div>
+                  </div>
+
+                  <button class="btn btn-sm btn-primary" id="withdrawBtn" onclick="submitWithdraw()" style="width:100%;padding:12px;font-size:14px;font-weight:700;opacity:0.5;pointer-events:none;">ยืนยันถอนเงิน</button>
+
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:10px;line-height:1.6;text-align:center;">
+                    โอนเข้าบัญชีภายใน 1–3 วันทำการ · ค่าธรรมเนียมการถอน ฿0
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── ขวา: ประวัติการถอน ── -->
+            <div>
+              <div class="panel">
+                <div class="panel-header" style="flex-wrap:wrap;gap:10px;">
+                  <div class="panel-title">ประวัติการถอนเงิน</div>
+                  <div style="display:flex;gap:4px;" id="wdFilterTabs">
+                    <button class="btn btn-sm btn-primary" onclick="filterWd('all',this)" style="font-size:11px;">ทั้งหมด</button>
+                    <button class="btn btn-sm btn-outline" onclick="filterWd('pending',this)" style="font-size:11px;">รอดำเนินการ</button>
+                    <button class="btn btn-sm btn-outline" onclick="filterWd('completed',this)" style="font-size:11px;">สำเร็จ</button>
+                    <button class="btn btn-sm btn-outline" onclick="filterWd('rejected',this)" style="font-size:11px;">ปฏิเสธ</button>
+                  </div>
+                </div>
+                <div style="padding:0;" id="wdTableWrap"></div>
+                <div style="padding:12px 16px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12px;color:var(--text-muted);">ถอนสำเร็จทั้งหมด</span>
+                  <span style="font-weight:800;font-family:'Inter';font-size:16px;color:var(--primary);">฿10,500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Withdrawal Detail Modal -->
+          <div id="wdDetailModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+            <div style="background:white;border-radius:var(--radius-lg);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+              <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:16px;font-weight:700;">รายละเอียดการถอนเงิน</div>
+                <button onclick="document.getElementById('wdDetailModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);padding:4px;">✕</button>
+              </div>
+              <div style="padding:24px;" id="wdDetailBody"></div>
+            </div>
+          </div>
+
+          <!-- แก้ไขบัญชี Modal -->
+        </div>
+
+        <!-- ═══════════ PAGE: Settings (ตั้งค่า) ═══════════ -->
+        <div class="page" id="page-settings">
+
+          <!-- Settings Tabs -->
+          <div style="display:flex;gap:6px;margin-bottom:20px;border-bottom:2px solid var(--border-light);padding-bottom:0;" id="settingsTabs">
+            <button class="btn btn-sm" onclick="showSettingsTab('profile',this)" style="border:none;border-bottom:2px solid var(--primary);border-radius:0;padding:8px 16px;font-weight:600;color:var(--primary);background:none;">ข้อมูลส่วนตัว</button>
+            <button class="btn btn-sm" onclick="showSettingsTab('bank',this)" style="border:none;border-bottom:2px solid transparent;border-radius:0;padding:8px 16px;font-weight:500;color:var(--text-muted);background:none;">บัญชีรับเงิน</button>
+            <button class="btn btn-sm" onclick="showSettingsTab('security',this)" style="border:none;border-bottom:2px solid transparent;border-radius:0;padding:8px 16px;font-weight:500;color:var(--text-muted);background:none;">ความปลอดภัย</button>
+          </div>
+
+          <!-- Tab: ข้อมูลส่วนตัว -->
+          <div class="settings-tab" id="stab-profile">
+            <div class="panel">
+              <div class="panel-header"><div class="panel-title">ข้อมูลส่วนตัว</div></div>
+              <div class="panel-body">
+                <!-- Avatar -->
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+                  <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:white;">SP</div>
+                  <div>
+                    <button class="btn btn-sm btn-outline" style="font-size:12px;margin-bottom:4px;">เปลี่ยนรูปโปรไฟล์</button>
+                    <div style="font-size:10px;color:var(--text-muted);">JPG, PNG ขนาดไม่เกิน 2MB</div>
+                  </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">ชื่อ</label>
+                    <input type="text" value="สมหญิง" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'IBM Plex Sans Thai';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">นามสกุล</label>
+                    <input type="text" value="พอดีนะ" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'IBM Plex Sans Thai';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">เบอร์โทรศัพท์</label>
+                    <input type="text" value="089-123-4567" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">อีเมล</label>
+                    <input type="text" value="somying@email.com" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">LINE ID</label>
+                    <input type="text" value="somying.p" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">รหัสสมาชิก</label>
+                    <input type="text" value="#PN-001" readonly style="width:100%;padding:10px 14px;border:1px solid var(--border-light);border-radius:var(--radius-sm);font-size:13px;font-family:'Inter';outline:none;background:#F9FAFB;color:var(--text-muted);">
+                  </div>
+                </div>
+
+                <div style="margin-top:20px;display:flex;justify-content:flex-end;">
+                  <button class="btn btn-sm btn-primary" style="padding:10px 32px;font-size:13px;">บันทึกข้อมูล</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: บัญชีรับเงิน -->
+          <div class="settings-tab" id="stab-bank" style="display:none;">
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">บัญชีรับเงิน</div>
+              </div>
+              <div class="panel-body">
+                <div style="background:#F0FDF4;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;font-size:12px;color:#065F46;line-height:1.6;">
+                  บัญชีนี้ใช้สำหรับรับเงินจากการถอนค่าคอมมิชชั่น กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนบันทึก
+                </div>
+
+                <!-- View mode (default) -->
+                <div id="bankViewMode">
+                  <div style="display:flex;align-items:center;gap:16px;padding:20px;background:#F9FAFB;border:1px solid var(--border-light);border-radius:var(--radius-sm);">
+                    <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#1E40AF,#3B82F6);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:24px;"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    </div>
+                    <div style="flex:1;">
+                      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                        <span style="font-weight:700;font-size:16px;">ธ.กรุงเทพ</span>
+                        <span class="tag tag-green" style="font-size:10px;">ใช้งานอยู่</span>
+                      </div>
+                      <div style="font-size:15px;font-family:'Inter';color:var(--text-secondary);letter-spacing:1px;margin-bottom:2px;">123-4-56789-0</div>
+                      <div style="font-size:13px;color:var(--text-muted);">สมหญิง พอดีนะ</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="toggleBankEdit(true)" style="font-size:12px;padding:8px 20px;">แก้ไข</button>
+                  </div>
+                </div>
+
+                <!-- Edit mode (hidden) -->
+                <div id="bankEditMode" style="display:none;">
+                  <div style="max-width:480px;">
+                    <div style="margin-bottom:16px;">
+                      <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">ธนาคาร</label>
+                      <select id="bankSelectEdit" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'IBM Plex Sans Thai';outline:none;background:white;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                        <option selected>ธ.กรุงเทพ</option>
+                        <option>ธ.กสิกรไทย</option>
+                        <option>ธ.ไทยพาณิชย์</option>
+                        <option>ธ.กรุงไทย</option>
+                        <option>ธ.ทหารไทยธนชาต</option>
+                        <option>ธ.กรุงศรีอยุธยา</option>
+                        <option>ธ.ออมสิน</option>
+                        <option>พร้อมเพย์ (PromptPay)</option>
+                      </select>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                      <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">เลขที่บัญชี</label>
+                      <input type="text" id="bankAccEdit" value="123-4-56789-0" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'Inter';letter-spacing:.5px;outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    </div>
+                    <div style="margin-bottom:20px;">
+                      <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">ชื่อบัญชี</label>
+                      <input type="text" id="bankNameEdit" value="สมหญิง พอดีนะ" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'IBM Plex Sans Thai';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    </div>
+                    <div style="display:flex;gap:10px;justify-content:flex-end;">
+                      <button class="btn btn-sm btn-outline" onclick="toggleBankEdit(false)" style="padding:10px 24px;font-size:13px;">ยกเลิก</button>
+                      <button class="btn btn-sm btn-primary" onclick="toggleBankEdit(false)" style="padding:10px 24px;font-size:13px;">บันทึกบัญชี</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: ความปลอดภัย -->
+          <div class="settings-tab" id="stab-security" style="display:none;">
+            <!-- เปลี่ยนรหัสผ่าน -->
+            <div class="panel" style="margin-bottom:20px;">
+              <div class="panel-header"><div class="panel-title">เปลี่ยนรหัสผ่าน</div></div>
+              <div class="panel-body">
+                <div style="max-width:400px;display:flex;flex-direction:column;gap:14px;">
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">รหัสผ่านปัจจุบัน</label>
+                    <input type="password" placeholder="••••••••" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">รหัสผ่านใหม่</label>
+                    <input type="password" placeholder="อย่างน้อย 8 ตัวอักษร" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;">ยืนยันรหัสผ่านใหม่</label>
+                    <input type="password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                  </div>
+                  <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-sm btn-primary" style="padding:10px 32px;font-size:13px;">เปลี่ยนรหัสผ่าน</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2FA -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">ยืนยันตัวตน 2 ขั้นตอน (2FA)</div>
+              </div>
+              <div class="panel-body">
+                <div style="display:flex;align-items:center;gap:16px;">
+                  <div style="flex:1;">
+                    <div style="font-size:14px;font-weight:600;margin-bottom:4px;">ยังไม่เปิดใช้งาน</div>
+                    <div style="font-size:12px;color:var(--text-muted);line-height:1.6;">เพิ่มความปลอดภัยให้บัญชีด้วยการยืนยันตัวตนผ่าน SMS หรือ Authenticator App ทุกครั้งที่เข้าสู่ระบบ</div>
+                  </div>
+                  <button class="btn btn-sm btn-primary" style="padding:10px 20px;font-size:13px;white-space:nowrap;">เปิดใช้งาน</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </main>
+  </div>
+
+  <!-- Logout Modal -->
+  <div id="logoutModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:white;border-radius:var(--radius-lg);width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.15);text-align:center;padding:32px 28px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2" style="width:28px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px;">ออกจากระบบ</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px;">คุณต้องการออกจากระบบใช่ไหม?</div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="document.getElementById('logoutModal').style.display='none'" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans Thai';">ยกเลิก</button>
+        <button onclick="window.location.href='login.html'" style="flex:1;padding:10px;border:none;border-radius:var(--radius-sm);background:#DC2626;color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans Thai';">ยืนยันออกจากระบบ</button>
+      </div>
+    </div>
   </div>
 
   <div class="mockup-watermark">MOCKUP — PordeeConnect Partner Portal v0.1</div>
@@ -1074,7 +1489,9 @@
       products: 'สินค้าที่ขายได้',
       links: 'ลิงก์ของฉัน',
       campaigns: 'แคมเปญ',
-      team: 'ทีมของฉัน'
+      withdraw: 'ถอนเงิน',
+      team: 'ทีมของฉัน',
+      settings: 'ตั้งค่า'
     };
 
     function showPage(id, navEl) {
@@ -1086,7 +1503,7 @@
     }
 
     // ── Team Data (3 levels deep) ──
-    // Total: สมหญิง 17 คน, วรรณา 5, ประวิทย์ 3, กมลวรรณ 3, อรอุมา 1
+    // Total: สมหญิง 19 คน (17 เดิม + 2 ซื้ออย่างเดียว), วรรณา 5, ประวิทย์ 3, กมลวรรณ 3, อรอุมา 1
     const TEAM = {
       id:'SP', name:'สมหญิง พอดีนะ (คุณ)', code:'#PN-001', tier:'Gold', color:'#F59E0B,#D97706',
       sales:45200, comm:8200, level:0, parent:'—',
@@ -1097,41 +1514,45 @@
             { id:'สุ', name:'สุรเชษฐ์ ดีเด่น', code:'#PN-045', tier:'Platinum', color:'#8B5CF6,#6D28D9',
               sales:15800, comm:5100, level:2, parent:'วรรณา',
               children: [ // สุรเชษฐ์: 2 ชั้น3
-                { id:'พร', name:'พรชัย มีสุข', code:'#PN-088', tier:'Starter', color:'#10B981,#059669', sales:1800, comm:0, level:3, parent:'สุรเชษฐ์', children:[] },
+                { id:'พร', name:'พรชัย มีสุข', code:'#PN-088', tier:'Starter', color:'#10B981,#059669', sales:1800, comm:180, level:3, parent:'สุรเชษฐ์', children:[] },
                 { id:'ดา', name:'ดารา แสงทอง', code:'#PN-091', tier:'Silver', color:'#94A3B8,#64748B', sales:4200, comm:840, level:3, parent:'สุรเชษฐ์', children:[] },
               ]},
             { id:'มน', name:'มนัส ใจดี', code:'#PN-052', tier:'Starter', color:'#10B981,#059669',
-              sales:2100, comm:0, level:2, parent:'วรรณา', children:[] },
+              sales:2100, comm:210, level:2, parent:'วรรณา', children:[] },
             { id:'สม', name:'สมศรี รักดี', code:'#PN-058', tier:'Silver', color:'#94A3B8,#64748B',
               sales:6800, comm:1360, level:2, parent:'วรรณา', children:[] },
           ]},
         { id:'ปร', name:'ประวิทย์ มั่นคง', code:'#PN-018', tier:'Silver', color:'#94A3B8,#64748B',
-          sales:8700, comm:0, level:1, parent:'สมหญิง',
+          sales:8700, comm:870, level:1, parent:'สมหญิง',
           children: [ // ประวิทย์: 3 คน (2 ตรง + 1 ชั้น3)
             { id:'จิ', name:'จิราภา วงษ์สว่าง', code:'#PN-071', tier:'Gold', color:'#F59E0B,#D97706',
               sales:9500, comm:1900, level:2, parent:'ประวิทย์',
               children: [
-                { id:'ณั', name:'ณัฐพล คงมั่น', code:'#PN-102', tier:'Starter', color:'#10B981,#059669', sales:2400, comm:0, level:3, parent:'จิราภา', children:[] },
+                { id:'ณั', name:'ณัฐพล คงมั่น', code:'#PN-102', tier:'Starter', color:'#10B981,#059669', sales:2400, comm:240, level:3, parent:'จิราภา', children:[] },
               ]},
-            { id:'อา', name:'อารยา จันทร์เพ็ญ', code:'#PN-075', tier:'Starter', color:'#10B981,#059669', sales:1500, comm:0, level:2, parent:'ประวิทย์', children:[] },
+            { id:'อา', name:'อารยา จันทร์เพ็ญ', code:'#PN-075', tier:'Starter', color:'#10B981,#059669', sales:1500, comm:150, level:2, parent:'ประวิทย์', children:[] },
           ]},
         { id:'นิ', name:'นิภา จันทร์ดี', code:'#PN-067', tier:'Starter', color:'#10B981,#059669',
-          sales:3200, comm:0, level:1, parent:'สมหญิง', children:[] },
+          sales:3200, comm:320, level:1, parent:'สมหญิง', children:[] },
         { id:'กม', name:'กมลวรรณ รุ่งเรือง', code:'#PN-005', tier:'Wisdom', color:'#EC4899,#DB2777',
           sales:28300, comm:9200, level:1, parent:'สมหญิง',
           children: [ // กมลวรรณ: 3 คน (2 ตรง + 1 ชั้น3)
             { id:'วิ', name:'วิภาวดี สุขสันต์', code:'#PN-031', tier:'Gold', color:'#F59E0B,#D97706',
               sales:11200, comm:2240, level:2, parent:'กมลวรรณ',
               children: [
-                { id:'ปิ', name:'ปิยะ ศรีสุข', code:'#PN-110', tier:'Starter', color:'#10B981,#059669', sales:3100, comm:0, level:3, parent:'วิภาวดี', children:[] },
+                { id:'ปิ', name:'ปิยะ ศรีสุข', code:'#PN-110', tier:'Starter', color:'#10B981,#059669', sales:3100, comm:310, level:3, parent:'วิภาวดี', children:[] },
               ]},
             { id:'ธน', name:'ธนภัทร ก้าวหน้า', code:'#PN-038', tier:'Silver', color:'#94A3B8,#64748B', sales:7400, comm:1480, level:2, parent:'กมลวรรณ', children:[] },
           ]},
         { id:'อร', name:'อรอุมา สมบูรณ์', code:'#PN-023', tier:'Silver', color:'#94A3B8,#64748B',
           sales:5600, comm:1120, level:1, parent:'สมหญิง',
           children: [ // อรอุมา: 1 คน
-            { id:'รั', name:'รัชนี พงษ์พันธ์', code:'#PN-082', tier:'Starter', color:'#10B981,#059669', sales:2800, comm:0, level:2, parent:'อรอุมา', children:[] },
+            { id:'รั', name:'รัชนี พงษ์พันธ์', code:'#PN-082', tier:'Starter', color:'#10B981,#059669', sales:2800, comm:280, level:2, parent:'อรอุมา', children:[] },
           ]},
+        { id:'ชน', name:'ชนิกา เพชรดี', code:'#PN-115', tier:'Starter', color:'#10B981,#059669',
+          sales:890, comm:0, level:1, parent:'สมหญิง', children:[] },
+        { id:'ภา', name:'ภาณุ วัฒนา', code:'#PN-118', tier:'Starter', color:'#10B981,#059669',
+          sales:450, comm:0, level:1, parent:'สมหญิง', children:[] },
       ]
     };
 
@@ -1227,8 +1648,8 @@
           <th style="text-align:center">ตำแหน่ง</th>
           <th style="text-align:center">ชั้น</th>
           <th>แม่ทีม</th>
-          <th style="text-align:right">ยอดขาย</th>
-          <th style="text-align:right">คอมมิชชั่น</th>
+          <th style="text-align:right;cursor:help;" title="ยอดรวมทั้งหมด (ซื้อส่วนตัว + ขายให้ผู้อื่น)">ยอดขาย <span style="font-size:10px;color:var(--text-muted);font-weight:400;">ⓘ</span></th>
+          <th style="text-align:right;cursor:help;" title="ค่าคอมจากการขายให้ผู้อื่นเท่านั้น ไม่รวมค่าลิขสิทธิ์ ค่าบริหารทีม และส่วนแบ่งอื่นๆ">ค่าคอม (Affiliate) <span style="font-size:10px;color:var(--text-muted);font-weight:400;">ⓘ</span></th>
           <th style="text-align:center">ลูกทีม</th>
         </tr></thead><tbody>`;
 
@@ -1304,8 +1725,8 @@
         <td style="text-align:center;font-family:'Inter';">${m.level}</td>
         <td style="font-size:12px;">${m.parent}</td>
         <td style="text-align:right;font-weight:700;font-family:'Inter';">${fmtB(m.sales)}</td>
-        <td style="text-align:right;${m.comm?'font-weight:700;':'color:var(--text-muted);'}font-family:'Inter';">${fmtB(m.comm)}</td>
-        <td style="text-align:center;${totalKids?'font-weight:700;':'color:var(--text-muted);'}">${totalKids}</td>
+        <td style="text-align:right;font-family:'Inter';${m.comm ? 'font-weight:700;' : 'color:var(--text-muted);'}">${m.comm ? fmtB(m.comm) : '฿0'}</td>
+        <td style="text-align:center;${totalKids ? 'font-weight:700;' : 'color:var(--text-muted);'}">${totalKids || 0}</td>
       </tr>`;
     }
 
@@ -1360,8 +1781,407 @@
       }
     }
 
+    // ══════════ Links Page ══════════
+    const LINKS_DATA = [
+      { id:'L1', name:'ลิงก์หลัก (ร้านค้า)', type:'store', url:'pordee.co/sp001', clicks:824, orders:28, newMembers:8, cvr:'3.4%', created:'1 ม.ค. 69' },
+      { id:'L2', name:'เซรั่มบำรุงผิว Premium', type:'product', url:'pordee.co/sp001-serum', clicks:312, orders:8, newMembers:3, cvr:'2.6%', created:'15 มี.ค. 69' },
+      { id:'L3', name:'โปรวิตามินซี', type:'product', url:'pordee.co/sp001-vitc', clicks:89, orders:4, newMembers:1, cvr:'4.5%', created:'22 เม.ย. 69' },
+      { id:'L4', name:'คอลลาเจนผง', type:'product', url:'pordee.co/sp001-colla', clicks:64, orders:2, newMembers:0, cvr:'3.1%', created:'1 พ.ค. 69' },
+    ];
+
+    const PRODUCTS_CATALOG = [
+      { name:'เซรั่มบำรุงผิว Premium', price:890, slug:'serum' },
+      { name:'ครีมกันแดด SPF50+', price:450, slug:'spf' },
+      { name:'วิตามินซี 1000mg', price:350, slug:'vitc' },
+      { name:'คอลลาเจนผง', price:690, slug:'colla' },
+      { name:'แชมพูสมุนไพร', price:280, slug:'shampoo' },
+      { name:'สบู่สมุนไพร', price:150, slug:'soap' },
+      { name:'ครีมบำรุงมือ', price:220, slug:'hand' },
+      { name:'โทนเนอร์เช็ดหน้า', price:390, slug:'toner' },
+      { name:'มาส์กหน้าคอลลาเจน', price:120, slug:'mask' },
+      { name:'น้ำมันมะพร้าวสกัดเย็น', price:250, slug:'coconut' },
+    ];
+
+    let selectedProduct = null;
+
+    const typeLabel = t => ({store:'ร้านค้า',product:'สินค้า'}[t]||t);
+    const typeColor = t => ({store:'background:#D1FAE5;color:#065F46',product:'background:#DBEAFE;color:#1E40AF'}[t]||'');
+
+    function renderLinksTable(filter) {
+      const data = filter === 'all' ? LINKS_DATA : LINKS_DATA.filter(l => l.type === filter);
+      const tbody = document.getElementById('linkTableBody');
+      tbody.innerHTML = data.map(l => `
+        <tr>
+          <td style="font-weight:600;">${l.name}</td>
+          <td style="text-align:center;"><span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;${typeColor(l.type)}">${typeLabel(l.type)}</span></td>
+          <td style="font-size:12px;font-family:'Inter';color:var(--primary);">${l.url}</td>
+          <td style="text-align:center;font-family:'Inter';font-weight:600;">${l.clicks.toLocaleString()}</td>
+          <td style="text-align:center;font-family:'Inter';font-weight:600;">${l.orders}</td>
+          <td style="text-align:center;font-family:'Inter';font-weight:600;${l.newMembers ? 'color:var(--accent-purple);' : 'color:var(--text-muted);'}">${l.newMembers || '—'}</td>
+          <td style="text-align:center;font-family:'Inter';font-weight:600;">${l.cvr}</td>
+          <td style="text-align:center;">
+            <div style="display:flex;gap:4px;justify-content:center;">
+              <button class="btn btn-sm btn-outline" style="font-size:10px;padding:4px 8px;" onclick="openSharePanel('${l.id}')">แชร์</button>
+              <button class="btn btn-sm btn-outline" style="font-size:10px;padding:4px 8px;" onclick="copyLinkUrl('${l.url}',this)">คัดลอก</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterLinks(type, btn) {
+      document.querySelectorAll('#linkFilterTabs button').forEach(b => { b.className = 'btn btn-sm btn-outline'; });
+      btn.className = 'btn btn-sm btn-primary';
+      renderLinksTable(type);
+    }
+
+    function copyLinkUrl(url, btn) {
+      navigator.clipboard?.writeText('https://' + url);
+      const orig = btn.textContent;
+      btn.textContent = 'คัดลอกแล้ว!';
+      btn.style.color = 'var(--primary)';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+    }
+
+    function openSharePanel(linkId) {
+      const link = LINKS_DATA.find(l => l.id === linkId);
+      if (!link) return;
+      document.getElementById('sharePanelTitle').textContent = 'แชร์ — ' + link.name;
+      document.getElementById('shareUrlInput').value = link.url;
+      document.getElementById('linkSharePanel').style.display = '';
+      document.getElementById('linkSharePanel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+
+    function copyShareUrl() {
+      const input = document.getElementById('shareUrlInput');
+      navigator.clipboard?.writeText('https://' + input.value);
+      const btn = document.getElementById('copyShareBtn');
+      btn.textContent = 'คัดลอกแล้ว!'; btn.style.background = '#D1FAE5'; btn.style.color = '#065F46';
+      setTimeout(() => { btn.textContent = 'คัดลอก'; btn.style.background = ''; btn.style.color = ''; }, 1500);
+    }
+
+    // ── Create Link Modal ──
+    function openCreateLink() {
+      document.getElementById('createLinkModal').style.display = 'flex';
+      document.getElementById('createLinkStep1').style.display = '';
+      document.getElementById('createLinkStep2').style.display = 'none';
+      document.getElementById('createLinkStep3').style.display = 'none';
+      document.getElementById('productSearchInput').value = '';
+      selectedProduct = null;
+      renderProductList();
+    }
+
+    function closeCreateLink() {
+      document.getElementById('createLinkModal').style.display = 'none';
+    }
+
+    function renderProductList(query) {
+      const q = (query || '').toLowerCase();
+      const filtered = q ? PRODUCTS_CATALOG.filter(p => p.name.toLowerCase().includes(q)) : PRODUCTS_CATALOG;
+      const container = document.getElementById('productListForLink');
+      container.innerHTML = filtered.map(p => `
+        <button onclick="selectProduct('${p.slug}')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:white;cursor:pointer;text-align:left;transition:all .15s;font-family:'IBM Plex Sans Thai';" onmouseover="this.style.borderColor='var(--primary)';this.style.background='#F0FDF4'" onmouseout="this.style.borderColor='var(--border-light)';this.style.background='white'">
+          <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#E0F2FE,#DBEAFE);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" style="width:18px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:600;font-size:13px;">${p.name}</div>
+            <div style="font-size:12px;color:var(--text-muted);font-family:'Inter';">฿${p.price.toLocaleString()}</div>
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="width:16px;flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      `).join('');
+      if (!filtered.length) container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">ไม่พบสินค้า</div>';
+    }
+
+    function filterProductList() {
+      renderProductList(document.getElementById('productSearchInput').value);
+    }
+
+    function selectProduct(slug) {
+      selectedProduct = PRODUCTS_CATALOG.find(p => p.slug === slug);
+      if (!selectedProduct) return;
+      document.getElementById('createLinkStep1').style.display = 'none';
+      document.getElementById('createLinkStep2').style.display = '';
+      document.getElementById('selectedProductName').textContent = selectedProduct.name;
+      document.getElementById('selectedProductPrice').textContent = '฿' + selectedProduct.price.toLocaleString();
+      document.getElementById('linkNameInput').value = '';
+      document.getElementById('linkSlugPreview').textContent = selectedProduct.slug;
+    }
+
+    function goBackStep1() {
+      document.getElementById('createLinkStep1').style.display = '';
+      document.getElementById('createLinkStep2').style.display = 'none';
+    }
+
+    function updateLinkPreview() {
+      const name = document.getElementById('linkNameInput').value.trim();
+      const slug = name ? name.replace(/\s+/g,'-').toLowerCase().replace(/[^a-z0-9\-ก-๙]/g,'').substring(0,20) || selectedProduct.slug : selectedProduct.slug;
+      document.getElementById('linkSlugPreview').textContent = slug;
+    }
+
+    function confirmCreateLink() {
+      const slug = document.getElementById('linkSlugPreview').textContent;
+      document.getElementById('newLinkUrl').value = 'pordee.co/sp001-' + slug;
+      document.getElementById('createLinkStep2').style.display = 'none';
+      document.getElementById('createLinkStep3').style.display = '';
+    }
+
+    function copyNewLink() {
+      const url = document.getElementById('newLinkUrl').value;
+      navigator.clipboard?.writeText('https://' + url);
+      const btn = document.getElementById('copyNewLinkBtn');
+      btn.textContent = 'คัดลอกแล้ว!'; btn.style.background = '#D1FAE5'; btn.style.color = '#065F46';
+      setTimeout(() => { btn.textContent = 'คัดลอก'; btn.style.background = ''; btn.style.color = ''; }, 1500);
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('createLinkModal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeCreateLink();
+    });
+
+    // ══════════ Withdraw Page ══════════
+    const WITHDRAWABLE = 6835;
+    const MIN_WITHDRAW = 100;
+
+    const WD_HISTORY = [
+      { id:'WD-2569-007', date:'5 พ.ค. 69', time:'10:04 น.', amount:1365, status:'pending', bank:'ธ.กรุงเทพ', account:'123-4-56789-0', name:'สมหญิง พอดีนะ', note:'', slip:false },
+      { id:'WD-2569-006', date:'3 พ.ค. 69', time:'14:32 น.', amount:2500, status:'completed', bank:'ธ.กรุงเทพ', account:'123-4-56789-0', name:'สมหญิง พอดีนะ', paidDate:'4 พ.ค. 69 · 09:15 น.', note:'', slip:true },
+      { id:'WD-2569-005', date:'28 เม.ย. 69', time:'09:15 น.', amount:1800, status:'completed', bank:'ธ.กรุงเทพ', account:'123-4-56789-0', name:'สมหญิง พอดีนะ', paidDate:'29 เม.ย. 69 · 10:30 น.', note:'', slip:true },
+      { id:'WD-2569-004', date:'15 เม.ย. 69', time:'18:47 น.', amount:500, status:'rejected', bank:'ธ.กรุงเทพ', account:'999-9-99999-9', name:'สมหญิง พอดีนะ', note:'เลขบัญชีไม่ถูกต้อง กรุณาตรวจสอบและทำรายการใหม่', slip:false },
+      { id:'WD-2569-003', date:'1 เม.ย. 69', time:'11:20 น.', amount:3000, status:'completed', bank:'ธ.กรุงเทพ', account:'123-4-56789-0', name:'สมหญิง พอดีนะ', paidDate:'2 เม.ย. 69 · 14:00 น.', note:'', slip:true },
+      { id:'WD-2569-002', date:'18 มี.ค. 69', time:'16:05 น.', amount:2000, status:'completed', bank:'ธ.กรุงเทพ', account:'123-4-56789-0', name:'สมหญิง พอดีนะ', paidDate:'19 มี.ค. 69 · 11:45 น.', note:'', slip:true },
+      { id:'WD-2569-001', date:'2 มี.ค. 69', time:'10:33 น.', amount:1200, status:'completed', bank:'ธ.กรุงเทพ', account:'123-4-56789-0', name:'สมหญิง พอดีนะ', paidDate:'3 มี.ค. 69 · 09:00 น.', note:'', slip:true },
+    ];
+
+    const wdStatusTag = s => ({
+      pending:  '<span class="tag" style="background:#FEF3C7;color:#92400E;">รอดำเนินการ</span>',
+      completed:'<span class="tag tag-green">สำเร็จ</span>',
+      rejected: '<span class="tag" style="background:#FEF2F2;color:#991B1B;">ปฏิเสธ</span>',
+    }[s]||s);
+
+    function renderWdTable(filter) {
+      const data = filter === 'all' ? WD_HISTORY : WD_HISTORY.filter(w => w.status === filter);
+      const wrap = document.getElementById('wdTableWrap');
+      if (!data.length) {
+        wrap.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:13px;">ไม่มีรายการ</div>';
+        return;
+      }
+      wrap.innerHTML = `<table class="data-table" style="min-width:100%;">
+        <thead><tr>
+          <th>หมายเลข</th>
+          <th>วันที่</th>
+          <th style="text-align:right">จำนวน</th>
+          <th style="text-align:center">สถานะ</th>
+        </tr></thead>
+        <tbody>${data.map(w => `
+          <tr onclick="openWdDetail('${w.id}')" style="cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background=''">
+            <td style="font-size:12px;font-family:'Inter';color:var(--primary);font-weight:600;">${w.id}</td>
+            <td>
+              <div style="font-weight:600;font-size:13px;">${w.date}</div>
+              <div style="font-size:10px;color:var(--text-muted);">${w.time}</div>
+            </td>
+            <td style="text-align:right;font-weight:700;font-family:'Inter';font-size:14px;">฿${w.amount.toLocaleString()}</td>
+            <td style="text-align:center;">${wdStatusTag(w.status)}</td>
+          </tr>
+        `).join('')}</tbody></table>`;
+    }
+
+    function filterWd(status, btn) {
+      document.querySelectorAll('#wdFilterTabs button').forEach(b => b.className = 'btn btn-sm btn-outline');
+      btn.className = 'btn btn-sm btn-primary';
+      renderWdTable(status);
+    }
+
+    function openWdDetail(id) {
+      const w = WD_HISTORY.find(x => x.id === id);
+      if (!w) return;
+
+      const statusLabel = { pending:'รอดำเนินการ', completed:'ทำการจ่ายเรียบร้อยแล้ว', rejected:'ปฏิเสธ' };
+      const statusBg = { pending:'#FEF3C7', completed:'#D1FAE5', rejected:'#FEF2F2' };
+      const statusColor = { pending:'#92400E', completed:'#065F46', rejected:'#991B1B' };
+      const statusIcon = {
+        pending:'<svg viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2" style="width:28px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+        completed:'<svg viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" style="width:28px;"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>',
+        rejected:'<svg viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" style="width:28px;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      };
+
+      let html = '';
+
+      // Status banner
+      html += `<div style="display:flex;align-items:center;gap:14px;padding:16px;background:${statusBg[w.status]};border-radius:var(--radius-sm);margin-bottom:20px;">
+        ${statusIcon[w.status]}
+        <div>
+          <div style="font-weight:700;font-size:15px;color:${statusColor[w.status]};">${statusLabel[w.status]}</div>
+          ${w.status === 'completed' ? `<div style="font-size:11px;color:${statusColor[w.status]};opacity:.8;">โอนเมื่อ ${w.paidDate}</div>` : ''}
+          ${w.status === 'rejected' && w.note ? `<div style="font-size:12px;color:${statusColor[w.status]};margin-top:2px;">${w.note}</div>` : ''}
+          ${w.status === 'pending' ? `<div style="font-size:11px;color:${statusColor[w.status]};opacity:.8;">กำลังดำเนินการ โอนภายใน 1–3 วันทำการ</div>` : ''}
+        </div>
+      </div>`;
+
+      // Info rows
+      const infoRow = (label, value, extra) => `<div style="display:flex;justify-content:space-between;align-items:start;padding:10px 0;border-bottom:1px solid var(--border-light);">
+        <span style="font-size:12px;color:var(--text-muted);min-width:100px;">${label}</span>
+        <div style="text-align:right;">
+          <span style="font-size:13px;font-weight:600;${extra||''}">${value}</span>
+        </div>
+      </div>`;
+
+      html += `<div style="margin-bottom:20px;">`;
+      html += infoRow('หมายเลข', w.id, "font-family:'Inter';color:var(--primary);");
+      html += infoRow('วันที่ขอถอน', w.date + ' · ' + w.time);
+      html += infoRow('จำนวนเงิน', '฿' + w.amount.toLocaleString(), "font-family:'Inter';font-size:16px;");
+      html += `</div>`;
+
+      // บัญชีปลายทาง
+      html += `<div style="background:#F9FAFB;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:14px;margin-bottom:20px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">บัญชีปลายทาง</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1E40AF,#3B82F6);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:18px;"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:13px;">${w.bank}</div>
+            <div style="font-size:13px;font-family:'Inter';color:var(--text-secondary);letter-spacing:.5px;">${w.account}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${w.name}</div>
+          </div>
+        </div>
+      </div>`;
+
+      // หลักฐานการโอน (สลิป) — เฉพาะ completed
+      if (w.status === 'completed' && w.slip) {
+        html += `<div style="margin-bottom:16px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">หลักฐานการโอน</div>
+          <div style="border:1px solid var(--border-light);border-radius:var(--radius-sm);overflow:hidden;">
+            <div style="background:#F9FAFB;padding:32px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div style="width:120px;height:160px;background:white;border:1px solid #E5E7EB;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.5" style="width:32px;"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><polyline points="8 14 11 17 16 12"/></svg>
+                <div style="font-size:9px;color:var(--text-muted);text-align:center;line-height:1.3;padding:0 8px;">${w.bank}<br>${w.paidDate?.split('·')[0]}</div>
+                <div style="font-size:11px;font-weight:800;font-family:'Inter';color:var(--primary);">฿${w.amount.toLocaleString()}</div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted);">สลิปการโอนเงิน</div>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      // ปุ่มล่าง
+      html += `<button class="btn btn-sm btn-outline" onclick="document.getElementById('wdDetailModal').style.display='none'" style="width:100%;padding:10px;font-size:13px;">ปิด</button>`;
+
+      document.getElementById('wdDetailBody').innerHTML = html;
+      document.getElementById('wdDetailModal').style.display = 'flex';
+    }
+
+    function validateWithdraw() {
+      const raw = document.getElementById('withdrawAmount').value.replace(/[^0-9.]/g,'');
+      const amount = parseFloat(raw) || 0;
+      const msg = document.getElementById('withdrawMsg');
+      const btn = document.getElementById('withdrawBtn');
+
+      if (amount === 0) {
+        msg.style.display = 'none';
+        btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
+        return;
+      }
+      if (amount < MIN_WITHDRAW) {
+        msg.style.display = ''; msg.style.background = '#FEF2F2'; msg.style.color = '#991B1B';
+        msg.textContent = 'จำนวนขั้นต่ำในการถอน ฿' + MIN_WITHDRAW.toLocaleString();
+        btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
+        return;
+      }
+      if (amount > WITHDRAWABLE) {
+        msg.style.display = ''; msg.style.background = '#FEF2F2'; msg.style.color = '#991B1B';
+        msg.textContent = 'ยอดเงินไม่เพียงพอ (ถอนได้สูงสุด ฿' + WITHDRAWABLE.toLocaleString() + ')';
+        btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
+        return;
+      }
+      msg.style.display = ''; msg.style.background = '#F0FDF4'; msg.style.color = '#065F46';
+      msg.textContent = 'ถอน ฿' + amount.toLocaleString() + ' → โอนเข้า ธ.กรุงเทพ 123-4-56789-0';
+      btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+    }
+
+    function submitWithdraw() {
+      const raw = document.getElementById('withdrawAmount').value.replace(/[^0-9.]/g,'');
+      const amount = parseFloat(raw) || 0;
+      if (amount < MIN_WITHDRAW || amount > WITHDRAWABLE) return;
+      const msg = document.getElementById('withdrawMsg');
+      msg.style.display = ''; msg.style.background = '#D1FAE5'; msg.style.color = '#065F46';
+      msg.innerHTML = '<strong>สำเร็จ!</strong> คำสั่งถอน ฿' + amount.toLocaleString() + ' ถูกส่งแล้ว โอนเข้าบัญชีภายใน 1–3 วันทำการ';
+      document.getElementById('withdrawBtn').style.opacity = '0.5';
+      document.getElementById('withdrawBtn').style.pointerEvents = 'none';
+      document.getElementById('withdrawAmount').value = '';
+    }
+
+
+    // ══════════ Settings Page ══════════
+    function showSettingsTab(tab, btn) {
+      document.querySelectorAll('.settings-tab').forEach(t => t.style.display = 'none');
+      document.getElementById('stab-' + tab).style.display = '';
+      document.querySelectorAll('#settingsTabs button').forEach(b => {
+        b.style.borderBottomColor = 'transparent';
+        b.style.color = 'var(--text-muted)';
+        b.style.fontWeight = '500';
+      });
+      if (btn) {
+        btn.style.borderBottomColor = 'var(--primary)';
+        btn.style.color = 'var(--primary)';
+        btn.style.fontWeight = '600';
+      }
+    }
+
+    // ══════════ Income Date Filter ══════════
+    function setIncomePeriod(period, btn) {
+      document.querySelectorAll('#incomeQuickFilter button').forEach(b => b.className = 'btn btn-sm btn-outline');
+      btn.className = 'btn btn-sm btn-primary';
+      const now = new Date(2026, 4, 6); // mock current date
+      let from, to;
+      switch(period) {
+        case 'month':    from='2026-05-01'; to='2026-05-31'; break;
+        case 'lastmonth':from='2026-04-01'; to='2026-04-30'; break;
+        case 'quarter':  from='2026-04-01'; to='2026-06-30'; break;
+        case 'year':     from='2026-01-01'; to='2026-12-31'; break;
+      }
+      document.getElementById('incomeDateFrom').value = from;
+      document.getElementById('incomeDateTo').value = to;
+      const labels = { month:'รายได้รวมเดือนนี้', lastmonth:'รายได้เดือนก่อน', quarter:'รายได้ไตรมาสนี้', year:'รายได้ปีนี้' };
+      document.getElementById('incomeStatLabel').textContent = labels[period] || 'รายได้ช่วงที่เลือก';
+    }
+
+    function applyIncomeDate() {
+      document.querySelectorAll('#incomeQuickFilter button').forEach(b => b.className = 'btn btn-sm btn-outline');
+      document.getElementById('incomeStatLabel').textContent = 'รายได้ช่วงที่เลือก';
+    }
+
+    function toggleBankEdit(edit) {
+      document.getElementById('bankViewMode').style.display = edit ? 'none' : '';
+      document.getElementById('bankEditMode').style.display = edit ? '' : 'none';
+    }
+
+    // Override showPage to handle settings highlight
+    const _origShowPage = showPage;
+    showPage = function(id, navEl) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + id)?.classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      // settings comes from profile click, not a nav-item
+      if (id !== 'settings' && navEl) navEl.classList.add('active');
+      document.getElementById('pageTitle').textContent = titles[id] || id;
+      // highlight profile area for settings
+      const prof = document.getElementById('sidebarProfile');
+      if (id === 'settings') {
+        prof.style.background = 'rgba(5,150,105,0.08)';
+        prof.style.borderColor = 'var(--primary)';
+      } else {
+        prof.style.background = '';
+        prof.style.borderColor = '';
+      }
+    };
+
     // Init
     renderTreeView();
+    renderListView();
+    renderLinksTable('all');
+    renderWdTable('all');
   </script>
 </body>
 </html>
