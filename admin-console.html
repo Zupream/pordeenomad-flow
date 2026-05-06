@@ -25,6 +25,8 @@
       --text-muted: #7DA88A;
       --border: rgba(5,150,105,0.12);
       --border-light: rgba(5,150,105,0.06);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
       --radius: 12px;
       --radius-sm: 8px;
       --radius-lg: 16px;
@@ -236,12 +238,66 @@
       padding-top: 8px;
     }
 
+    /* ── Stats Grid (Dashboard) ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden;
+    }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .stat-card.green::before { background: var(--primary); }
+    .stat-card.orange::before { background: var(--accent-orange); }
+    .stat-card.purple::before { background: var(--accent-purple); }
+    .stat-card.blue::before { background: var(--accent-blue); }
+    .stat-card.pink::before { background: var(--accent-pink); }
+    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 800; font-family: 'Inter', sans-serif; line-height: 1; }
+    .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+    .stat-sub .up { color: var(--primary); font-weight: 600; }
+    .stat-sub .down { color: var(--accent-red); font-weight: 600; }
+
+    /* ── Tooltip ── */
+    .has-tooltip { position: relative; cursor: help; }
+    .has-tooltip .tt {
+      display: none; position: absolute; top: calc(100% + 6px); left: 0;
+      background: #1E293B; color: #F8FAFC; padding: 8px 12px;
+      border-radius: 8px; font-size: 11px; line-height: 1.5;
+      white-space: nowrap; z-index: 20; pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .has-tooltip .tt.wide { white-space: normal; max-width: 280px; }
+    .has-tooltip:hover .tt { display: block; }
+
+    /* ── Toast Notification ── */
+    .toast {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+      padding: 14px 20px; border-radius: var(--radius);
+      font-size: 13px; font-weight: 600; color: white;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      transform: translateX(120%); transition: transform 0.3s ease;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast-success { background: #059669; }
+    .toast-warning { background: #D97706; }
+    .toast-error { background: #DC2626; }
+
+    /* ── Pool meter ── */
+    .pool-meter { margin-top: 12px; }
+    .pool-bar { height: 8px; background: var(--border-light); border-radius: 4px; overflow: hidden; }
+    .pool-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+    .pool-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: var(--text-muted); }
+
+    @media (max-width: 1200px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 1024px) {
       .settings-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
+      .stats-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -260,8 +316,18 @@
         </div>
       </div>
       <nav class="sidebar-nav">
+        <div class="nav-label">ภาพรวม</div>
+        <button class="nav-item active" onclick="showPage('overview', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          แดชบอร์ด
+        </button>
+        <button class="nav-item" onclick="showPage('partners', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          จัดการพาร์ทเนอร์
+        </button>
+
         <div class="nav-label">การตั้งค่า</div>
-        <button class="nav-item active" onclick="showPage('rank', this)">
+        <button class="nav-item" onclick="showPage('rank', this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           ตั้งค่าตำแหน่ง
         </button>
@@ -277,6 +343,12 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           แคมเปญโบนัส
         </button>
+
+        <div class="nav-label">ระบบ</div>
+        <button class="nav-item" onclick="showPage('changelog', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+          ประวัติเปลี่ยนแปลง
+        </button>
       </nav>
       <div class="sidebar-profile">
         <div class="profile-avatar">AD</div>
@@ -290,14 +362,278 @@
     <!-- ── Main ── -->
     <main class="main">
       <header class="topbar">
-        <div class="topbar-title" id="pageTitle">ตั้งค่าตำแหน่ง</div>
+        <div class="topbar-title" id="pageTitle">แดชบอร์ด</div>
         <div style="font-size:12px;color:var(--text-muted);">Pordee Admin Console</div>
       </header>
 
       <div class="content">
 
+        <!-- ═══════════ PAGE: Dashboard Overview ═══════════ -->
+        <div class="page active" id="page-overview">
+          <div class="stats-grid">
+            <div class="stat-card green">
+              <div class="stat-label">พาร์ทเนอร์ทั้งหมด</div>
+              <div class="stat-value" style="color:var(--primary)">248</div>
+              <div class="stat-sub"><span class="up">↑ 12</span> คนใหม่เดือนนี้</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-label">คอมมิชชั่นจ่ายเดือนนี้</div>
+              <div class="stat-value" style="color:var(--accent-orange)">฿184K</div>
+              <div class="stat-sub"><span class="up">↑ 8.4%</span> จากเดือนก่อน</div>
+            </div>
+            <div class="stat-card purple">
+              <div class="stat-label">แคมเปญ Active</div>
+              <div class="stat-value" style="color:var(--accent-purple)">2</div>
+              <div class="stat-sub">จากทั้งหมด 3 แคมเปญ</div>
+            </div>
+            <div class="stat-card blue">
+              <div class="stat-label">ยอดขายรวมบริษัท</div>
+              <div class="stat-value" style="color:var(--accent-blue)">฿1.2M</div>
+              <div class="stat-sub"><span class="up">↑ 15.2%</span> จากเดือนก่อน</div>
+            </div>
+          </div>
+
+          <!-- Pool Status -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title has-tooltip">Team Management Pool
+                  <span style="font-size:11px;color:var(--text-muted);font-weight:400;"> ⓘ</span>
+                  <span class="tt wide">1% ของรายได้คอมมิชชั่นทีมทั้งหมด<br>แจกจ่ายให้ผู้ที่ผ่านเกณฑ์ตามสัดส่วนตำแหน่ง</span>
+                </div>
+                <span class="tag tag-orange">1% Pool</span>
+              </div>
+              <div class="panel-body">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+                  <span style="font-size:24px;font-weight:800;font-family:'Inter';">฿18,400</span>
+                  <span style="font-size:12px;color:var(--text-muted);">จ่ายแล้ว ฿14,200</span>
+                </div>
+                <div class="pool-meter">
+                  <div class="pool-bar"><div class="pool-fill" style="width:77%;background:var(--accent-orange);"></div></div>
+                  <div class="pool-labels"><span>จ่ายแล้ว 77%</span><span>คงเหลือ ฿4,200</span></div>
+                </div>
+                <div style="margin-top:12px;font-size:12px;color:var(--text-secondary);">ผู้มีสิทธิ์รับ: <strong>42 คน</strong> (จาก 248 พาร์ทเนอร์)</div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title has-tooltip">Sales Sharing Pool
+                  <span style="font-size:11px;color:var(--text-muted);font-weight:400;"> ⓘ</span>
+                  <span class="tt wide">1% ของยอดขายรวมบริษัท<br>แจกจ่ายเท่าๆ กันภายในตำแหน่ง Gold ขึ้นไป</span>
+                </div>
+                <span class="tag tag-blue">1% Pool</span>
+              </div>
+              <div class="panel-body">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+                  <span style="font-size:24px;font-weight:800;font-family:'Inter';">฿12,000</span>
+                  <span style="font-size:12px;color:var(--text-muted);">จ่ายแล้ว ฿9,800</span>
+                </div>
+                <div class="pool-meter">
+                  <div class="pool-bar"><div class="pool-fill" style="width:82%;background:var(--accent-blue);"></div></div>
+                  <div class="pool-labels"><span>จ่ายแล้ว 82%</span><span>คงเหลือ ฿2,200</span></div>
+                </div>
+                <div style="margin-top:12px;font-size:12px;color:var(--text-secondary);">ผู้มีสิทธิ์รับ: <strong>18 คน</strong> (Gold ขึ้นไปที่ผ่านเกณฑ์)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rank distribution -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">สัดส่วนตำแหน่งพาร์ทเนอร์</div>
+              <button class="btn btn-sm btn-outline" onclick="showPage('partners', document.querySelectorAll('.nav-item')[1])">ดูรายชื่อทั้งหมด →</button>
+            </div>
+            <div class="panel-body" style="padding:0;overflow-x:auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ตำแหน่ง</th>
+                    <th style="text-align:center">จำนวน</th>
+                    <th style="text-align:center">% ของทั้งหมด</th>
+                    <th style="text-align:right">คอมฯ เฉลี่ย/คน</th>
+                    <th style="text-align:right">ยอดขายเฉลี่ย/คน</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="rank-dot" style="background:#10B981"></span><strong>Starter</strong></td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">142</td>
+                    <td style="text-align:center;font-family:'Inter';">57%</td>
+                    <td style="text-align:right;font-family:'Inter';">฿1,200</td>
+                    <td style="text-align:right;font-family:'Inter';">฿3,400</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank-dot" style="background:#94A3B8"></span><strong>Silver</strong></td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">58</td>
+                    <td style="text-align:center;font-family:'Inter';">23%</td>
+                    <td style="text-align:right;font-family:'Inter';">฿4,800</td>
+                    <td style="text-align:right;font-family:'Inter';">฿8,200</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank-dot" style="background:#F59E0B"></span><strong>Gold</strong></td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">31</td>
+                    <td style="text-align:center;font-family:'Inter';">13%</td>
+                    <td style="text-align:right;font-family:'Inter';">฿12,500</td>
+                    <td style="text-align:right;font-family:'Inter';">฿22,000</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank-dot" style="background:#8B5CF6"></span><strong>Platinum</strong></td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">12</td>
+                    <td style="text-align:center;font-family:'Inter';">5%</td>
+                    <td style="text-align:right;font-family:'Inter';">฿28,400</td>
+                    <td style="text-align:right;font-family:'Inter';">฿38,000</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank-dot" style="background:#EC4899"></span><strong>Wisdom</strong></td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:600;">5</td>
+                    <td style="text-align:center;font-family:'Inter';">2%</td>
+                    <td style="text-align:right;font-family:'Inter';">฿52,000</td>
+                    <td style="text-align:right;font-family:'Inter';">฿65,000</td>
+                  </tr>
+                  <tr style="background:var(--bg-card);">
+                    <td><strong>รวม</strong></td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:800;">248</td>
+                    <td style="text-align:center;font-family:'Inter';font-weight:700;">100%</td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:700;">฿7,420</td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:700;">฿12,600</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent changes -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">การเปลี่ยนแปลงล่าสุด</div>
+              <button class="btn btn-sm btn-outline" onclick="showPage('changelog', document.querySelectorAll('.nav-item')[7])">ดูทั้งหมด →</button>
+            </div>
+            <div class="panel-body" style="padding:0;">
+              <table class="data-table">
+                <thead><tr><th>วันที่</th><th>ผู้ดำเนินการ</th><th>รายละเอียด</th><th>ค่าเดิม → ใหม่</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;">2 พ.ค. 2569</td>
+                    <td style="font-size:12px;">Admin (คุณเอง)</td>
+                    <td style="font-size:12px;">แก้ไข Gold Royalty %</td>
+                    <td style="font-size:12px;font-family:'Inter';"><span style="color:var(--accent-red);text-decoration:line-through;">25%</span> → <span style="color:var(--primary);font-weight:600;">30%</span></td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;">28 เม.ย. 2569</td>
+                    <td style="font-size:12px;">Admin (คุณเอง)</td>
+                    <td style="font-size:12px;">สร้างแคมเปญ "Gold Award Q3"</td>
+                    <td style="font-size:12px;color:var(--text-muted);">—</td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;">25 เม.ย. 2569</td>
+                    <td style="font-size:12px;">ระบบอัตโนมัติ</td>
+                    <td style="font-size:12px;">เลื่อนตำแหน่ง สมหญิง พ. → Platinum</td>
+                    <td style="font-size:12px;font-family:'Inter';"><span style="color:var(--accent-orange);">Gold</span> → <span style="color:var(--accent-purple);font-weight:600;">Platinum</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ PAGE: Partner Management ═══════════ -->
+        <div class="page" id="page-partners">
+          <div class="info-banner">
+            <strong>จัดการพาร์ทเนอร์</strong> — ดูรายชื่อ ตำแหน่ง ยอดขาย และปรับตำแหน่งแบบ Manual
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">พาร์ทเนอร์ทั้งหมด (248 คน)</div>
+              <div style="display:flex;gap:8px;">
+                <input type="search" placeholder="ค้นหาชื่อ..." style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;width:180px;outline:none;">
+                <button class="btn btn-sm btn-outline">กรองตำแหน่ง ▾</button>
+                <button class="btn btn-sm btn-primary">+ เพิ่มพาร์ทเนอร์</button>
+              </div>
+            </div>
+            <div class="panel-body" style="padding:0;overflow-x:auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ชื่อ</th>
+                    <th>ตำแหน่ง</th>
+                    <th style="text-align:right">ยอดขาย/เดือน</th>
+                    <th style="text-align:right">คอมฯ/เดือน</th>
+                    <th style="text-align:center">ลูกทีม</th>
+                    <th>แม่ทีม</th>
+                    <th style="text-align:center">สถานะ</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>สมหญิง พอดีนะ</strong><br><span style="font-size:11px;color:var(--text-muted)">ID: P-0042</span></td>
+                    <td><span class="tag tag-purple">Platinum</span></td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿45,200</td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿17,150</td>
+                    <td style="text-align:center;font-family:'Inter';">19</td>
+                    <td style="font-size:12px;">วิชัย ก.</td>
+                    <td style="text-align:center"><span class="tag tag-green">Active</span></td>
+                    <td><button class="btn btn-sm btn-outline">ดู</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>วรรณา สุขใจ</strong><br><span style="font-size:11px;color:var(--text-muted)">ID: P-0087</span></td>
+                    <td><span class="tag" style="background:#FEF3C7;color:#92400E;">Gold</span></td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿22,400</td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿8,200</td>
+                    <td style="text-align:center;font-family:'Inter';">7</td>
+                    <td style="font-size:12px;">สมหญิง พ.</td>
+                    <td style="text-align:center"><span class="tag tag-green">Active</span></td>
+                    <td><button class="btn btn-sm btn-outline">ดู</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>ประวิทย์ มั่นคง</strong><br><span style="font-size:11px;color:var(--text-muted)">ID: P-0103</span></td>
+                    <td><span class="tag" style="background:#F1F5F9;color:#475569;">Silver</span></td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿8,700</td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿1,800</td>
+                    <td style="text-align:center;font-family:'Inter';">2</td>
+                    <td style="font-size:12px;">สมหญิง พ.</td>
+                    <td style="text-align:center"><span class="tag tag-green">Active</span></td>
+                    <td><button class="btn btn-sm btn-outline">ดู</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>นิภา จันทร์ดี</strong><br><span style="font-size:11px;color:var(--text-muted)">ID: P-0156</span></td>
+                    <td><span class="tag tag-green">Starter</span></td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿3,200</td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿480</td>
+                    <td style="text-align:center;font-family:'Inter';">0</td>
+                    <td style="font-size:12px;">สมหญิง พ.</td>
+                    <td style="text-align:center"><span class="tag tag-green">Active</span></td>
+                    <td><button class="btn btn-sm btn-outline">ดู</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>สมชาย ยิ้มดี</strong><br><span style="font-size:11px;color:var(--text-muted)">ID: P-0201</span></td>
+                    <td><span class="tag tag-green">Starter</span></td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿1,200</td>
+                    <td style="text-align:right;font-family:'Inter';font-weight:600;">฿180</td>
+                    <td style="text-align:center;font-family:'Inter';">0</td>
+                    <td style="font-size:12px;">วรรณา ส.</td>
+                    <td style="text-align:center"><span class="tag tag-orange">ไม่ active 30 วัน</span></td>
+                    <td><button class="btn btn-sm btn-outline">ดู</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:center;gap:4px;padding:12px 0;">
+            <button class="btn btn-sm btn-outline" style="font-family:'Inter';">← ก่อนหน้า</button>
+            <button class="btn btn-sm btn-primary" style="font-family:'Inter';">1</button>
+            <button class="btn btn-sm btn-outline" style="font-family:'Inter';">2</button>
+            <button class="btn btn-sm btn-outline" style="font-family:'Inter';">3</button>
+            <button class="btn btn-sm btn-outline" style="font-family:'Inter';">...</button>
+            <button class="btn btn-sm btn-outline" style="font-family:'Inter';">25</button>
+            <button class="btn btn-sm btn-outline" style="font-family:'Inter';">ถัดไป →</button>
+          </div>
+        </div>
+
         <!-- ═══════════ PAGE: Rank Settings ═══════════ -->
-        <div class="page active" id="page-rank">
+        <div class="page" id="page-rank">
           <div class="info-banner">
             <strong>Admin Only</strong> — ตั้งค่าตำแหน่ง เปอร์เซ็นต์ และเกณฑ์การเลื่อนตำแหน่ง
           </div>
@@ -313,9 +649,9 @@
                   <tr>
                     <th>ตำแหน่ง</th>
                     <th style="text-align:center">ลำดับ</th>
-                    <th style="text-align:right">Royalty %</th>
-                    <th style="text-align:right">Team Mgmt %</th>
-                    <th style="text-align:right">Sales Sharing %</th>
+                    <th style="text-align:right" class="has-tooltip">Royalty %<span class="tt">2% จาก Platform Fee<br>จ่ายแบบ Cascade ตามลำดับตำแหน่ง</span></th>
+                    <th style="text-align:right" class="has-tooltip">Team Mgmt %<span class="tt">1% Pool จากคอมมิชชั่นทีม<br>แบ่งตามสัดส่วนของตำแหน่ง</span></th>
+                    <th style="text-align:right" class="has-tooltip">Sales Sharing %<span class="tt">1% Pool จากยอดขายรวมบริษัท<br>หารเท่าๆ กันในตำแหน่งเดียวกัน</span></th>
                     <th>เกณฑ์ขั้นต่ำ</th>
                     <th style="text-align:center">เปิดใช้</th>
                     <th></th>
@@ -677,18 +1013,105 @@
           </div>
         </div>
 
+        <!-- ═══════════ PAGE: Changelog ═══════════ -->
+        <div class="page" id="page-changelog">
+          <div class="info-banner">
+            <strong>ประวัติเปลี่ยนแปลง</strong> — บันทึกทุกการแก้ไขค่าตั้ง ตำแหน่ง และแคมเปญ (Audit Log)
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Audit Log</div>
+              <div style="display:flex;gap:8px;">
+                <input type="month" value="2026-05" style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'Inter';outline:none;">
+                <button class="btn btn-sm btn-outline">กรองประเภท ▾</button>
+              </div>
+            </div>
+            <div class="panel-body" style="padding:0;overflow-x:auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>วันที่/เวลา</th>
+                    <th>ผู้ดำเนินการ</th>
+                    <th>ประเภท</th>
+                    <th>รายละเอียด</th>
+                    <th>ค่าเดิม</th>
+                    <th>ค่าใหม่</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;white-space:nowrap;">2 พ.ค. 69 · 14:32</td>
+                    <td style="font-size:12px;">Admin</td>
+                    <td><span class="tag tag-purple">ตำแหน่ง</span></td>
+                    <td style="font-size:12px;">แก้ไข Gold Royalty %</td>
+                    <td style="font-family:'Inter';font-size:12px;color:var(--accent-red);">25%</td>
+                    <td style="font-family:'Inter';font-size:12px;color:var(--primary);font-weight:600;">30%</td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;white-space:nowrap;">28 เม.ย. 69 · 10:15</td>
+                    <td style="font-size:12px;">Admin</td>
+                    <td><span class="tag tag-orange">แคมเปญ</span></td>
+                    <td style="font-size:12px;">สร้างแคมเปญ "Gold Award Q3/2569"</td>
+                    <td style="font-size:12px;color:var(--text-muted);">—</td>
+                    <td style="font-size:12px;">สถานะ: ร่าง</td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;white-space:nowrap;">25 เม.ย. 69 · 00:01</td>
+                    <td style="font-size:12px;">ระบบอัตโนมัติ</td>
+                    <td><span class="tag tag-green">เลื่อนตำแหน่ง</span></td>
+                    <td style="font-size:12px;">สมหญิง พอดีนะ (P-0042)</td>
+                    <td style="font-size:12px;">Gold</td>
+                    <td style="font-size:12px;font-weight:600;color:var(--accent-purple);">Platinum</td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;white-space:nowrap;">20 เม.ย. 69 · 09:44</td>
+                    <td style="font-size:12px;">Admin</td>
+                    <td><span class="tag tag-blue">ค่าธรรมเนียม</span></td>
+                    <td style="font-size:12px;">แก้ไข Infrastructure Fee</td>
+                    <td style="font-family:'Inter';font-size:12px;color:var(--accent-red);">3%</td>
+                    <td style="font-family:'Inter';font-size:12px;color:var(--primary);font-weight:600;">2%</td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;white-space:nowrap;">18 เม.ย. 69 · 16:20</td>
+                    <td style="font-size:12px;">Admin</td>
+                    <td><span class="tag tag-purple">ตำแหน่ง</span></td>
+                    <td style="font-size:12px;">ปรับเกณฑ์ Platinum: ทีม ≥ 10 → 15 คน</td>
+                    <td style="font-size:12px;">ทีม ≥ 10</td>
+                    <td style="font-size:12px;font-weight:600;">ทีม ≥ 15</td>
+                  </tr>
+                  <tr>
+                    <td style="font-family:'Inter';font-size:12px;white-space:nowrap;">15 เม.ย. 69 · 00:01</td>
+                    <td style="font-size:12px;">ระบบอัตโนมัติ</td>
+                    <td><span class="tag tag-green">เลื่อนตำแหน่ง</span></td>
+                    <td style="font-size:12px;">วรรณา สุขใจ (P-0087)</td>
+                    <td style="font-size:12px;">Silver</td>
+                    <td style="font-size:12px;font-weight:600;color:var(--accent-orange);">Gold</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
 
-  <div class="mockup-watermark">MOCKUP — Pordee Admin Console v0.1</div>
+  <!-- Toast container -->
+  <div class="toast toast-success" id="toast">✓ บันทึกการตั้งค่าเรียบร้อยแล้ว</div>
+
+  <div class="mockup-watermark">MOCKUP — Pordee Admin Console v0.2</div>
 
   <script>
     const titles = {
+      overview: 'แดชบอร์ด',
+      partners: 'จัดการพาร์ทเนอร์',
       rank: 'ตั้งค่าตำแหน่ง',
       commission: 'ตั้งค่าคอมมิชชั่น',
       platform: 'ค่าธรรมเนียมแพลตฟอร์ม',
-      campaign: 'แคมเปญโบนัส'
+      campaign: 'แคมเปญโบนัส',
+      changelog: 'ประวัติเปลี่ยนแปลง'
     };
 
     function showPage(id, navEl) {
@@ -698,6 +1121,26 @@
       if (navEl) navEl.classList.add('active');
       document.getElementById('pageTitle').textContent = titles[id] || id;
     }
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = (type === 'success' ? '✓ ' : '⚠ ') + message;
+      toast.className = 'toast toast-' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Save confirmation
+    document.querySelectorAll('.btn-primary').forEach(btn => {
+      if (btn.textContent.includes('บันทึก')) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (confirm('ยืนยันบันทึกการตั้งค่า?\nการเปลี่ยนแปลงนี้จะมีผลกับพาร์ทเนอร์ทุกคนในระบบ')) {
+            showToast('บันทึกการตั้งค่าเรียบร้อยแล้ว');
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>

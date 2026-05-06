@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PordeeConnect — เข้าสู่ระบบ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      background: #F0FDF4;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      padding: 40px 32px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #059669, #10B981);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      color: white;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0A2E1B;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: #7DA88A;
+      margin-top: -2px;
+    }
+
+    .login-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #3D6B50;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3D6B50;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid rgba(5,150,105,0.12);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: #059669;
+    }
+
+    .form-input::placeholder {
+      color: #7DA88A;
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .remember-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #3D6B50;
+      cursor: pointer;
+    }
+
+    .remember-row a {
+      font-size: 12px;
+      color: #059669;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .remember-row a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-login:hover {
+      background: #047857;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(5,150,105,0.12);
+    }
+
+    .divider span {
+      font-size: 11px;
+      color: #7DA88A;
+    }
+
+    .btn-line {
+      width: 100%;
+      padding: 11px;
+      background: #06C755;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-line:hover {
+      background: #05B34C;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #7DA88A;
+    }
+
+    .login-footer a {
+      color: #059669;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .mockup-watermark {
+      position: fixed;
+      bottom: 12px;
+      right: 16px;
+      font-size: 10px;
+      color: rgba(0,0,0,0.15);
+      font-family: 'Inter', monospace;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Logo -->
+      <div class="logo">
+        <div class="logo-icon">PC</div>
+        <div>
+          <div class="logo-text">PordeeConnect</div>
+          <div class="logo-sub">Partner Portal</div>
+        </div>
+      </div>
+
+      <div class="login-title">เข้าสู่ระบบพาร์ทเนอร์</div>
+
+      <!-- Login Form -->
+      <div class="form-group">
+        <label class="form-label">อีเมลหรือเบอร์โทรศัพท์</label>
+        <input type="text" class="form-input" placeholder="email@example.com" value="somying@email.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">รหัสผ่าน</label>
+        <input type="password" class="form-input" placeholder="••••••••" value="12345678">
+      </div>
+
+      <div class="remember-row">
+        <label><input type="checkbox" checked> จดจำฉันไว้</label>
+        <a href="#">ลืมรหัสผ่าน?</a>
+      </div>
+
+      <button class="btn-login" onclick="window.location.href='partner-portal.html'">เข้าสู่ระบบ</button>
+
+      <div class="login-footer">
+        ยังไม่มีบัญชี? <a href="#">สมัครสมาชิก</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup-watermark">MOCKUP — PordeeConnect Login</div>
+</body>
+</html>
