@@ -425,7 +425,7 @@
             <div class="stat-card green clickable has-tooltip" onclick="showPage('income',document.querySelectorAll('.nav-item')[2])">
               <div class="stat-label">รายได้รวมเดือนนี้ <span style="font-size:10px;color:var(--text-muted);">ⓘ</span></div>
               <span class="tt" style="white-space:normal;max-width:240px;">คอมมิชชั่น + Royalty + Team Mgmt Fee + Sales Sharing<br>เฉพาะยอดที่ settled แล้ว</span>
-              <div class="stat-value" style="color:var(--primary)">฿17,150</div>
+              <div class="stat-value" style="color:var(--primary)">฿14,823</div>
               <div class="stat-sub"><span class="up">↑ 12.5%</span> จากเดือนก่อน</div>
             </div>
             <div class="stat-card orange clickable has-tooltip" onclick="showPage('products',document.querySelectorAll('.nav-item')[1])">
@@ -471,7 +471,7 @@
                     </tr>
                     <tr>
                       <td class="has-tooltip"><span class="rank-dot" style="background:var(--accent-orange)"></span>Team Management Fee (1%)<span class="tt">คำนวณจากค่าคอมลูกทีม 3 ชั้น × 1% × % ตาม Tier<br>เงื่อนไข: ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน<br>สถานะ: ✅ ผ่านเกณฑ์</span></td>
-                      <td style="text-align:right;font-weight:700;font-family:'Inter'">2,350</td>
+                      <td style="text-align:right;font-weight:700;font-family:'Inter'">23.50</td>
                     </tr>
                     <tr>
                       <td class="has-tooltip"><span class="rank-dot" style="background:var(--accent-blue)"></span>Sales Sharing (1%)<span class="tt">เงื่อนไข: ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿10,000/เดือน<br>สถานะ: ❌ ยังไม่ผ่าน (฿8,200 / ฿10,000)</span></td>
@@ -479,7 +479,7 @@
                     </tr>
                     <tr style="background:var(--bg-card)">
                       <td style="font-weight:700">รวมทั้งหมด</td>
-                      <td style="text-align:right;font-weight:800;font-family:'Inter';font-size:16px;color:var(--primary)">17,150</td>
+                      <td style="text-align:right;font-weight:800;font-family:'Inter';font-size:16px;color:var(--primary)">14,823</td>
                     </tr>
                   </tbody>
                 </table>
@@ -490,7 +490,7 @@
             <div class="panel leader-only-content">
               <div class="panel-header">
                 <div class="panel-title">ทีมล่าสุด</div>
-                <button class="btn btn-sm btn-outline" onclick="showPage('team',document.querySelectorAll('.nav-item')[1])">ดูทั้งหมด</button>
+                <button class="btn btn-sm btn-outline" onclick="showPage('team',document.getElementById('navTeam'))">ดูทั้งหมด</button>
               </div>
               <div class="panel-body" style="padding:8px 12px;">
                 <div class="member-row">
@@ -518,7 +518,7 @@
           </div>
 
           <!-- Promo Banner -->
-          <div style="margin-top:20px;background:linear-gradient(135deg,#059669,#0D9488);border-radius:var(--radius-lg);padding:24px 28px;color:white;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:opacity 0.15s;" onclick="showPage('campaigns',document.querySelectorAll('.nav-item')[4])" onmouseenter="this.style.opacity='0.92'" onmouseleave="this.style.opacity='1'">
+          <div style="margin-top:20px;background:linear-gradient(135deg,#059669,#0D9488);border-radius:var(--radius-lg);padding:24px 28px;color:white;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:opacity 0.15s;" onclick="showPage('campaigns',document.querySelectorAll('.nav-item')[5])" onmouseenter="this.style.opacity='0.92'" onmouseleave="this.style.opacity='1'">
             <div>
               <div style="font-size:12px;font-weight:600;opacity:0.8;text-transform:uppercase;letter-spacing:0.05em;">โปรโมชั่นพิเศษ Q2/2569</div>
               <div style="font-size:20px;font-weight:800;margin:6px 0;">🎌 ทริปญี่ปุ่น — เป้าหมาย ฿100,000</div>
@@ -537,8 +537,8 @@
           <div class="stats-grid cols-3">
             <div class="stat-card green">
               <div class="stat-label">สมาชิกทั้งหมด</div>
-              <div class="stat-value" style="color:var(--primary)">24</div>
-              <div class="stat-sub">ลูกทีมตรง 5 · ทั้งหมด 24</div>
+              <div class="stat-value" style="color:var(--primary)">19</div>
+              <div class="stat-sub">ลูกทีมตรง 7 · ทั้งหมด 19</div>
             </div>
             <div class="stat-card orange">
               <div class="stat-label">ยอดขายรวมทีม</div>
@@ -555,9 +555,15 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">โครงสร้างทีม (Genealogy Tree)</div>
-              <div style="display:flex;gap:8px;">
+              <div style="display:flex;gap:8px;align-items:center;">
                 <button class="btn btn-sm btn-outline" id="btnTree" onclick="switchTeamView('tree')">แผนภูมิ</button>
                 <button class="btn btn-sm btn-primary" id="btnList" onclick="switchTeamView('list')">รายการ</button>
+                <div style="position:relative;margin-left:8px;">
+                  <button class="btn btn-sm btn-outline" onclick="mockExport('ลูกทีมทั้งหมด')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);" onmouseenter="document.getElementById('teamExportTip').style.display='block'" onmouseleave="document.getElementById('teamExportTip').style.display='none'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+                  </button>
+                  <div id="teamExportTip" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#1E293B;color:#F8FAFC;padding:8px 12px;border-radius:8px;font-size:11px;line-height:1.5;white-space:nowrap;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.15);">Export รายชื่อลูกทีมทั้งหมด (ทุกชั้น) ไม่ขึ้นกับ filter</div>
+                </div>
               </div>
             </div>
 
@@ -606,13 +612,16 @@
               <span style="font-size:12px;color:var(--text-muted);">—</span>
               <input type="date" id="incomeDateTo" value="2026-05-31" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
               <button class="btn btn-sm btn-primary" onclick="applyIncomeDate()" style="font-size:11px;padding:6px 12px;">ดูข้อมูล</button>
+              <button class="btn btn-sm btn-outline" onclick="mockExport('สรุปรายได้')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);margin-left:4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+              </button>
             </div>
           </div>
 
           <div class="stats-grid" style="grid-template-columns:1fr 1fr;">
             <div class="stat-card green">
               <div class="stat-label" id="incomeStatLabel">รายได้รวมเดือนนี้</div>
-              <div class="stat-value" style="color:var(--primary)">฿17,150</div>
+              <div class="stat-value" style="color:var(--primary)">฿14,823</div>
             </div>
             <div class="stat-card orange">
               <div class="stat-label" style="cursor:help;position:relative;" onmouseenter="document.getElementById('incomeTooltip').style.display='block'" onmouseleave="document.getElementById('incomeTooltip').style.display='none'">รอจ่าย <span style="font-size:10px;color:var(--text-muted);font-weight:400;">ⓘ</span>
@@ -623,7 +632,7 @@
           </div>
 
           <div class="income-grid">
-            <div class="income-card">
+            <div class="income-card" style="cursor:pointer;" onclick="showIncomeDetail('affiliate')" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor=''">
               <div class="income-card-header">
                 <div class="income-type">ค่าคอมมิชชั่น Affiliate</div>
                 <span class="tag tag-green">ผู้ขายกำหนด</span>
@@ -631,9 +640,10 @@
               <div class="income-amount" style="color:var(--primary)">฿8,200</div>
               <div class="income-desc">คอมมิชชั่นจากการแนะนำสินค้า ผู้ขายกำหนด % เอง (5-20%)<br><strong>แหล่งที่มา:</strong> ยอดขายจากลิงก์ affiliate</div>
               <div class="income-bar"><div class="income-bar-fill" style="width:75%;background:var(--primary)"></div></div>
+              <div style="text-align:right;margin-top:8px;font-size:11px;color:var(--primary);font-weight:600;">ดูรายละเอียด →</div>
             </div>
 
-            <div class="income-card">
+            <div class="income-card" style="cursor:pointer;" onclick="showIncomeDetail('royalty')" onmouseover="this.style.borderColor='var(--accent-purple)'" onmouseout="this.style.borderColor=''">
               <div class="income-card-header">
                 <div class="income-type">Royalty / Licensing Fee</div>
                 <span class="tag tag-purple">2%</span>
@@ -641,23 +651,25 @@
               <div class="income-amount" style="color:var(--accent-purple)">฿4,500</div>
               <div class="income-desc">คำนวณแบบ cascade ตามตำแหน่ง จากรายได้ลูกทีม<br><strong>Gold ได้รับ:</strong> 30% ของรายได้ขั้นก่อนหน้า</div>
               <div class="income-bar"><div class="income-bar-fill" style="width:55%;background:var(--accent-purple)"></div></div>
+              <div style="text-align:right;margin-top:8px;font-size:11px;color:var(--accent-purple);font-weight:600;">ดูรายละเอียด →</div>
             </div>
 
-            <div class="income-card">
+            <div class="income-card" style="cursor:pointer;" onclick="showIncomeDetail('team')" onmouseover="this.style.borderColor='var(--accent-orange)'" onmouseout="this.style.borderColor=''">
               <div class="income-card-header">
                 <div class="income-type">Team Management Fee</div>
                 <span class="tag tag-orange">1%</span>
               </div>
-              <div class="income-amount" style="color:var(--accent-orange)">฿2,350</div>
+              <div class="income-amount" style="color:var(--accent-orange)">฿23.50</div>
               <div class="income-desc">ค่าคอมลูกทีม 3 ชั้นรวมกัน × 1% × % ตามตำแหน่ง<br><strong>Gold ได้รับ:</strong> 10% ของ pool (คำนวณรายคน)</div>
               <div class="income-bar"><div class="income-bar-fill" style="width:40%;background:var(--accent-orange)"></div></div>
               <div style="margin-top:10px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:11px;">
                 <strong>เงื่อนไข:</strong> ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿1,000/เดือน
                 <div class="qual-status" style="margin-top:4px;"><span class="qual-dot pass"></span><span style="color:var(--primary);font-weight:600;">ผ่านเกณฑ์</span></div>
               </div>
+              <div style="text-align:right;margin-top:8px;font-size:11px;color:var(--accent-orange);font-weight:600;">ดูรายละเอียด →</div>
             </div>
 
-            <div class="income-card">
+            <div class="income-card" style="cursor:pointer;" onclick="showIncomeDetail('sales')" onmouseover="this.style.borderColor='var(--accent-blue)'" onmouseout="this.style.borderColor=''">
               <div class="income-card-header">
                 <div class="income-type">Sales Sharing</div>
                 <span class="tag" style="background:#EFF6FF;color:#1E40AF;">1%</span>
@@ -669,6 +681,7 @@
                 <strong>เงื่อนไข:</strong> ยอดขาย ≥ ฿1,000/เดือน + คอมมิชชั่น ≥ ฿10,000/เดือน
                 <div class="qual-status" style="margin-top:4px;"><span class="qual-dot fail"></span><span style="color:var(--accent-red);font-weight:600;">ยังไม่ผ่าน (฿8,200 / ฿10,000)</span></div>
               </div>
+              <div style="text-align:right;margin-top:8px;font-size:11px;color:var(--accent-blue);font-weight:600;">ดูรายละเอียด →</div>
             </div>
 
             <!-- Campaign / Promotional Bonus -->
@@ -725,6 +738,305 @@
           </div>
         </div>
 
+        <!-- ═══════════ SUB-PAGE: Income Detail — Affiliate ═══════════ -->
+        <div class="page" id="page-income-affiliate">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <button onclick="showPage('income',document.querySelectorAll('.nav-item')[2])" style="background:none;border:none;font-size:13px;color:var(--primary);cursor:pointer;font-weight:600;font-family:'IBM Plex Sans Thai';display:flex;align-items:center;gap:4px;">← กลับรายได้ของฉัน</button>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <label style="font-size:12px;color:var(--text-muted);white-space:nowrap;">ช่วงวันที่:</label>
+              <input type="date" class="subDateFrom" value="2026-05-01" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <span style="font-size:12px;color:var(--text-muted);">—</span>
+              <input type="date" class="subDateTo" value="2026-05-31" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <button class="btn btn-sm btn-primary" style="font-size:11px;padding:6px 12px;">ดูข้อมูล</button>
+              <button class="btn btn-sm btn-outline" onclick="mockExport('รายละเอียดรายได้')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);margin-left:4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">ค่าคอมมิชชั่น Affiliate</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">รายละเอียดค่าคอมจากออเดอร์ที่ขายผ่านลิงก์ · พ.ค. 2569</div>
+              </div>
+              <div style="font-size:24px;font-weight:900;font-family:'Inter';color:var(--primary);">฿8,200</div>
+            </div>
+            <div style="padding:0;overflow-x:auto;" id="affOrderTableWrap"></div>
+            <div style="padding:12px 16px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <span style="font-size:12px;color:var(--text-muted);" id="affOrderSummary"></span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--text-muted);">แสดง</span>
+                <select onchange="paginate(this,'tblAffiliate')" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'Inter';outline:none;">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                </select>
+                <span style="font-size:11px;color:var(--text-muted);">รายการ</span>
+                <div style="display:flex;gap:2px;margin-left:8px;" id="pager-tblAffiliate"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Detail Modal -->
+          <div id="orderDetailModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+            <div style="background:white;border-radius:var(--radius-lg);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+              <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:16px;font-weight:700;" id="orderDetailTitle">รายละเอียดออเดอร์</div>
+                <button onclick="document.getElementById('orderDetailModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);padding:4px;">✕</button>
+              </div>
+              <div style="padding:24px;" id="orderDetailBody"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ SUB-PAGE: Income Detail — Royalty ═══════════ -->
+        <div class="page" id="page-income-royalty">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <button onclick="showPage('income',document.querySelectorAll('.nav-item')[2])" style="background:none;border:none;font-size:13px;color:var(--primary);cursor:pointer;font-weight:600;font-family:'IBM Plex Sans Thai';display:flex;align-items:center;gap:4px;">← กลับรายได้ของฉัน</button>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <label style="font-size:12px;color:var(--text-muted);white-space:nowrap;">ช่วงวันที่:</label>
+              <input type="date" class="subDateFrom" value="2026-05-01" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <span style="font-size:12px;color:var(--text-muted);">—</span>
+              <input type="date" class="subDateTo" value="2026-05-31" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <button class="btn btn-sm btn-primary" style="font-size:11px;padding:6px 12px;">ดูข้อมูล</button>
+              <button class="btn btn-sm btn-outline" onclick="mockExport('รายละเอียดรายได้')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);margin-left:4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+              </button>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-bottom:20px;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Royalty / Licensing Fee</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">ค่าลิขสิทธิ์ cascade จากยอดขายลูกทีม · พ.ค. 2569</div>
+              </div>
+              <div style="font-size:24px;font-weight:900;font-family:'Inter';color:var(--accent-purple);">฿4,500</div>
+            </div>
+            <div class="panel-body" style="padding:16px 20px;">
+              <div style="background:#F5F3FF;border-radius:var(--radius-sm);padding:12px 16px;font-size:12px;color:#4A148C;line-height:1.6;margin-bottom:16px;">
+                <strong>วิธีคำนวณ:</strong> Royalty Pool = 2% ของราคาสินค้า → cascade ตามตำแหน่ง (Gold = 30% ของขั้นก่อนหน้า)
+              </div>
+            </div>
+            <div style="padding:0;overflow-x:auto;">
+              <table class="data-table" style="min-width:700px;" id="tblRoyalty">
+                <thead><tr>
+                  <th>ลูกทีม</th>
+                  <th style="text-align:center">ชั้น</th>
+                  <th style="text-align:center">ตำแหน่ง</th>
+                  <th style="text-align:right">ยอดขายลูกทีม</th>
+                  <th style="text-align:right">Royalty Pool (2%)</th>
+                  <th style="text-align:right">ค่าลิขสิทธิ์ที่ได้</th>
+                </tr></thead>
+                <tbody>
+                  <!-- ชั้น 1 -->
+                  <tr><td style="font-weight:600;">วรรณา สุขใจ</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:center"><span class="rank-badge badge-gold">Gold</span></td><td style="text-align:right;font-family:'Inter';">฿12,400</td><td style="text-align:right;font-family:'Inter';">฿248</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿74.40</td></tr>
+                  <tr><td style="font-weight:600;">ประวิทย์ มั่นคง</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:center"><span class="rank-badge badge-silver">Silver</span></td><td style="text-align:right;font-family:'Inter';">฿8,700</td><td style="text-align:right;font-family:'Inter';">฿174</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿52.20</td></tr>
+                  <tr><td style="font-weight:600;">กมลวรรณ รุ่งเรือง</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:center"><span class="rank-badge badge-wisdom">Wisdom</span></td><td style="text-align:right;font-family:'Inter';">฿28,300</td><td style="text-align:right;font-family:'Inter';">฿566</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿169.80</td></tr>
+                  <tr><td style="font-weight:600;">อรอุมา สมบูรณ์</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:center"><span class="rank-badge badge-silver">Silver</span></td><td style="text-align:right;font-family:'Inter';">฿5,600</td><td style="text-align:right;font-family:'Inter';">฿112</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿33.60</td></tr>
+                  <tr><td style="font-weight:600;">นิภา จันทร์ดี</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿3,200</td><td style="text-align:right;font-family:'Inter';">฿64</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿19.20</td></tr>
+                  <tr><td style="font-weight:600;">ชนิกา เพชรดี</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿890</td><td style="text-align:right;font-family:'Inter';">฿17.80</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿5.34</td></tr>
+                  <tr><td style="font-weight:600;">ภาณุ วัฒนา</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿450</td><td style="text-align:right;font-family:'Inter';">฿9</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿2.70</td></tr>
+                  <!-- ชั้น 2 -->
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">สุรเชษฐ์ ดีเด่น</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-platinum">Platinum</span></td><td style="text-align:right;font-family:'Inter';">฿15,800</td><td style="text-align:right;font-family:'Inter';">฿316</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿28.44</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">มนัส ใจดี</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿2,100</td><td style="text-align:right;font-family:'Inter';">฿42</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿3.78</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">สมศรี รักดี</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-silver">Silver</span></td><td style="text-align:right;font-family:'Inter';">฿6,800</td><td style="text-align:right;font-family:'Inter';">฿136</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿12.24</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">จิราภา วงษ์สว่าง</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-gold">Gold</span></td><td style="text-align:right;font-family:'Inter';">฿9,500</td><td style="text-align:right;font-family:'Inter';">฿190</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿17.10</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">อารยา จันทร์เพ็ญ</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿1,500</td><td style="text-align:right;font-family:'Inter';">฿30</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿2.70</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">วิภาวดี สุขสันต์</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-gold">Gold</span></td><td style="text-align:right;font-family:'Inter';">฿11,200</td><td style="text-align:right;font-family:'Inter';">฿224</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿20.16</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">ธนภัทร ก้าวหน้า</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-silver">Silver</span></td><td style="text-align:right;font-family:'Inter';">฿7,400</td><td style="text-align:right;font-family:'Inter';">฿148</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿13.32</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">รัชนี พงษ์พันธ์</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿2,800</td><td style="text-align:right;font-family:'Inter';">฿56</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿5.04</td></tr>
+                  <!-- ชั้น 3 -->
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">พรชัย มีสุข</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿1,800</td><td style="text-align:right;font-family:'Inter';">฿36</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿0.97</td></tr>
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">ดารา แสงทอง</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:center"><span class="rank-badge badge-silver">Silver</span></td><td style="text-align:right;font-family:'Inter';">฿4,200</td><td style="text-align:right;font-family:'Inter';">฿84</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿2.27</td></tr>
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">ณัฐพล คงมั่น</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿2,400</td><td style="text-align:right;font-family:'Inter';">฿48</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿1.30</td></tr>
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">ปิยะ ศรีสุข</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:center"><span class="rank-badge badge-starter">Starter</span></td><td style="text-align:right;font-family:'Inter';">฿3,100</td><td style="text-align:right;font-family:'Inter';">฿62</td><td style="text-align:right;font-weight:700;color:var(--accent-purple);font-family:'Inter';">฿1.67</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="padding:12px 16px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <span style="font-size:12px;color:var(--text-muted);">19 สมาชิก · รวม <strong style="font-family:'Inter';color:var(--accent-purple);">฿4,500</strong></span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--text-muted);">แสดง</span>
+                <select onchange="paginate(this,'tblRoyalty')" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'Inter';outline:none;">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                </select>
+                <span style="font-size:11px;color:var(--text-muted);">รายการ</span>
+                <div style="display:flex;gap:2px;margin-left:8px;" id="pager-tblRoyalty">
+                  <button class="btn btn-sm btn-primary" style="font-size:10px;padding:4px 10px;min-width:28px;">1</button>
+                  <button class="btn btn-sm btn-outline" style="font-size:10px;padding:4px 10px;min-width:28px;" disabled>2</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ SUB-PAGE: Income Detail — Team Mgmt ═══════════ -->
+        <div class="page" id="page-income-team">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <button onclick="showPage('income',document.querySelectorAll('.nav-item')[2])" style="background:none;border:none;font-size:13px;color:var(--primary);cursor:pointer;font-weight:600;font-family:'IBM Plex Sans Thai';display:flex;align-items:center;gap:4px;">← กลับรายได้ของฉัน</button>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <label style="font-size:12px;color:var(--text-muted);white-space:nowrap;">ช่วงวันที่:</label>
+              <input type="date" class="subDateFrom" value="2026-05-01" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <span style="font-size:12px;color:var(--text-muted);">—</span>
+              <input type="date" class="subDateTo" value="2026-05-31" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <button class="btn btn-sm btn-primary" style="font-size:11px;padding:6px 12px;">ดูข้อมูล</button>
+              <button class="btn btn-sm btn-outline" onclick="mockExport('รายละเอียดรายได้')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);margin-left:4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+              </button>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-bottom:20px;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Team Management Fee</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">ค่าบริหารทีมจากค่าคอมลูกทีม · พ.ค. 2569</div>
+              </div>
+              <div style="font-size:24px;font-weight:900;font-family:'Inter';color:var(--accent-orange);">฿23.50</div>
+            </div>
+            <div class="panel-body" style="padding:16px 20px;">
+              <div style="background:#FFF7ED;border-radius:var(--radius-sm);padding:12px 16px;font-size:12px;color:#9A3412;line-height:1.6;margin-bottom:16px;">
+                <strong>วิธีคำนวณ:</strong> ค่าคอมรวมลูกทีม 3 ชั้น × 1% = Pool → Gold ได้ 10% ของ Pool
+              </div>
+
+              <!-- สรุป Pool -->
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+                <div style="background:#F9FAFB;border-radius:var(--radius-sm);padding:12px;text-align:center;">
+                  <div style="font-size:11px;color:var(--text-muted);">คอมรวมลูกทีม</div>
+                  <div style="font-size:18px;font-weight:800;font-family:'Inter';color:var(--text-primary);">฿23,500</div>
+                </div>
+                <div style="background:#F9FAFB;border-radius:var(--radius-sm);padding:12px;text-align:center;">
+                  <div style="font-size:11px;color:var(--text-muted);">Pool 1%</div>
+                  <div style="font-size:18px;font-weight:800;font-family:'Inter';color:var(--text-primary);">฿235</div>
+                </div>
+                <div style="background:#FFF7ED;border-radius:var(--radius-sm);padding:12px;text-align:center;">
+                  <div style="font-size:11px;color:var(--accent-orange);">Gold ได้ 10%</div>
+                  <div style="font-size:18px;font-weight:800;font-family:'Inter';color:var(--accent-orange);">฿23.50</div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:0;overflow-x:auto;">
+              <table class="data-table" style="min-width:600px;" id="tblTeamMgmt">
+                <thead><tr>
+                  <th>ลูกทีม</th>
+                  <th style="text-align:center">ชั้น</th>
+                  <th style="text-align:right">ค่าคอมลูกทีม</th>
+                  <th style="text-align:right">Pool 1%</th>
+                </tr></thead>
+                <tbody>
+                  <!-- ชั้น 1 -->
+                  <tr><td style="font-weight:600;">วรรณา สุขใจ</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:right;font-family:'Inter';">฿3,200</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿32</td></tr>
+                  <tr><td style="font-weight:600;">ประวิทย์ มั่นคง</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:right;font-family:'Inter';">฿870</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿8.70</td></tr>
+                  <tr><td style="font-weight:600;">กมลวรรณ รุ่งเรือง</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:right;font-family:'Inter';">฿9,200</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿92</td></tr>
+                  <tr><td style="font-weight:600;">อรอุมา สมบูรณ์</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:right;font-family:'Inter';">฿1,120</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿11.20</td></tr>
+                  <tr><td style="font-weight:600;">นิภา จันทร์ดี</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:right;font-family:'Inter';">฿320</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿3.20</td></tr>
+                  <tr><td style="font-weight:600;">ชนิกา เพชรดี</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:right;font-family:'Inter';color:var(--text-muted);">฿0</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿0</td></tr>
+                  <tr><td style="font-weight:600;">ภาณุ วัฒนา</td><td style="text-align:center;font-family:'Inter';">1</td><td style="text-align:right;font-family:'Inter';color:var(--text-muted);">฿0</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿0</td></tr>
+                  <!-- ชั้น 2 -->
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">สุรเชษฐ์ ดีเด่น</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿5,100</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿51</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">มนัส ใจดี</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿210</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿2.10</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">สมศรี รักดี</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿1,360</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿13.60</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">จิราภา วงษ์สว่าง</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿1,900</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿19</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">อารยา จันทร์เพ็ญ</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿150</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿1.50</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">วิภาวดี สุขสันต์</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿2,240</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿22.40</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">ธนภัทร ก้าวหน้า</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿1,480</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿14.80</td></tr>
+                  <tr style="background:#F0FDFA;"><td style="font-weight:600;">รัชนี พงษ์พันธ์</td><td style="text-align:center;font-family:'Inter';">2</td><td style="text-align:right;font-family:'Inter';">฿280</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿2.80</td></tr>
+                  <!-- ชั้น 3 -->
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">พรชัย มีสุข</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:right;font-family:'Inter';">฿180</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿1.80</td></tr>
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">ดารา แสงทอง</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:right;font-family:'Inter';">฿840</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿8.40</td></tr>
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">ณัฐพล คงมั่น</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:right;font-family:'Inter';">฿240</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿2.40</td></tr>
+                  <tr style="background:#F5F3FF;"><td style="font-weight:600;">ปิยะ ศรีสุข</td><td style="text-align:center;font-family:'Inter';">3</td><td style="text-align:right;font-family:'Inter';">฿310</td><td style="text-align:right;font-family:'Inter';font-weight:600;">฿3.10</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="padding:12px 16px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <span style="font-size:12px;color:var(--text-muted);">19 สมาชิก · Pool รวม <strong style="font-family:'Inter';color:var(--accent-orange);">฿235</strong></span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--text-muted);">แสดง</span>
+                <select onchange="paginate(this,'tblTeamMgmt')" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'Inter';outline:none;">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                </select>
+                <span style="font-size:11px;color:var(--text-muted);">รายการ</span>
+                <div style="display:flex;gap:2px;margin-left:8px;" id="pager-tblTeamMgmt">
+                  <button class="btn btn-sm btn-primary" style="font-size:10px;padding:4px 10px;min-width:28px;">1</button>
+                  <button class="btn btn-sm btn-outline" style="font-size:10px;padding:4px 10px;min-width:28px;" disabled>2</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ SUB-PAGE: Income Detail — Sales Sharing ═══════════ -->
+        <div class="page" id="page-income-sales">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <button onclick="showPage('income',document.querySelectorAll('.nav-item')[2])" style="background:none;border:none;font-size:13px;color:var(--primary);cursor:pointer;font-weight:600;font-family:'IBM Plex Sans Thai';display:flex;align-items:center;gap:4px;">← กลับรายได้ของฉัน</button>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <label style="font-size:12px;color:var(--text-muted);white-space:nowrap;">ช่วงวันที่:</label>
+              <input type="date" class="subDateFrom" value="2026-05-01" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <span style="font-size:12px;color:var(--text-muted);">—</span>
+              <input type="date" class="subDateTo" value="2026-05-31" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:'Inter';outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+              <button class="btn btn-sm btn-primary" style="font-size:11px;padding:6px 12px;">ดูข้อมูล</button>
+              <button class="btn btn-sm btn-outline" onclick="mockExport('รายละเอียดรายได้')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);margin-left:4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Sales Sharing</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">ส่วนแบ่งยอดขายรวมบริษัท · พ.ค. 2569</div>
+              </div>
+              <div style="font-size:24px;font-weight:900;font-family:'Inter';color:var(--accent-blue);">฿2,100</div>
+            </div>
+            <div class="panel-body" style="padding:16px 20px;">
+              <div style="background:#EFF6FF;border-radius:var(--radius-sm);padding:12px 16px;font-size:12px;color:#1E40AF;line-height:1.6;margin-bottom:20px;">
+                <strong>วิธีคำนวณ:</strong> 1% ของยอดขายรวมบริษัท → แบ่งตาม tier → หารจำนวนคนที่ผ่านเกณฑ์
+              </div>
+
+              <!-- Flow การคำนวณ -->
+              <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:8px;align-items:center;margin-bottom:20px;">
+                <div style="background:#F9FAFB;border-radius:var(--radius-sm);padding:12px;text-align:center;">
+                  <div style="font-size:10px;color:var(--text-muted);">ยอดขายรวมบริษัท</div>
+                  <div style="font-size:16px;font-weight:800;font-family:'Inter';">฿3.2M</div>
+                </div>
+                <div style="font-size:16px;color:var(--text-muted);">→</div>
+                <div style="background:#F9FAFB;border-radius:var(--radius-sm);padding:12px;text-align:center;">
+                  <div style="font-size:10px;color:var(--text-muted);">Pool 1%</div>
+                  <div style="font-size:16px;font-weight:800;font-family:'Inter';">฿32,000</div>
+                </div>
+                <div style="font-size:16px;color:var(--text-muted);">→</div>
+                <div style="background:#F9FAFB;border-radius:var(--radius-sm);padding:12px;text-align:center;">
+                  <div style="font-size:10px;color:var(--text-muted);">Gold pool 10%</div>
+                  <div style="font-size:16px;font-weight:800;font-family:'Inter';">฿3,200</div>
+                </div>
+                <div style="font-size:16px;color:var(--text-muted);">÷</div>
+                <div style="background:#F9FAFB;border-radius:var(--radius-sm);padding:12px;text-align:center;">
+                  <div style="font-size:10px;color:var(--text-muted);">ผ่านเกณฑ์</div>
+                  <div style="font-size:16px;font-weight:800;font-family:'Inter';">15 คน</div>
+                </div>
+              </div>
+
+              <div style="background:#EFF6FF;border-radius:var(--radius-sm);padding:14px;text-align:center;">
+                <div style="font-size:12px;color:var(--accent-blue);">ส่วนแบ่งที่ได้รับ</div>
+                <div style="font-size:28px;font-weight:900;font-family:'Inter';color:var(--accent-blue);">฿2,100</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">จ่ายรายไตรมาส · รอบ Q2 จ่ายภายใน ก.ค. 2569</div>
+              </div>
+
+              <div style="margin-top:16px;padding:10px 14px;background:#FEF2F2;border-radius:var(--radius-sm);font-size:12px;color:#991B1B;">
+                <strong>สถานะ:</strong> ยังไม่ผ่านเกณฑ์ (คอมมิชชั่น ฿8,200 / ฿10,000 ที่ต้องการ) · ยอดที่แสดงเป็นประมาณการหากผ่านเกณฑ์
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- ═══════════ PAGE: Products (สินค้าที่ขายได้) ═══════════ -->
         <div class="page" id="page-products">
           <!-- Filter bar -->
@@ -745,6 +1057,9 @@
                 <option value="refunded">คืนเงิน</option>
               </select>
             </div>
+            <button class="btn btn-sm btn-outline" onclick="mockExport('สินค้าที่ขายได้')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);margin-left:auto;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+            </button>
           </div>
 
           <!-- Stats -->
@@ -893,7 +1208,7 @@
           <div class="panel">
             <div class="panel-header"><div class="panel-title">รายการออเดอร์ล่าสุด</div></div>
             <div style="padding:0;overflow-x:auto;">
-              <table class="data-table" style="min-width:800px;">
+              <table class="data-table" style="min-width:800px;" id="tblProducts">
                 <thead><tr>
                   <th>สินค้า</th><th style="text-align:center">จำนวน</th><th style="text-align:right">ราคา/ชิ้น</th><th style="text-align:right">ยอดขาย</th><th style="text-align:center">คอม %</th><th style="text-align:right">ค่าคอม</th><th style="text-align:center">สถานะ</th><th>วันที่</th>
                 </tr></thead>
@@ -912,6 +1227,19 @@
                   <tr style="opacity:0.5;"><td style="font-weight:600;">ครีมบำรุงมือ</td><td style="text-align:center;font-family:'Inter';font-weight:600;">1</td><td style="text-align:right;font-family:'Inter';">฿220</td><td style="text-align:right;font-weight:700;font-family:'Inter';">฿220</td><td style="text-align:center;font-family:'Inter';">10%</td><td style="text-align:right;font-family:'Inter';text-decoration:line-through;color:var(--text-muted);">฿22</td><td style="text-align:center"><span class="tag" style="background:#FFF7ED;color:#9A3412;">คืนเงิน</span></td><td style="font-size:12px;color:var(--text-muted);">25 เม.ย. 69</td></tr>
                 </tbody>
               </table>
+            </div>
+            <div style="padding:12px 16px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <span style="font-size:12px;color:var(--text-muted);">12 รายการ</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--text-muted);">แสดง</span>
+                <select onchange="paginate(this,'tblProducts')" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'Inter';outline:none;">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                </select>
+                <span style="font-size:11px;color:var(--text-muted);">รายการ</span>
+                <div style="display:flex;gap:2px;margin-left:8px;" id="pager-tblProducts"></div>
+              </div>
             </div>
           </div>
 
@@ -1271,6 +1599,9 @@
                     <button class="btn btn-sm btn-outline" onclick="filterWd('completed',this)" style="font-size:11px;">สำเร็จ</button>
                     <button class="btn btn-sm btn-outline" onclick="filterWd('rejected',this)" style="font-size:11px;">ปฏิเสธ</button>
                   </div>
+                  <button class="btn btn-sm btn-outline" onclick="mockExport('ประวัติการถอนเงิน')" style="font-size:11px;padding:6px 12px;color:var(--text-muted);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+                  </button>
                 </div>
                 <div style="padding:0;" id="wdTableWrap"></div>
                 <div style="padding:12px 16px;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;">
@@ -2129,6 +2460,174 @@
       }
     }
 
+    // ══════════ Mock Export ══════════
+    function mockExport(name) {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1E293B;color:#F8FAFC;padding:12px 20px;border-radius:10px;font-size:13px;z-index:2000;box-shadow:0 8px 24px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px;font-family:"IBM Plex Sans Thai",sans-serif;animation:fadeIn .2s;';
+      toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" style="width:18px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>กำลังดาวน์โหลด <strong>' + name + '.xlsx</strong>';
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity .3s'; setTimeout(() => toast.remove(), 300); }, 2500);
+    }
+
+    // ══════════ Table Pagination ══════════
+    const pagerState = {};
+
+    function paginate(sel, tableId, goPage) {
+      const tbl = document.getElementById(tableId);
+      if (!tbl) return;
+      const rows = Array.from(tbl.tBodies[0]?.rows || []);
+      const perPage = sel ? parseInt(sel.value) : (pagerState[tableId]?.perPage || 10);
+      const totalPages = Math.max(1, Math.ceil(rows.length / perPage));
+      let page = goPage || 1;
+      if (page > totalPages) page = totalPages;
+
+      pagerState[tableId] = { perPage, page };
+
+      rows.forEach((r, i) => {
+        r.style.display = (i >= (page - 1) * perPage && i < page * perPage) ? '' : 'none';
+      });
+
+      // render pager buttons
+      const pager = document.getElementById('pager-' + tableId);
+      if (pager) {
+        let html = '';
+        for (let p = 1; p <= totalPages; p++) {
+          const cls = p === page ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+          html += `<button class="${cls}" style="font-size:10px;padding:4px 10px;min-width:28px;" onclick="paginate(null,'${tableId}',${p})">${p}</button>`;
+        }
+        pager.innerHTML = html;
+      }
+
+      // update select if called from pager button
+      if (!sel) {
+        const panel = tbl.closest('.panel');
+        const select = panel?.querySelector('select[onchange*="paginate"]');
+        if (select) select.value = perPage;
+      }
+    }
+
+    // ══════════ Affiliate Order Data ══════════
+    const AFF_ORDERS = [
+      { id:'#ORD-4821', date:'5 พ.ค.', status:'done', statusTip:'ออเดอร์ complete และพ้นระยะคืนสินค้าแล้ว',
+        items:[{name:'เซรั่มบำรุงผิว Premium',qty:5,price:890,pct:10},{name:'ครีมกันแดด SPF50+',qty:2,price:450,pct:10}] },
+      { id:'#ORD-4818', date:'4 พ.ค.', status:'done', statusTip:'ออเดอร์ complete และพ้นระยะคืนสินค้าแล้ว',
+        items:[{name:'เซรั่มบำรุงผิว Premium',qty:3,price:890,pct:10},{name:'วิตามินซี 1000mg',qty:4,price:350,pct:15}] },
+      { id:'#ORD-4815', date:'3 พ.ค.', status:'done', statusTip:'ออเดอร์ complete และพ้นระยะคืนสินค้าแล้ว',
+        items:[{name:'ครีมกันแดด SPF50+',qty:6,price:450,pct:10},{name:'คอลลาเจนผง',qty:3,price:690,pct:10}] },
+      { id:'#ORD-4810', date:'3 พ.ค.', status:'pending', statusTip:'ออเดอร์ยังไม่ complete',
+        items:[{name:'วิตามินซี 1000mg',qty:4,price:350,pct:15},{name:'แชมพูสมุนไพร',qty:3,price:280,pct:5}] },
+      { id:'#ORD-4805', date:'2 พ.ค.', status:'done', statusTip:'ออเดอร์ complete และพ้นระยะคืนสินค้าแล้ว',
+        items:[{name:'เซรั่มบำรุงผิว Premium',qty:8,price:890,pct:10}] },
+      { id:'#ORD-4798', date:'2 พ.ค.', status:'pending', statusTip:'รอพ้นระยะเวลาคืนสินค้า',
+        items:[{name:'คอลลาเจนผง',qty:5,price:690,pct:10},{name:'วิตามินซี 1000mg',qty:3,price:350,pct:15}] },
+      { id:'#ORD-4790', date:'1 พ.ค.', status:'done', statusTip:'ออเดอร์ complete และพ้นระยะคืนสินค้าแล้ว',
+        items:[{name:'ครีมกันแดด SPF50+',qty:4,price:450,pct:10},{name:'แชมพูสมุนไพร',qty:3,price:280,pct:5}] },
+    ];
+
+    function calcOrder(o) {
+      let sales=0, comm=0, qty=0;
+      o.items.forEach(i => { const s=i.qty*i.price; sales+=s; comm+=s*i.pct/100; qty+=i.qty; });
+      return { sales, comm, qty, itemCount:o.items.length };
+    }
+
+    function renderAffOrders() {
+      let totalSales=0, totalComm=0, totalOrders=AFF_ORDERS.length;
+      const rows = AFF_ORDERS.map(o => {
+        const c = calcOrder(o);
+        totalSales+=c.sales; totalComm+=c.comm;
+        const statusTag = o.status==='done'
+          ? `<span class="tag tag-green" style="cursor:help;position:relative;" onmouseenter="this.querySelector('i').style.display='block'" onmouseleave="this.querySelector('i').style.display='none'">สำเร็จ<i style="display:none;position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1E293B;color:#F8FAFC;padding:6px 10px;border-radius:6px;font-size:10px;font-style:normal;white-space:nowrap;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.15);">${o.statusTip}</i></span>`
+          : `<span class="tag" style="background:#FEF3C7;color:#92400E;cursor:help;position:relative;" onmouseenter="this.querySelector('i').style.display='block'" onmouseleave="this.querySelector('i').style.display='none'">รอดำเนินการ<i style="display:none;position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1E293B;color:#F8FAFC;padding:6px 10px;border-radius:6px;font-size:10px;font-style:normal;white-space:nowrap;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.15);">${o.statusTip}</i></span>`;
+        return `<tr onclick="showOrderDetail('${o.id}')" style="cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background=''">
+          <td style="font-family:'Inter';font-size:12px;color:var(--primary);font-weight:600;">${o.id}</td>
+          <td style="text-align:center;font-family:'Inter';">${c.itemCount} รายการ</td>
+          <td style="text-align:right;font-family:'Inter';font-weight:700;">฿${c.sales.toLocaleString()}</td>
+          <td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿${c.comm.toLocaleString()}</td>
+          <td style="text-align:center;">${statusTag}</td>
+          <td style="font-size:12px;color:var(--text-muted);">${o.date}</td>
+        </tr>`;
+      }).join('');
+
+      document.getElementById('affOrderTableWrap').innerHTML = `<table class="data-table" style="min-width:600px;" id="tblAffiliate">
+        <thead><tr>
+          <th>ออเดอร์</th>
+          <th style="text-align:center">รายการ</th>
+          <th style="text-align:right">ยอดขาย</th>
+          <th style="text-align:right">ค่าคอม</th>
+          <th style="text-align:center">สถานะ</th>
+          <th>วันที่</th>
+        </tr></thead>
+        <tbody>${rows}</tbody></table>`;
+
+      document.getElementById('affOrderSummary').innerHTML = `${totalOrders} ออเดอร์ · รวม <strong style="font-family:'Inter';color:var(--primary);">฿${totalComm.toLocaleString()}</strong>`;
+      paginate(null, 'tblAffiliate', 1);
+    }
+
+    function showOrderDetail(orderId) {
+      const o = AFF_ORDERS.find(x => x.id === orderId);
+      if (!o) return;
+      const c = calcOrder(o);
+      const statusLabel = o.status==='done' ? '<span class="tag tag-green">สำเร็จ</span>' : '<span class="tag" style="background:#FEF3C7;color:#92400E;">รอดำเนินการ</span>';
+
+      let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div><span style="font-family:'Inter';font-size:14px;font-weight:700;color:var(--primary);">${o.id}</span><span style="margin-left:8px;font-size:12px;color:var(--text-muted);">${o.date}</span></div>
+        ${statusLabel}
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">${o.statusTip}</div>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>สินค้า</th><th style="text-align:center">จำนวน</th><th style="text-align:right">ราคา/ชิ้น</th><th style="text-align:right">ยอดขาย</th><th style="text-align:center">คอม%</th><th style="text-align:right">ค่าคอม</th></tr></thead>
+        <tbody>`;
+      o.items.forEach(i => {
+        const s = i.qty*i.price;
+        const cm = s*i.pct/100;
+        html += `<tr>
+          <td style="font-weight:600;">${i.name}</td>
+          <td style="text-align:center;font-family:'Inter';">${i.qty}</td>
+          <td style="text-align:right;font-family:'Inter';">฿${i.price.toLocaleString()}</td>
+          <td style="text-align:right;font-family:'Inter';font-weight:700;">฿${s.toLocaleString()}</td>
+          <td style="text-align:center;font-family:'Inter';">${i.pct}%</td>
+          <td style="text-align:right;font-weight:700;color:var(--primary);font-family:'Inter';">฿${cm.toLocaleString()}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border-light);margin-top:12px;">
+        <span style="font-size:13px;font-weight:600;">รวม</span>
+        <div style="text-align:right;">
+          <div style="font-size:12px;color:var(--text-muted);">ยอดขาย ฿${c.sales.toLocaleString()}</div>
+          <div style="font-size:16px;font-weight:800;color:var(--primary);font-family:'Inter';">ค่าคอม ฿${c.comm.toLocaleString()}</div>
+        </div>
+      </div>`;
+
+      document.getElementById('orderDetailTitle').textContent = 'รายละเอียดออเดอร์ ' + o.id;
+      document.getElementById('orderDetailBody').innerHTML = html;
+      document.getElementById('orderDetailModal').style.display = 'flex';
+    }
+
+    // ══════════ Income Detail Sub-pages ══════════
+    const incomeDetailTitles = {
+      'income-affiliate': 'ค่าคอมมิชชั่น Affiliate',
+      'income-royalty': 'Royalty / Licensing Fee',
+      'income-team': 'Team Management Fee',
+      'income-sales': 'Sales Sharing',
+    };
+    // merge into titles
+    Object.assign(titles, incomeDetailTitles);
+
+    function showIncomeDetail(type) {
+      // sync date from parent income page
+      const fromVal = document.getElementById('incomeDateFrom').value;
+      const toVal = document.getElementById('incomeDateTo').value;
+      showPage('income-' + type);
+      // set all sub-page date inputs to match
+      const page = document.getElementById('page-income-' + type);
+      if (page) {
+        const f = page.querySelector('.subDateFrom');
+        const t = page.querySelector('.subDateTo');
+        if (f) f.value = fromVal;
+        if (t) t.value = toVal;
+      }
+    }
+
     // ══════════ Income Date Filter ══════════
     function setIncomePeriod(period, btn) {
       document.querySelectorAll('#incomeQuickFilter button').forEach(b => b.className = 'btn btn-sm btn-outline');
@@ -2182,6 +2681,8 @@
     renderListView();
     renderLinksTable('all');
     renderWdTable('all');
+    renderAffOrders();
+    ['tblRoyalty','tblTeamMgmt','tblProducts'].forEach(id => paginate(null, id, 1));
   </script>
 </body>
 </html>
