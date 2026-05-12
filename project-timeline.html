@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PordeeNomad — Project Development Timeline</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-dark: #047857;
+            --primary-light: #10B981;
+            --primary-bg: #F0FDF4;
+            --secondary: #0D9488;
+            --text-primary: #0A2E1B;
+            --text-secondary: #3D6B50;
+            --text-muted: #7DA88A;
+            --border: #D1FAE5;
+            --card-bg: #FFFFFF;
+            --orange: #F59E0B;
+            --orange-bg: #FFFBEB;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --blue: #3B82F6;
+            --blue-bg: #EFF6FF;
+            --pink: #EC4899;
+            --pink-bg: #FDF2F8;
+            --red: #EF4444;
+            --red-bg: #FEF2F2;
+            --cyan: #06B6D4;
+            --cyan-bg: #ECFEFF;
+            --amber: #D97706;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary), var(--secondary));
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            position: relative;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+            position: relative;
+        }
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            margin-top: 0.75rem;
+            position: relative;
+        }
+        .back-link {
+            position: absolute;
+            top: 1.25rem;
+            left: 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.85rem;
+            z-index: 2;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: white; }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .summary-card .num {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .summary-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem 1.25rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Phase */
+        .phase {
+            margin-bottom: 2.5rem;
+        }
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        .phase-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .phase-info { flex: 1; }
+        .phase-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .phase-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .phase-toggle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        .phase.collapsed .phase-toggle { transform: rotate(-90deg); }
+        .phase.collapsed .phase-body { display: none; }
+
+        /* Gantt-like timeline */
+        .timeline-table {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            border-bottom: 1px solid #f0f9f4;
+            min-height: 48px;
+            transition: background 0.15s;
+        }
+        .timeline-row:last-child { border-bottom: none; }
+        .timeline-row:hover { background: #f8fdfb; }
+        .timeline-row.sub { background: #fcfefb; }
+        .timeline-row.sub:hover { background: #f5fbf7; }
+
+        .task-info {
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-right: 1px solid #f0f9f4;
+        }
+        .task-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .task-name {
+            font-size: 0.82rem;
+            font-weight: 500;
+            flex: 1;
+        }
+        .task-name small {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+        .task-badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-must { background: #FEE2E2; color: #DC2626; }
+        .badge-should { background: #FEF3C7; color: #D97706; }
+        .badge-nice { background: #E0F2FE; color: #0284C7; }
+        .badge-be { background: #EDE9FE; color: #7C3AED; }
+        .badge-fe { background: #D1FAE5; color: #059669; }
+        .badge-full { background: #F3F4F6; color: #6B7280; }
+
+        .task-bar-area {
+            padding: 0.6rem 0.75rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .task-bar {
+            height: 22px;
+            border-radius: 6px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            min-width: 40px;
+            transition: opacity 0.2s;
+            cursor: default;
+        }
+        .task-bar:hover {
+            opacity: 0.85;
+            z-index: 2;
+        }
+
+        /* Week headers */
+        .week-header {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            border-bottom: 2px solid var(--border);
+            background: #f8fdfb;
+        }
+        .week-header-label {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-right: 1px solid #f0f9f4;
+        }
+        .week-cols {
+            display: flex;
+            padding: 0;
+        }
+        .week-col {
+            flex: 1;
+            text-align: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 0.5rem 0;
+            border-left: 1px solid #f0f9f4;
+            line-height: 1.3;
+        }
+        .week-col span { display: block; font-weight: 400; font-size: 0.55rem; }
+
+        /* Grid lines */
+        .task-bar-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent calc(100% / var(--total-weeks) - 1px),
+                #f0f9f4 calc(100% / var(--total-weeks) - 1px),
+                #f0f9f4 calc(100% / var(--total-weeks))
+            );
+            pointer-events: none;
+        }
+
+        /* Dependency arrow */
+        .dep-tag {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-left: 0.25rem;
+        }
+
+        /* Milestone */
+        .milestone {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, var(--primary-bg), #dcfce7);
+            border: 1px dashed var(--primary-light);
+            border-radius: 10px;
+            margin-top: 0.75rem;
+        }
+        .milestone-icon {
+            font-size: 1.25rem;
+        }
+        .milestone-text {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        .milestone-text small {
+            display: block;
+            font-weight: 400;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* Notes section */
+        .notes {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .notes h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        .notes ul {
+            list-style: none;
+            padding: 0;
+        }
+        .notes li {
+            padding: 0.4rem 0;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .notes li:last-child { border-bottom: none; }
+        .notes li::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .timeline-row { grid-template-columns: 200px 1fr; }
+            .week-header { grid-template-columns: 200px 1fr; }
+            .legend { gap: 0.5rem; }
+        }
+        @media (max-width: 480px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .timeline-row { grid-template-columns: 160px 1fr; }
+            .week-header { grid-template-columns: 160px 1fr; }
+        }
+
+        /* Tooltip */
+        .tooltip-wrap {
+            position: relative;
+        }
+        .tooltip-wrap .tooltip-text {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            line-height: 1.4;
+            white-space: nowrap;
+            z-index: 100;
+            max-width: 300px;
+            white-space: normal;
+        }
+        .tooltip-wrap:hover .tooltip-text { display: block; }
+
+        /* Status Tabs */
+        .status-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .status-tab {
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .status-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .status-tab:hover:not(.active) {
+            background: var(--primary-bg);
+            border-color: var(--primary-light);
+        }
+
+        /* Dependency section */
+        .dep-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .dep-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .dep-flow {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+        .dep-node {
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .dep-arrow {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="index.html" class="back-link">← Document Hub</a>
+    <h1>Project Development Timeline</h1>
+    <p>PordeeNomad / PordeeConnect — Roadmap แผนพัฒนาระบบ</p>
+    <span class="badge">v1.0 · 12 May 2026 · 6 Phases · 20 Weeks</span>
+</div>
+
+<div class="container">
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="num" style="color: var(--primary);">6</div>
+            <div class="label">Phases</div>
+        </div>
+        <div class="summary-card">
+            <div class="num" style="color: var(--blue);">~20</div>
+            <div class="label">สัปดาห์ (Weeks)</div>
+        </div>
+        <div class="summary-card">
+            <div class="num" style="color: var(--purple);">35+</div>
+            <div class="label">Features / Tasks</div>
+        </div>
+        <div class="summary-card">
+            <div class="num" style="color: var(--orange);">2</div>
+            <div class="label">Systems (Portal + Admin)</div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background: var(--primary);"></div> Backend API</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--blue);"></div> Frontend</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--purple);"></div> Full-stack</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--orange);"></div> Business Logic</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--pink);"></div> Testing / QA</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--cyan);"></div> DevOps / Infra</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--red);"></div> Milestone</div>
+    </div>
+
+    <!-- Dependency Map -->
+    <div class="dep-section">
+        <h3>🔗 Critical Dependencies</h3>
+        <div class="dep-flow">
+            <span class="dep-node" style="background: #ECFEFF; color: #0891B2;">Infra + DB</span>
+            <span class="dep-arrow">→</span>
+            <span class="dep-node" style="background: #D1FAE5; color: #059669;">Auth System</span>
+            <span class="dep-arrow">→</span>
+            <span class="dep-node" style="background: #EDE9FE; color: #7C3AED;">Tier System</span>
+            <span class="dep-arrow">→</span>
+            <span class="dep-node" style="background: #FEF3C7; color: #D97706;">Commission Engine</span>
+            <span class="dep-arrow">→</span>
+            <span class="dep-node" style="background: #EFF6FF; color: #3B82F6;">Partner Portal</span>
+            <span class="dep-arrow">→</span>
+            <span class="dep-node" style="background: #FDF2F8; color: #EC4899;">Admin Console</span>
+        </div>
+        <div class="dep-flow" style="margin-top: 0.25rem;">
+            <span class="dep-node" style="background: #D1FAE5; color: #059669;">Auth System</span>
+            <span class="dep-arrow">→</span>
+            <span class="dep-node" style="background: #EFF6FF; color: #3B82F6;">Dashboard / Team / Income</span>
+        </div>
+        <div class="dep-flow" style="margin-top: 0.25rem;">
+            <span class="dep-node" style="background: #FEF3C7; color: #D97706;">Commission Engine</span>
+            <span class="dep-arrow">→</span>
+            <span class="dep-node" style="background: #EFF6FF; color: #3B82F6;">Withdrawal / Export</span>
+        </div>
+    </div>
+
+    <!-- ====== PHASE 0 ====== -->
+    <div class="phase" id="phase-0">
+        <div class="phase-header" onclick="togglePhase('phase-0')">
+            <div class="phase-number" style="background: var(--cyan);">0</div>
+            <div class="phase-info">
+                <div class="phase-title">Foundation & Infrastructure</div>
+                <div class="phase-meta">Week 1–3 · โครงสร้างพื้นฐาน ฐานข้อมูล Authentication</div>
+            </div>
+            <div class="phase-toggle">▾</div>
+        </div>
+        <div class="phase-body">
+            <div class="timeline-table" style="--total-weeks: 20;">
+                <div class="week-header">
+                    <div class="week-header-label">Task</div>
+                    <div class="week-cols" id="week-cols-0"></div>
+                </div>
+                <!-- Tasks -->
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #ECFEFF; color: #0891B2;">🗄️</div>
+                        <div class="task-name">
+                            Project Setup & DevOps
+                            <small>CI/CD, staging, repo structure</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--cyan); left: 0%; width: 10%;">W1–2</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">🗃️</div>
+                        <div class="task-name">
+                            Database Schema Design
+                            <small>Users, Orders, Products, Members, Tiers</small>
+                        </div>
+                        <span class="task-badge badge-be">BE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 0%; width: 15%;">W1–3</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">🔐</div>
+                        <div class="task-name">
+                            Authentication & Session
+                            <small>Login, JWT, Session management</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 5%; width: 10%;">W2–3</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">🎨</div>
+                        <div class="task-name">
+                            Frontend Scaffold
+                            <small>Design system, components, routing</small>
+                        </div>
+                        <span class="task-badge badge-fe">FE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 5%; width: 10%;">W2–3</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">🔑</div>
+                        <div class="task-name">
+                            Login Page (FE)
+                            <small>Login UI, forgot password, session</small>
+                        </div>
+                        <span class="task-badge badge-fe">FE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 10%; width: 5%;">W3</div>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone">
+                <span class="milestone-icon">🏁</span>
+                <span class="milestone-text">
+                    M0: Foundation Ready
+                    <small>ระบบพื้นฐานพร้อม — Login ได้ ฐานข้อมูลพร้อม CI/CD ทำงาน</small>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== PHASE 1 ====== -->
+    <div class="phase" id="phase-1">
+        <div class="phase-header" onclick="togglePhase('phase-1')">
+            <div class="phase-number" style="background: var(--primary);">1</div>
+            <div class="phase-info">
+                <div class="phase-title">Tier System & Commission Engine</div>
+                <div class="phase-meta">Week 3–6 · ระบบตำแหน่ง คำนวณค่าคอมมิชชั่น 4 ประเภท</div>
+            </div>
+            <div class="phase-toggle">▾</div>
+        </div>
+        <div class="phase-body">
+            <div class="timeline-table" style="--total-weeks: 20;">
+                <div class="week-header">
+                    <div class="week-header-label">Task</div>
+                    <div class="week-cols" id="week-cols-1"></div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FEF3C7; color: #D97706;">🏅</div>
+                        <div class="task-name">
+                            Tier/Position System API
+                            <small>Starter → Silver → Gold → Platinum → Wisdom</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--orange); left: 10%; width: 10%;">W3–4</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FEF3C7; color: #D97706;">💰</div>
+                        <div class="task-name">
+                            Affiliate Commission Engine
+                            <small>Order-based, seller-defined rate (5–20%)</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--orange); left: 15%; width: 10%;">W4–5</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FEF3C7; color: #D97706;">👑</div>
+                        <div class="task-name">
+                            Royalty/Licensing Fee (2%)
+                            <small>Cascade calculation ตามตำแหน่ง</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--orange); left: 15%; width: 10%;">W4–5</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FEF3C7; color: #D97706;">👥</div>
+                        <div class="task-name">
+                            Team Management Fee (1%)
+                            <small>Pool จาก downline 3 ชั้น × tier%</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--orange); left: 20%; width: 10%;">W5–6</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FEF3C7; color: #D97706;">📊</div>
+                        <div class="task-name">
+                            Sales Sharing (1%)
+                            <small>Company-wide pool → แบ่งตามตำแหน่ง</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--orange); left: 20%; width: 10%;">W5–6</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">🔧</div>
+                        <div class="task-name">
+                            Platform Fee Logic (10%)
+                            <small>แยก GP, Growth, Infrastructure</small>
+                        </div>
+                        <span class="task-badge badge-be">BE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 10%; width: 10%;">W3–4</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FDF2F8; color: #EC4899;">🧪</div>
+                        <div class="task-name">
+                            Commission Unit Tests
+                            <small>ทดสอบ multi-tier, edge cases</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--pink); left: 25%; width: 5%;">W6</div>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone">
+                <span class="milestone-icon">🏁</span>
+                <span class="milestone-text">
+                    M1: Commission Engine Complete
+                    <small>คำนวณค่าคอมมิชชั่น 4 ประเภทถูกต้อง ผ่าน unit test ทุก case</small>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== PHASE 2 ====== -->
+    <div class="phase" id="phase-2">
+        <div class="phase-header" onclick="togglePhase('phase-2')">
+            <div class="phase-number" style="background: var(--blue);">2</div>
+            <div class="phase-info">
+                <div class="phase-title">Partner Portal — Core Pages</div>
+                <div class="phase-meta">Week 5–10 · Dashboard, Income, Team, Products</div>
+            </div>
+            <div class="phase-toggle">▾</div>
+        </div>
+        <div class="phase-body">
+            <div class="timeline-table" style="--total-weeks: 20;">
+                <div class="week-header">
+                    <div class="week-header-label">Task</div>
+                    <div class="week-cols" id="week-cols-2"></div>
+                </div>
+                <!-- APIs -->
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">📡</div>
+                        <div class="task-name">
+                            Dashboard API
+                            <small>Income, Sales, Team, Tier, Campaign summary</small>
+                        </div>
+                        <span class="task-badge badge-be">BE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 20%; width: 10%;">W5–6</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">📊</div>
+                        <div class="task-name">
+                            Dashboard (FE)
+                            <small>Stats Cards, Income table, Team, Banner</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 25%; width: 10%;">W6–7</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">📡</div>
+                        <div class="task-name">
+                            Income APIs
+                            <small>Affiliate detail, Royalty, TMF, Sales Sharing</small>
+                        </div>
+                        <span class="task-badge badge-be">BE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 25%; width: 10%;">W6–7</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">💰</div>
+                        <div class="task-name">
+                            รายได้ของฉัน (My Income) (FE)
+                            <small>4 ประเภทรายได้ + รายละเอียด + filter</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 30%; width: 10%;">W7–8</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">📡</div>
+                        <div class="task-name">
+                            Team & Genealogy API
+                            <small>Tree/List view, member search, levels 1-3</small>
+                        </div>
+                        <span class="task-badge badge-be">BE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 25%; width: 15%;">W6–8</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">👥</div>
+                        <div class="task-name">
+                            ทีมของฉัน (My Team) (FE)
+                            <small>Tree view, List view, filter by tier/level</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 35%; width: 10%;">W8–9</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EDE9FE; color: #7C3AED;">🛍️</div>
+                        <div class="task-name">
+                            สินค้าที่ขายได้ (Products Sold)
+                            <small>Order list, product breakdown, charts</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--purple); left: 35%; width: 10%;">W8–9</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">🔗</div>
+                        <div class="task-name">
+                            ลิงก์ของฉัน (My Links)
+                            <small>Affiliate link, QR, sharing, analytics</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 40%; width: 10%;">W9–10</div>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone">
+                <span class="milestone-icon">🏁</span>
+                <span class="milestone-text">
+                    M2: Partner Portal Core Ready
+                    <small>Partner ใช้งาน Dashboard, ดูรายได้, ดูทีม, ดูสินค้า และสร้าง Affiliate Link ได้</small>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== PHASE 3 ====== -->
+    <div class="phase" id="phase-3">
+        <div class="phase-header" onclick="togglePhase('phase-3')">
+            <div class="phase-number" style="background: var(--purple);">3</div>
+            <div class="phase-info">
+                <div class="phase-title">Financial & Campaign Features</div>
+                <div class="phase-meta">Week 9–13 · ระบบถอนเงิน แคมเปญ ตั้งค่า Export</div>
+            </div>
+            <div class="phase-toggle">▾</div>
+        </div>
+        <div class="phase-body">
+            <div class="timeline-table" style="--total-weeks: 20;">
+                <div class="week-header">
+                    <div class="week-header-label">Task</div>
+                    <div class="week-cols" id="week-cols-3"></div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">🏦</div>
+                        <div class="task-name">
+                            Withdrawal API
+                            <small>Request, approval flow, bank transfer</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 40%; width: 10%;">W9–10</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">💳</div>
+                        <div class="task-name">
+                            ถอนเงิน (Withdraw) (FE)
+                            <small>Balance, request, history, bank accounts</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 45%; width: 10%;">W10–11</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EDE9FE; color: #7C3AED;">🎯</div>
+                        <div class="task-name">
+                            แคมเปญ (Campaigns)
+                            <small>Active campaigns, progress, rewards</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--purple); left: 45%; width: 10%;">W10–11</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">⚙️</div>
+                        <div class="task-name">
+                            ตั้งค่า (Settings) (FE)
+                            <small>Profile, bank, security, 2FA</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 50%; width: 10%;">W11–12</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">📥</div>
+                        <div class="task-name">
+                            Export System (.xlsx)
+                            <small>7 export types ตาม export-spec.md</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 50%; width: 10%;">W11–12</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">📱</div>
+                        <div class="task-name">
+                            Responsive & Mobile
+                            <small>ปรับ Portal ทุกหน้าสำหรับ mobile</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 55%; width: 10%;">W12–13</div>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone">
+                <span class="milestone-icon">🏁</span>
+                <span class="milestone-text">
+                    M3: Partner Portal Feature Complete
+                    <small>Partner Portal ครบทุกฟีเจอร์ — ถอนเงินได้ export ได้ ตั้งค่าได้ mobile ใช้งานได้</small>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== PHASE 4 ====== -->
+    <div class="phase" id="phase-4">
+        <div class="phase-header" onclick="togglePhase('phase-4')">
+            <div class="phase-number" style="background: var(--orange);">4</div>
+            <div class="phase-info">
+                <div class="phase-title">Admin Console</div>
+                <div class="phase-meta">Week 11–16 · ระบบ Admin จัดการตำแหน่ง คอมมิชชั่น แคมเปญ</div>
+            </div>
+            <div class="phase-toggle">▾</div>
+        </div>
+        <div class="phase-body">
+            <div class="timeline-table" style="--total-weeks: 20;">
+                <div class="week-header">
+                    <div class="week-header-label">Task</div>
+                    <div class="week-cols" id="week-cols-4"></div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #D1FAE5; color: #059669;">📡</div>
+                        <div class="task-name">
+                            Admin APIs
+                            <small>Partner CRUD, settings, reports</small>
+                        </div>
+                        <span class="task-badge badge-be">BE</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--primary); left: 50%; width: 15%;">W11–13</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EFF6FF; color: #3B82F6;">📈</div>
+                        <div class="task-name">
+                            Admin Dashboard (FE)
+                            <small>KPI overview, partner stats, payouts</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--blue); left: 55%; width: 10%;">W12–13</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EDE9FE; color: #7C3AED;">👤</div>
+                        <div class="task-name">
+                            Partner Management
+                            <small>List, search, filter, edit, rank adjust</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--purple); left: 60%; width: 10%;">W13–14</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EDE9FE; color: #7C3AED;">⚙️</div>
+                        <div class="task-name">
+                            Settings — Rank & Commission
+                            <small>ตั้งค่าตำแหน่ง, %, fee, platform fee</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--purple); left: 60%; width: 10%;">W13–14</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EDE9FE; color: #7C3AED;">🎪</div>
+                        <div class="task-name">
+                            Campaign Management (Admin)
+                            <small>Create/edit campaigns, set targets</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--purple); left: 65%; width: 10%;">W14–15</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EDE9FE; color: #7C3AED;">📜</div>
+                        <div class="task-name">
+                            Audit Log / Change History
+                            <small>ประวัติเปลี่ยนแปลง, filter by type</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--purple); left: 70%; width: 5%;">W15</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #EDE9FE; color: #7C3AED;">💸</div>
+                        <div class="task-name">
+                            Withdrawal Approval (Admin)
+                            <small>Review, approve/reject, batch process</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--purple); left: 70%; width: 10%;">W15–16</div>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone">
+                <span class="milestone-icon">🏁</span>
+                <span class="milestone-text">
+                    M4: Admin Console Complete
+                    <small>Admin จัดการ Partner ตั้งค่าระบบ ดูรายงาน อนุมัติถอนเงินได้ครบ</small>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== PHASE 5 ====== -->
+    <div class="phase" id="phase-5">
+        <div class="phase-header" onclick="togglePhase('phase-5')">
+            <div class="phase-number" style="background: var(--pink);">5</div>
+            <div class="phase-info">
+                <div class="phase-title">Integration, Testing & Launch</div>
+                <div class="phase-meta">Week 15–20 · Integration test, UAT, Security, Production deploy</div>
+            </div>
+            <div class="phase-toggle">▾</div>
+        </div>
+        <div class="phase-body">
+            <div class="timeline-table" style="--total-weeks: 20;">
+                <div class="week-header">
+                    <div class="week-header-label">Task</div>
+                    <div class="week-cols" id="week-cols-5"></div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FDF2F8; color: #EC4899;">🔗</div>
+                        <div class="task-name">
+                            Integration Testing
+                            <small>E2E commission flow, withdrawal flow</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--pink); left: 70%; width: 10%;">W15–16</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FDF2F8; color: #EC4899;">🔒</div>
+                        <div class="task-name">
+                            Security & PDPA
+                            <small>PII encryption, data privacy, audit</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--pink); left: 75%; width: 5%;">W16–17</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FDF2F8; color: #EC4899;">⚡</div>
+                        <div class="task-name">
+                            Performance Optimization
+                            <small>API caching, FCP < 3s, lazy loading</small>
+                        </div>
+                        <span class="task-badge badge-should">SHOULD</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--pink); left: 75%; width: 5%;">W16–17</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FDF2F8; color: #EC4899;">🧑‍💼</div>
+                        <div class="task-name">
+                            UAT — Business Team
+                            <small>ทดสอบกับทีม business, real scenarios</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--pink); left: 80%; width: 10%;">W17–18</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #FDF2F8; color: #EC4899;">🐛</div>
+                        <div class="task-name">
+                            Bug Fixes & Polish
+                            <small>แก้ bug จาก UAT, UI polish</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--pink); left: 85%; width: 10%;">W18–19</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #ECFEFF; color: #0891B2;">🚀</div>
+                        <div class="task-name">
+                            Production Deployment
+                            <small>Deploy, monitoring, rollback plan</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--cyan); left: 90%; width: 5%;">W19</div>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="task-info">
+                        <div class="task-icon" style="background: #ECFEFF; color: #0891B2;">👁️</div>
+                        <div class="task-name">
+                            Post-Launch Monitoring
+                            <small>Monitor, hotfix, partner onboarding</small>
+                        </div>
+                        <span class="task-badge badge-must">MUST</span>
+                    </div>
+                    <div class="task-bar-area">
+                        <div class="task-bar" style="background: var(--cyan); left: 95%; width: 5%;">W20</div>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone">
+                <span class="milestone-icon">🎉</span>
+                <span class="milestone-text">
+                    M5: Production Launch
+                    <small>ระบบ PordeeConnect ทั้ง Partner Portal + Admin Console พร้อมใช้งานจริง</small>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes">
+        <h3>📌 หมายเหตุ & สิ่งที่ต้องตัดสินใจก่อน</h3>
+        <ul>
+            <li><strong>Tier/Position criteria:</strong> ต้องกำหนดเกณฑ์ตำแหน่งแต่ละ tier ให้ชัดเจน (ยอดสะสมตลอดชีพ? รายปี? เงื่อนไขอื่น?) — ตัดสินใจก่อน Phase 1</li>
+            <li><strong>Royalty cascade formula:</strong> ต้องระบุ % ที่แต่ละ tier ได้รับจาก royalty pool และคำนวณจากชั้นไหนถึงชั้นไหน — ตัดสินใจก่อน Phase 1</li>
+            <li><strong>TMF overpayment prevention:</strong> ต้องตรวจสอบ logic ป้องกันจ่ายเกิน (จาก MOM 3 เม.ย.) — แก้ไขก่อน Phase 1</li>
+            <li><strong>Sales Sharing qualification:</strong> ยืนยันเงื่อนไขคุณสมบัติ (ยอดขาย ≥ ฿1,000 + คอม ≥ ฿10,000) และจะแสดงยอดที่ยังไม่ผ่านเกณฑ์หรือไม่</li>
+            <li><strong>Settlement period:</strong> กำหนดระยะเวลาคืนสินค้า (return period) ที่ใช้คำนวณ settled amount</li>
+            <li><strong>Wallet minimum withdrawal:</strong> ยืนยันขั้นต่ำถอน ฿100 และค่าธรรมเนียมถอน (ถ้ามี)</li>
+            <li><strong>BA Spec remaining pages:</strong> ยังต้องเขียน BA spec สำหรับหน้า Income, Team, Products, Withdraw, Links, Campaigns, Settings</li>
+            <li><strong>BuyDi integration:</strong> ต้องกำหนดขอบเขตการ integrate กับระบบ BuyDi (eCommerce backend) ที่มีอยู่</li>
+        </ul>
+    </div>
+
+    <!-- Spec Status -->
+    <div class="notes" style="margin-top: 1rem;">
+        <h3>📋 สถานะ BA Specification</h3>
+        <ul>
+            <li>✅ <strong>Dashboard</strong> — spec เสร็จแล้ว (dashboard.md)</li>
+            <li>✅ <strong>Export</strong> — spec เสร็จแล้ว (export-spec.md)</li>
+            <li>⬜ <strong>รายได้ของฉัน (My Income)</strong> — ยังไม่มี spec</li>
+            <li>⬜ <strong>สินค้าที่ขายได้ (Products Sold)</strong> — ยังไม่มี spec</li>
+            <li>⬜ <strong>ทีมของฉัน (My Team)</strong> — ยังไม่มี spec</li>
+            <li>⬜ <strong>ถอนเงิน (Withdraw)</strong> — ยังไม่มี spec</li>
+            <li>⬜ <strong>ลิงก์ของฉัน (My Links)</strong> — ยังไม่มี spec</li>
+            <li>⬜ <strong>แคมเปญ (Campaigns)</strong> — ยังไม่มี spec</li>
+            <li>⬜ <strong>ตั้งค่า (Settings)</strong> — ยังไม่มี spec</li>
+            <li>⬜ <strong>Admin Console</strong> — ยังไม่มี spec</li>
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    // Generate week columns for each phase
+    const totalWeeks = 20;
+    const weekLabels = [];
+    for (let i = 1; i <= totalWeeks; i++) {
+        weekLabels.push(`W${i}`);
+    }
+
+    function generateWeekCols(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        weekLabels.forEach((label, i) => {
+            const col = document.createElement('div');
+            col.className = 'week-col';
+            col.textContent = label;
+            container.appendChild(col);
+        });
+    }
+
+    // Generate week columns for all phases
+    for (let i = 0; i <= 5; i++) {
+        generateWeekCols(`week-cols-${i}`);
+    }
+
+    // Toggle phase
+    function togglePhase(id) {
+        const phase = document.getElementById(id);
+        phase.classList.toggle('collapsed');
+    }
+</script>
+
+</body>
+</html>

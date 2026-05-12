@@ -1,6 +1,6 @@
 # **Minutes of Meeting**
 
-**หัวข้อ:** การทบทวนแนวทางการคิดรายได้ ค่าธรรมเนียมแพลตฟอร์ม และโบนัสพิเศษของ PordeeNomad  
+**หัวข้อ:** การทบทวนแนวทางการคิดรายได้ ค่าธรรมเนียมแพลตฟอร์ม และโบนัสพิเศษของ PordeeMall  
  **วัตถุประสงค์ของการประชุม:**  
  เพื่อทบทวนและยืนยันแนวทางการคิดรายได้ในระบบใหม่ โดยเฉพาะการแยก “ค่าในหน้า” ที่ Seller กำหนดเอง ออกจาก “Platform Fee” ที่ระบบหักเพิ่มเติม รวมถึงทบทวนแนวทางการจ่ายรายได้ในส่วนต่าง ๆ เช่น ค่าลิขสิทธิ์ ค่าบริหารทีม ส่วนแบ่งยอดขาย และโบนัสพิเศษ เพื่อใช้เป็นฐานในการปรับสไลด์ ออกแบบ flow และสรุป requirement ในลำดับถัดไป
 
@@ -110,5 +110,5 @@
 * ทบทวนเงื่อนไขและกรอบเวลาของแต่ละโปรโมชันให้ชัดเจนก่อนนำไปใช้จริง  
 * ส่ง MoM และสไลด์ฉบับปรับปรุงกลับเข้ากลุ่มเพื่อ review และยืนยันร่วมกันอีกครั้ง
 
-อ้างอิง : [รายได้ Pordeenomad](https://docs.google.com/spreadsheets/d/1eH4vsOUxu-_ZCa4oL82bj9OrpcTINDIGFOMjNxpR3rU/edit?usp=sharing) [Presentation](https://zupream.github.io/pordeenomad-flow/)
+อ้างอิง : [รายได้ Pordeemall](https://docs.google.com/spreadsheets/d/1eH4vsOUxu-_ZCa4oL82bj9OrpcTINDIGFOMjNxpR3rU/edit?usp=sharing) [Presentation](https://zupream.github.io/pordeenomad-flow/)
 
